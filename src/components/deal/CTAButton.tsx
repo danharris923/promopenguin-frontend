@@ -1,10 +1,11 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
+import { toNumber, formatPrice } from '@/lib/price-utils'
 
 interface CTAButtonProps {
   href: string
-  price?: number | null
+  price?: number | string | null
   storeName?: string
   variant?: 'primary' | 'secondary'
   size?: 'md' | 'lg' | 'xl'
@@ -22,6 +23,7 @@ export function CTAButton({
   animate = true,
 }: CTAButtonProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const priceNum = toNumber(price)
 
   const sizeClasses = {
     md: 'py-3 px-6 text-base',
@@ -44,9 +46,9 @@ export function CTAButton({
     `,
   }
 
-  const buttonText = price
-    ? `🛒 GET THIS DEAL - $${price.toFixed(2)}`
-    : '🛒 GET THIS DEAL NOW'
+  const buttonText = priceNum !== null
+    ? `GET THIS DEAL - $${formatPrice(priceNum)}`
+    : 'GET THIS DEAL NOW'
 
   return (
     <a

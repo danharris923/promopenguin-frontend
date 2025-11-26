@@ -6,6 +6,7 @@
  */
 
 import { Deal, ContentContext } from '@/types/deal'
+import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 // =============================================================================
 // DESCRIPTION TEMPLATES (8 variations per category)
@@ -138,17 +139,15 @@ export function generateDealDescription(deal: Deal): string {
   const urgency = URGENCY_PHRASES[urgencyIndex]
 
   // Calculate savings
-  const savings = deal.original_price && deal.price
-    ? (deal.original_price - deal.price).toFixed(2)
-    : '0'
+  const savings = calculateSavings(deal.original_price, deal.price) || '0'
 
   // Replace placeholders
   const description = template
     .replace(/{product}/g, deal.title)
     .replace(/{store}/g, formatStoreName(deal.store))
     .replace(/{category}/g, category)
-    .replace(/{original_price}/g, deal.original_price?.toFixed(2) || 'regular price')
-    .replace(/{current_price}/g, deal.price?.toFixed(2) || 'sale price')
+    .replace(/{original_price}/g, formatPrice(deal.original_price) || 'regular price')
+    .replace(/{current_price}/g, formatPrice(deal.price) || 'sale price')
     .replace(/{savings}/g, savings)
     .replace(/{percent}/g, deal.discount_percent?.toString() || '??')
     .replace(/{benefits}/g, benefit)
@@ -161,8 +160,9 @@ export function generateDealDescription(deal: Deal): string {
  * Generate SEO meta description
  */
 export function generateMetaDescription(deal: Deal): string {
-  const savings = deal.original_price && deal.price
-    ? `Save $${(deal.original_price - deal.price).toFixed(2)}`
+  const savingsAmount = calculateSavings(deal.original_price, deal.price)
+  const savings = savingsAmount
+    ? `Save $${savingsAmount}`
     : `${deal.discount_percent}% off`
 
   return `${deal.title} - ${savings} at ${formatStoreName(deal.store)}. Shop this Canadian deal now before it's gone.`
@@ -176,7 +176,7 @@ export function generatePageTitle(deal: Deal): string {
     return `${deal.title} - ${deal.discount_percent}% OFF`
   }
   if (deal.price) {
-    return `${deal.title} - $${deal.price.toFixed(2)}`
+    return `${deal.title} - $${formatPrice(deal.price)}`
   }
   return deal.title
 }
@@ -232,7 +232,7 @@ export function generateFAQ(deal: Deal): { question: string; answer: string }[] 
     {
       question: `How much can I save on this deal?`,
       answer: deal.original_price && deal.price
-        ? `You save $${(deal.original_price - deal.price).toFixed(2)} (${deal.discount_percent}% off) compared to the regular price of $${deal.original_price.toFixed(2)}.`
+        ? `You save $${calculateSavings(deal.original_price, deal.price)} (${deal.discount_percent}% off) compared to the regular price of $${formatPrice(deal.original_price)}.`
         : `This deal offers ${deal.discount_percent}% off the regular price.`,
     },
     {

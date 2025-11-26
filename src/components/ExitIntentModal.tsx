@@ -1,10 +1,11 @@
-'use client'
+"use client"
 
 import { useEffect, useState, useCallback } from 'react'
+import { toNumber, formatPrice } from '@/lib/price-utils'
 
 interface ExitIntentModalProps {
   dealTitle?: string
-  dealPrice?: number | null
+  dealPrice?: number | string | null
 }
 
 export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) {
@@ -12,6 +13,8 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
   const [email, setEmail] = useState('')
   const [hasShown, setHasShown] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+
+  const priceNum = toNumber(dealPrice)
 
   const handleExitIntent = useCallback((e: MouseEvent) => {
     // Only trigger when mouse moves to top of viewport (leaving page)
@@ -85,7 +88,7 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
 
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-8 text-center">
-          <div className="text-4xl mb-2">🎁</div>
+          <div className="text-4xl mb-2">DEAL</div>
           <h2 className="text-2xl font-bold text-white mb-1">
             Wait! Don't Miss Out
           </h2>
@@ -98,7 +101,7 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
         <div className="px-6 py-6">
           {isSubmitted ? (
             <div className="text-center py-4">
-              <div className="text-4xl mb-2">✅</div>
+              <div className="text-4xl mb-2">OK</div>
               <p className="text-gray-900 font-semibold">You're on the list!</p>
               <p className="text-gray-600 text-sm">
                 We'll email you when we find better deals.
@@ -111,8 +114,8 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <p className="text-sm text-gray-600">You were looking at:</p>
                   <p className="font-semibold text-gray-900 truncate">{dealTitle}</p>
-                  {dealPrice && (
-                    <p className="text-green-600 font-bold">${dealPrice.toFixed(2)}</p>
+                  {priceNum !== null && (
+                    <p className="text-green-600 font-bold">${formatPrice(priceNum)}</p>
                   )}
                 </div>
               )}
@@ -120,15 +123,15 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
               {/* Value Props */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">Y</span>
                   <span>Instant price drop alerts</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">Y</span>
                   <span>Exclusive Canadian deals</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">Y</span>
                   <span>Unsubscribe anytime</span>
                 </div>
               </div>
@@ -158,7 +161,7 @@ export function ExitIntentModal({ dealTitle, dealPrice }: ExitIntentModalProps) 
                     transition-all
                   "
                 >
-                  🔔 GET DEAL ALERTS
+                  GET DEAL ALERTS
                 </button>
               </form>
 

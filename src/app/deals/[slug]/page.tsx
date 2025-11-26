@@ -22,6 +22,7 @@ import {
   generateCountdown,
   getStockWarning,
 } from '@/lib/urgency'
+import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 import { UrgencyBanner } from '@/components/deal/UrgencyBanner'
 import { SocialProofBanner } from '@/components/deal/SocialProofBanner'
@@ -234,9 +235,7 @@ export default async function DealPage({ params }: PageProps) {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-900">
-                    ${deal.original_price && deal.price
-                      ? (deal.original_price - deal.price).toFixed(0)
-                      : '0'}
+                    ${calculateSavings(deal.original_price, deal.price)?.split('.')[0] || '0'}
                   </div>
                   <div className="text-xs text-gray-500">You Save</div>
                 </div>
@@ -352,7 +351,7 @@ export default async function DealPage({ params }: PageProps) {
                               </div>
                               {related.price && (
                                 <div className="text-sm text-green-600 font-bold">
-                                  ${related.price.toFixed(2)}
+                                  ${formatPrice(related.price)}
                                 </div>
                               )}
                             </div>

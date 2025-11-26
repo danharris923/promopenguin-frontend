@@ -1,16 +1,18 @@
-'use client'
+"use client"
 
 import { useEffect, useState } from 'react'
 import { CTAButton } from './CTAButton'
+import { toNumber, formatPrice } from '@/lib/price-utils'
 
 interface StickyMobileCTAProps {
   href: string
-  price: number | null
+  price: number | string | null
   storeName?: string
 }
 
 export function StickyMobileCTA({ href, price, storeName }: StickyMobileCTAProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const priceNum = toNumber(price)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,9 +37,9 @@ export function StickyMobileCTA({ href, price, storeName }: StickyMobileCTAProps
       <div className="flex items-center gap-3">
         {/* Price summary */}
         <div className="flex-shrink-0">
-          {price ? (
+          {priceNum !== null ? (
             <div className="text-xl font-black text-green-600">
-              ${price.toFixed(2)}
+              ${formatPrice(priceNum)}
             </div>
           ) : (
             <div className="text-lg font-bold text-gray-800">

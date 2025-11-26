@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { DealCardProps } from '@/types/deal'
+import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 export function DealCard({
   id,
@@ -14,9 +15,9 @@ export function DealCard({
   affiliateUrl,
   featured,
 }: DealCardProps) {
-  const savings = originalPrice && price
-    ? (originalPrice - price).toFixed(2)
-    : null
+  const priceNum = toNumber(price)
+  const originalPriceNum = toNumber(originalPrice)
+  const savings = calculateSavings(originalPrice, price)
 
   return (
     <Link
@@ -52,7 +53,7 @@ export function DealCard({
               px-2 py-1 rounded-lg
               font-bold text-xs
             ">
-              🔥 HOT
+              HOT
             </span>
           </div>
         )}
@@ -81,14 +82,14 @@ export function DealCard({
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          {price ? (
+          {priceNum !== null ? (
             <>
               <span className="text-xl font-bold text-green-600">
-                ${price.toFixed(2)}
+                ${formatPrice(priceNum)}
               </span>
-              {originalPrice && (
+              {originalPriceNum !== null && (
                 <span className="text-sm text-gray-400 line-through">
-                  ${originalPrice.toFixed(2)}
+                  ${formatPrice(originalPriceNum)}
                 </span>
               )}
             </>
