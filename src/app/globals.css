@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CTR Warfare Base Styles */
+:root {
+  --cta-primary: #FF6B00;
+  --cta-secondary: #FF0000;
+  --urgency-red: #FF0000;
+  --urgency-orange: #FF6B00;
+  --urgency-yellow: #FFC107;
+  --success-green: #00AA00;
+  --trust-blue: #0066CC;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base typography */
+body {
+  @apply antialiased;
+}
+
+/* CTA Button Base */
+@layer components {
+  .btn-cta {
+    @apply px-6 py-4 rounded-xl font-black text-white text-lg uppercase tracking-wide;
+    @apply bg-gradient-to-r from-orange-500 to-red-600;
+    @apply shadow-lg shadow-red-500/30;
+    @apply transition-all duration-200;
+    @apply hover:scale-105 hover:shadow-xl hover:shadow-red-500/40;
+    @apply active:scale-95;
+  }
+
+  .btn-cta-pulse {
+    @apply btn-cta animate-pulse;
+  }
+
+  /* Urgency Banner */
+  .urgency-banner {
+    @apply bg-gradient-to-r from-red-600 to-orange-500;
+    @apply text-white text-sm font-bold text-center py-2;
+    @apply animate-pulse;
+  }
+
+  /* Social Proof Banner */
+  .social-proof-banner {
+    @apply bg-yellow-100 text-yellow-800 text-sm font-medium text-center py-2;
+  }
+
+  /* Price Display */
+  .price-current {
+    @apply text-4xl font-black text-green-600;
+  }
+
+  .price-original {
+    @apply text-lg text-gray-400 line-through;
+  }
+
+  .price-savings {
+    @apply text-red-600 font-bold;
+  }
+
+  /* Discount Badge */
+  .discount-badge {
+    @apply absolute top-2 right-2;
+    @apply bg-red-600 text-white;
+    @apply px-3 py-1 rounded-lg;
+    @apply font-black text-xl;
+    @apply shadow-lg;
+  }
+
+  /* Deal Card */
+  .deal-card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden;
+    @apply transition-all duration-200;
+    @apply hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Stock Warning */
+  .stock-warning {
+    @apply bg-yellow-50 border border-yellow-200 rounded-lg;
+    @apply px-3 py-2 text-sm text-yellow-800;
+    @apply flex items-center gap-2;
+  }
+
+  .stock-critical {
+    @apply bg-red-50 border border-red-200 text-red-800;
+  }
+}
+
+/* Animations */
+@keyframes countdown-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.countdown-urgent {
+  animation: countdown-pulse 1s infinite;
+}
+
+/* Sticky bottom CTA (mobile) */
+.sticky-cta {
+  @apply fixed bottom-0 left-0 right-0;
+  @apply bg-white border-t border-gray-200;
+  @apply p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.1)];
+  @apply z-50;
+}
+
+/* Exit Intent Modal Overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/80 z-50;
+  @apply flex items-center justify-center;
+  @apply animate-fade-in;
+}
