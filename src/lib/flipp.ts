@@ -168,12 +168,14 @@ const CATEGORY_MAP: Record<string, string> = {
  */
 export async function searchFlipp(
   query: string,
-  postalCode: string = DEFAULT_POSTAL_CODE
+  postalCode: string = DEFAULT_POSTAL_CODE,
+  limit: number = 50
 ): Promise<FlippSearchResponse> {
   const url = new URL(FLIPP_API_URL)
   url.searchParams.set('locale', DEFAULT_LOCALE)
   url.searchParams.set('postal_code', postalCode)
   url.searchParams.set('q', query)
+  url.searchParams.set('limit', String(limit))
 
   const response = await fetch(url.toString(), {
     headers: {
@@ -218,11 +220,13 @@ export async function getFlippStoreDeals(
  */
 export async function searchFlippDeals(
   query: string,
+  limit: number = 50,
   postalCode: string = DEFAULT_POSTAL_CODE
 ): Promise<FlippDeal[]> {
   try {
-    const response = await searchFlipp(query, postalCode)
-    return transformFlippItems(response.items)
+    const response = await searchFlipp(query, postalCode, limit * 2)
+    const deals = transformFlippItems(response.items)
+    return deals.slice(0, limit)
   } catch (error) {
     console.error(`Error searching Flipp for ${query}:`, error)
     return []
@@ -368,3 +372,4 @@ export function hasFlippSupport(slug: string): boolean {
 export function getFlippStoreSlugs(): string[] {
   return Object.values(STORE_SLUGS)
 }
+

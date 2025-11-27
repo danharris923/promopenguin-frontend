@@ -207,6 +207,7 @@ export interface AffiliateBrand {
   color: string        // Tailwind gradient classes
   bgColor: string      // Light background for chips
   textColor: string    // Text color for chips
+  image?: string       // Primary image for the brand
 }
 
 // All affiliate brands with full styling config
@@ -220,6 +221,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-pink-500 to-rose-600',
     bgColor: 'bg-pink-50',
     textColor: 'text-pink-700',
+    image: '/images/affiliates/lululemon/1.avif',
   },
   {
     name: 'Roots',
@@ -230,6 +232,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-amber-500 to-orange-600',
     bgColor: 'bg-amber-50',
     textColor: 'text-amber-700',
+    image: '/images/affiliates/roots/1.jpg',
   },
   {
     name: 'Aritzia',
@@ -240,6 +243,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-purple-500 to-indigo-600',
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700',
+    image: '/images/affiliates/aritzia/1.jpg',
   },
   {
     name: 'Ardene',
@@ -250,6 +254,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-teal-500 to-cyan-600',
     bgColor: 'bg-teal-50',
     textColor: 'text-teal-700',
+    image: '/images/affiliates/ardene/1.webp',
   },
   {
     name: 'Sephora',
@@ -260,6 +265,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-black to-gray-800',
     bgColor: 'bg-gray-100',
     textColor: 'text-gray-900',
+    image: '/images/affiliates/sephora/1.jpeg',
   },
   {
     name: 'Walmart',

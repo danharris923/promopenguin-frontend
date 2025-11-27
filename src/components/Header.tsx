@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { AFFILIATE_BRANDS, getStoreAffiliateLink } from '@/lib/affiliates'
+import { SearchForm } from './SearchForm'
 
 export function Header() {
   // Triple the brands for seamless scrolling
@@ -35,15 +36,17 @@ export function Header() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/deals" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-              All Deals
+          {/* Search Bar - Desktop */}
+          <div className="hidden md:block flex-1 max-w-xs mx-4">
+            <SearchForm compact />
+          </div>
+
+          <nav className="hidden md:flex items-center gap-4">
+            <Link href="/deals" className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm">
+              Deals
             </Link>
-            <Link href="/stores" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            <Link href="/stores" className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm">
               Stores
-            </Link>
-            <Link href="/deals/today" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-              Today
             </Link>
           </nav>
 
