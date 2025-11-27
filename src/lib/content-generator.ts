@@ -1,103 +1,55 @@
 /**
- * Content Generator - Creates unique descriptions for SEO
+ * Content Generator - Creates descriptions for SEO
  *
- * Uses template rotation and data injection to generate
- * unique content for each deal page.
+ * Generates honest descriptions based on actual data.
+ * Strips AI slop from scraped feed descriptions.
  */
 
-import { Deal, ContentContext } from '@/types/deal'
+import { Deal } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 // =============================================================================
-// DESCRIPTION TEMPLATES (8 variations per category)
+// SLOP PATTERNS TO STRIP FROM SCRAPED DESCRIPTIONS
 // =============================================================================
 
-const DESCRIPTION_TEMPLATES = {
-  default: [
-    `{product} at {store}. Was ${'{original_price}'}, now ${'{current_price}'} ({percent}% off). Found by our AI scraper.`,
-
-    `{product} - {percent}% off at {store}. Sale price: ${'{current_price}'}. Automated find.`,
-
-    `{store} has {product} for ${'{current_price}'} (down from ${'{original_price}'}). AI-sourced.`,
-
-    `{percent}% off {product} at {store}. Now ${'{current_price}'}. From retailer feed.`,
-
-    `{product} on sale at {store}: ${'{current_price}'} (was ${'{original_price}'}). Scraper find.`,
-
-    `{store} deal: {product} at ${'{current_price}'} ({percent}% off). Auto-found.`,
-
-    `Price drop: {product} now ${'{current_price}'} at {store}. AI-sourced.`,
-
-    `{product} at {store} - ${'{current_price}'} ({percent}% off). Verify at retailer.`,
-  ],
-}
-
-// =============================================================================
-// CATEGORY-SPECIFIC BENEFITS
-// =============================================================================
-
-const CATEGORY_BENEFITS: Record<string, string[]> = {
-  electronics: [
-    'Ships to Canada.',
-    '',
-    '',
-    '',
-    '',
-  ],
-  fashion: [
-    'Ships to Canada.',
-    '',
-    '',
-    '',
-    'Check return policy.',
-  ],
-  home: [
-    'Made for Canadian homes and families.',
-    'Trusted by Canadian homeowners nationwide.',
-    'Perfect for our Canadian climate and lifestyle.',
-    'Energy-efficient for Canadian winters.',
-    'A popular choice among Canadian home decor enthusiasts.',
-  ],
-  grocery: [
-    'Stock up and save at Canadian prices.',
-    'Quality products for Canadian families.',
-    'Great value for budget-conscious Canadian shoppers.',
-    'A pantry staple at an unbeatable price.',
-  ],
-  beauty: [
-    'Loved by Canadian beauty enthusiasts.',
-    'Perfect addition to your skincare routine.',
-    'A bestseller among Canadian shoppers.',
-    'Great for the Canadian climate.',
-  ],
-  sports: [
-    'Get active with this Canadian deal.',
-    'Perfect for outdoor activities in Canada.',
-    'Trusted by Canadian athletes and fitness enthusiasts.',
-    'Great for Canadian winters and summers alike.',
-  ],
-  general: [
-    'A great find for Canadian shoppers.',
-    'Quality product at an unbeatable Canadian price.',
-    'Popular with Canadian buyers.',
-    "Don't miss this Canadian deal.",
-  ],
-}
-
-// =============================================================================
-// URGENCY PHRASES
-// =============================================================================
-
-const URGENCY_PHRASES = [
-  '',
-  '',
-  '',
-  '',
-  'One of the best deals we\'ve seen this month.',
-  '',
-  '',  // Sometimes no urgency
-  '',
+const SLOP_PATTERNS = [
+  /if you're not sure whether to buy,?\s*add to cart/gi,
+  /you can come back to it later!?/gi,
+  /I think the price is very good\.?/gi,
+  /Please read some of the reviews/gi,
+  /see (?:what )?people thought of the product/gi,
+  /sells on Amazon\.?/gi,
+  /This is a great deal!?/gi,
+  /Don't miss out!?/gi,
+  /Limited time offer!?/gi,
+  /Act fast!?/gi,
+  /Hurry!?/gi,
+  /Buy now!?/gi,
+  /Order now!?/gi,
+  /\*\*[^*]+\*\*/g,
+  /Click here to/gi,
+  /Check it out!?/gi,
 ]
+
+/**
+ * Strip AI slop from scraped content
+ */
+export function cleanDescription(text: string | null | undefined): string | null {
+  if (!text) return null
+  let cleaned = text
+  for (const pattern of SLOP_PATTERNS) {
+    cleaned = cleaned.replace(pattern, '')
+  }
+  cleaned = cleaned
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\.\s*\./g, '.')
+    .replace(/^\s+|\s+$/g, '')
+    .replace(/\s+([.,!?])/g, '$1')
+  if (cleaned.length < 20 || !/[a-zA-Z]{3,}/.test(cleaned)) {
+    return null
+  }
+  return cleaned
+}
 
 // =============================================================================
 // STORE DESCRIPTIONS
@@ -111,7 +63,7 @@ const STORE_DESCRIPTIONS: Record<string, string> = {
   'canadian-tire': 'Canadian Tire - Auto, sports, home.',
   'home-depot': 'Home Depot Canada - Home improvement.',
   'shoppers': 'Shoppers Drug Mart - PC Optimum points.',
-  'loblaws': 'Loblaws is one of Canada\'s largest grocery chains with PC Optimum rewards.',
+  'loblaws': 'Loblaws - PC Optimum rewards.',
 }
 
 // =============================================================================
@@ -119,63 +71,84 @@ const STORE_DESCRIPTIONS: Record<string, string> = {
 // =============================================================================
 
 /**
- * Generate a unique description for a deal
+ * Generate a description based on available data
  */
 export function generateDealDescription(deal: Deal): string {
-  const category = deal.category || 'general'
-  const templates = DESCRIPTION_TEMPLATES.default
+  const price = toNumber(deal.price)
+  const originalPrice = toNumber(deal.original_price)
+  const hasPrice = price !== null && price > 0
+  const hasOriginalPrice = originalPrice !== null && originalPrice > 0
+  const hasDiscount = deal.discount_percent && deal.discount_percent > 0
+  const storeName = formatStoreName(deal.store)
 
-  // Pick template based on deal ID hash (consistent for same deal)
-  const templateIndex = hashString(deal.id) % templates.length
-  let template = templates[templateIndex]
-
-  // Pick benefit based on different hash
-  const benefits = CATEGORY_BENEFITS[category] || CATEGORY_BENEFITS.general
-  const benefitIndex = hashString(deal.id + 'benefit') % benefits.length
-  const benefit = benefits[benefitIndex]
-
-  // Pick urgency phrase
-  const urgencyIndex = hashString(deal.id + 'urgency') % URGENCY_PHRASES.length
-  const urgency = URGENCY_PHRASES[urgencyIndex]
-
-  // Calculate savings
-  const savings = calculateSavings(deal.original_price, deal.price) || '0'
-
-  // Replace placeholders
-  const description = template
-    .replace(/{product}/g, deal.title)
-    .replace(/{store}/g, formatStoreName(deal.store))
-    .replace(/{category}/g, category)
-    .replace(/{original_price}/g, formatPrice(deal.original_price) || 'regular price')
-    .replace(/{current_price}/g, formatPrice(deal.price) || 'sale price')
-    .replace(/{savings}/g, savings)
-    .replace(/{percent}/g, deal.discount_percent?.toString() || '??')
-    .replace(/{benefits}/g, benefit)
-    .replace(/{urgency}/g, urgency)
-
-  return description.trim()
+  if (hasPrice && hasOriginalPrice && hasDiscount) {
+    const templates = [
+      `${deal.title} at ${storeName}. Was $${formatPrice(deal.original_price)}, now $${formatPrice(deal.price)} (${deal.discount_percent}% off).`,
+      `${deal.title} - ${deal.discount_percent}% off at ${storeName}. Sale price: $${formatPrice(deal.price)}.`,
+      `${storeName} has ${deal.title} for $${formatPrice(deal.price)} (down from $${formatPrice(deal.original_price)}).`,
+    ]
+    return templates[hashString(deal.id) % templates.length]
+  } else if (hasPrice) {
+    const templates = [
+      `${deal.title} at ${storeName} for $${formatPrice(deal.price)}.`,
+      `${deal.title} - $${formatPrice(deal.price)} at ${storeName}.`,
+      `${storeName}: ${deal.title} at $${formatPrice(deal.price)}.`,
+    ]
+    return templates[hashString(deal.id) % templates.length]
+  } else if (hasDiscount) {
+    const templates = [
+      `${deal.title} - ${deal.discount_percent}% off at ${storeName}.`,
+      `${deal.discount_percent}% off ${deal.title} at ${storeName}.`,
+      `${storeName} deal: ${deal.title} at ${deal.discount_percent}% off.`,
+    ]
+    return templates[hashString(deal.id) % templates.length]
+  } else {
+    const templates = [
+      `${deal.title} on sale at ${storeName}. Check store for current price.`,
+      `${deal.title} deal at ${storeName}.`,
+      `${storeName} deal: ${deal.title}.`,
+    ]
+    return templates[hashString(deal.id) % templates.length]
+  }
 }
 
 /**
  * Generate SEO meta description
  */
 export function generateMetaDescription(deal: Deal): string {
+  const price = toNumber(deal.price)
+  const hasPrice = price !== null && price > 0
+  const hasDiscount = deal.discount_percent && deal.discount_percent > 0
   const savingsAmount = calculateSavings(deal.original_price, deal.price)
-  const savings = savingsAmount
-    ? `Save $${savingsAmount}`
-    : `${deal.discount_percent}% off`
+  const storeName = formatStoreName(deal.store)
 
-  return `${deal.title} - ${savings} at ${formatStoreName(deal.store)}. Shop this Canadian deal now before it's gone.`
+  let savings = ''
+  if (savingsAmount && parseFloat(savingsAmount) > 0) {
+    savings = `Save $${savingsAmount}`
+  } else if (hasDiscount) {
+    savings = `${deal.discount_percent}% off`
+  }
+
+  if (savings) {
+    return `${deal.title} - ${savings} at ${storeName}. Canadian deal.`
+  } else if (hasPrice) {
+    return `${deal.title} - $${formatPrice(deal.price)} at ${storeName}. Canadian deal.`
+  } else {
+    return `${deal.title} deal at ${storeName}. Check store for price.`
+  }
 }
 
 /**
  * Generate page title
  */
 export function generatePageTitle(deal: Deal): string {
+  const price = toNumber(deal.price)
+  const hasPrice = price !== null && price > 0
+
   if (deal.discount_percent && deal.discount_percent >= 20) {
     return `${deal.title} - ${deal.discount_percent}% OFF`
   }
-  if (deal.price) {
+  if (hasPrice) {
     return `${deal.title} - $${formatPrice(deal.price)}`
   }
   return deal.title
@@ -221,31 +194,35 @@ export function getStoreDescription(storeSlug: string | null): string {
 }
 
 /**
- * Generate FAQ items for a deal
+ * Generate FAQ items - only when we have real data
  */
 export function generateFAQ(deal: Deal): { question: string; answer: string }[] {
-  const faqs = [
-    {
-      question: `Is this ${deal.title} deal available in Canada?`,
-      answer: `Yes, this deal is available to Canadian shoppers through ${formatStoreName(deal.store)}. Shipping is available across Canada.`,
-    },
-    {
-      question: `How much can I save on this deal?`,
-      answer: deal.original_price && deal.price
-        ? `You save $${calculateSavings(deal.original_price, deal.price)} (${deal.discount_percent}% off) compared to the regular price of $${formatPrice(deal.original_price)}.`
-        : `This deal offers ${deal.discount_percent}% off the regular price.`,
-    },
-    {
-      question: `How long will this deal last?`,
-      answer: `Deal availability varies. We recommend purchasing soon as prices and stock can change at any time.`,
-    },
-  ]
+  const faqs: { question: string; answer: string }[] = []
+
+  const price = toNumber(deal.price)
+  const originalPrice = toNumber(deal.original_price)
+  const hasPrice = price !== null && price > 0
+  const hasOriginalPrice = originalPrice !== null && originalPrice > 0
+  const hasDiscount = deal.discount_percent && deal.discount_percent > 0
+  const savingsAmount = calculateSavings(deal.original_price, deal.price)
+  const hasSavings = savingsAmount && parseFloat(savingsAmount) > 0
+  const storeName = formatStoreName(deal.store)
+
+  if (hasPrice && hasOriginalPrice && hasDiscount && hasSavings) {
+    faqs.push({
+      question: `What's the discount on this ${storeName} deal?`,
+      answer: `This deal saves you $${savingsAmount} (${deal.discount_percent}% off). Original price was $${formatPrice(deal.original_price)}, now $${formatPrice(deal.price)}.`,
+    })
+  }
 
   if (deal.store) {
-    faqs.push({
-      question: `Does ${formatStoreName(deal.store)} offer free shipping?`,
-      answer: getStoreDescription(deal.store),
-    })
+    const shippingInfo = getStoreDescription(deal.store)
+    if (shippingInfo) {
+      faqs.push({
+        question: `Does ${storeName} ship to Canada?`,
+        answer: shippingInfo,
+      })
+    }
   }
 
   return faqs
@@ -283,9 +260,9 @@ export function formatStoreName(slug: string | null): string {
     'lululemon': 'Lululemon',
     'gap': 'Gap',
     'old-navy': 'Old Navy',
-    'the-bay': 'Hudson\'s Bay',
+    'the-bay': "Hudson's Bay",
     'sport-chek': 'Sport Chek',
-    'marks': 'Mark\'s',
+    'marks': "Mark's",
     'staples': 'Staples',
     'rona': 'RONA',
     'ikea': 'IKEA',

@@ -11,6 +11,7 @@ import {
   formatStoreName,
   generateFAQ,
   getStoreDescription,
+  cleanDescription,
 } from '@/lib/content-generator'
 import {
   generateProductSchema,
@@ -87,13 +88,14 @@ export default async function DealPage({ params }: PageProps) {
   const breadcrumbs = generateBreadcrumbs(deal)
   const description = generateDealDescription(deal)
   const faqs = generateFAQ(deal)
+  const cleanedDealDescription = cleanDescription(deal.description)
   const storeDescription = getStoreDescription(deal.store)
   const relatedDeals = await getRelatedDeals(deal)
 
   // Schema markup
   const productSchema = generateProductSchema(deal)
   const breadcrumbSchema = generateBreadcrumbSchema(deal)
-  const faqSchema = generateFAQSchema(deal)
+  const faqSchema = faqs.length > 0 ? generateFAQSchema(deal) : null
 
   const imageUrl = deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'
   const storeName = formatStoreName(deal.store)
@@ -111,7 +113,7 @@ export default async function DealPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([productSchema, breadcrumbSchema, faqSchema]),
+          __html: JSON.stringify([productSchema, breadcrumbSchema, faqSchema].filter(Boolean)),
         }}
       />
 
@@ -283,9 +285,9 @@ export default async function DealPage({ params }: PageProps) {
                 <p className="text-gray-600 leading-relaxed">
                   {description}
                 </p>
-                {deal.description && (
+                {cleanedDealDescription && (
                   <p className="text-gray-600 leading-relaxed mt-4">
-                    {deal.description}
+                    {cleanedDealDescription}
                   </p>
                 )}
               </section>
@@ -302,8 +304,9 @@ export default async function DealPage({ params }: PageProps) {
                 </section>
               )}
 
-              {/* FAQ Section */}
-              <section>
+              {/* FAQ Section - only show if we have FAQs */}
+              {faqs.length > 0 && (
+                <section>
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
                   Frequently Asked Questions
                 </h2>
@@ -320,6 +323,7 @@ export default async function DealPage({ params }: PageProps) {
                   ))}
                 </div>
               </section>
+              )}
             </div>
 
             {/* Sidebar (1 col) */}
