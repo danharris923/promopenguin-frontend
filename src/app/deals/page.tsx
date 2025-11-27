@@ -5,6 +5,7 @@ import { getDeals, getStores, getCategories, getDealCount } from '@/lib/db'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { FeaturedBrandsGrid, FEATURED_BRANDS, FeaturedBrandCard } from '@/components/FeaturedBrands'
 
 export const revalidate = 900
 
@@ -73,10 +74,24 @@ export default async function DealsPage() {
           ))}
         </div>
 
+        {/* Featured Canadian Brands - AFFILIATE */}
+        <div className="mb-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">🇨🇦 Shop Canadian Brands</h2>
+          <FeaturedBrandsGrid />
+        </div>
+
         {/* Deals Grid */}
         {deals.length > 0 ? (
           <DealGrid>
-            {deals.map(deal => (
+            {deals.map((deal, index) => (
+              <>
+                {/* Insert brand card every 8 deals */}
+                {index > 0 && index % 8 === 0 && (
+                  <FeaturedBrandCard 
+                    key={`brand-${index}`} 
+                    brand={FEATURED_BRANDS[Math.floor(index / 8) % FEATURED_BRANDS.length]} 
+                  />
+                )}
               <DealCard
                 key={deal.id}
                 id={deal.id}
@@ -90,6 +105,7 @@ export default async function DealsPage() {
                 affiliateUrl={deal.affiliate_url}
                 featured={deal.featured}
               />
+              </>
             ))}
           </DealGrid>
         ) : (

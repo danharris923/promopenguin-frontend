@@ -4,6 +4,7 @@ import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { FeaturedBrandsSection, BrandBanner, FEATURED_BRANDS } from '@/components/FeaturedBrands'
 
 // Revalidate every 15 minutes
 export const revalidate = 900
@@ -99,6 +100,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Featured Canadian Brands - AFFILIATE */}
+        <FeaturedBrandsSection />
 
         {/* Featured Deals */}
         {featuredDeals.length > 0 && (
@@ -224,6 +228,13 @@ export default async function HomePage() {
                 View All Deals
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Brand Banner - AFFILIATE */}
+        <section className="py-6 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <BrandBanner brand={FEATURED_BRANDS[0]} />
           </div>
         </section>
 
