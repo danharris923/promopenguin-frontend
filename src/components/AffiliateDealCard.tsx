@@ -47,6 +47,13 @@ const AFFILIATE_IMAGES: Record<string, string[]> = {
     '/images/affiliates/michael-kors/2.webp',
     '/images/affiliates/michael-kors/3.webp',
   ],
+  'cabelas': [
+    '/images/affiliates/cabelas/1.jpg',
+    '/images/affiliates/cabelas/2.jpg',
+    '/images/affiliates/cabelas/3.jpg',
+    '/images/affiliates/cabelas/4.jpg',
+    '/images/affiliates/cabelas/5.webp',
+  ],
 }
 
 /**
