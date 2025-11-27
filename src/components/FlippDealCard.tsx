@@ -3,6 +3,24 @@
 import Image from 'next/image'
 import { FlippDeal } from '@/lib/flipp'
 
+// Store affiliate links - clicking flyer deals goes through affiliate + search
+const STORE_AFFILIATE_LINKS: Record<string, string> = {
+  'sephora': 'https://shopstyle.it/l/cw4bZ',
+  'lululemon': 'https://shopstyle.it/l/cwE20',
+  'roots': 'https://shopstyle.it/l/cwE2E',
+  'aritzia': 'https://shopstyle.it/l/cwE2N',
+  'ardene': 'https://shopstyle.it/l/cwE8W',
+}
+
+// Build affiliate search URL if available
+function getAffiliateUrl(storeSlug: string, productTitle: string): string | null {
+  const baseUrl = STORE_AFFILIATE_LINKS[storeSlug]
+  if (!baseUrl) return null
+  // Append search query to affiliate link
+  const searchQuery = encodeURIComponent(productTitle)
+  return `${baseUrl}?searchText=${searchQuery}`
+}
+
 interface FlippDealCardProps {
   deal: FlippDeal
 }
@@ -16,13 +34,19 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
   const expiresDate = new Date(deal.validTo)
   const isExpiringSoon = expiresDate.getTime() - Date.now() < 2 * 24 * 60 * 60 * 1000 // 2 days
 
-  return (
-    <div className="
-      group block
-      bg-white rounded-xl shadow-md overflow-hidden
-      transition-all duration-200
-      hover:shadow-xl hover:-translate-y-1
-    ">
+  // Check if this store has an affiliate link
+  const affiliateUrl = getAffiliateUrl(deal.storeSlug, deal.title)
+
+  const cardClasses = `
+    group block
+    bg-white rounded-xl shadow-md overflow-hidden
+    transition-all duration-200
+    hover:shadow-xl hover:-translate-y-1
+    ${affiliateUrl ? 'cursor-pointer' : ''}
+  `
+
+  const cardContent = (
+    <>
       {/* Image Container - with overflow hidden to crop borders */}
       <div className="relative aspect-square bg-gray-100 overflow-hidden">
         {/* Discount Badge */}
@@ -132,6 +156,27 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
           Valid until {expiresDate.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
         </div>
       </div>
+    </>
+  )
+
+  // If we have an affiliate link, wrap in anchor tag
+  if (affiliateUrl) {
+    return (
+      <a
+        href={affiliateUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cardClasses}
+      >
+        {cardContent}
+      </a>
+    )
+  }
+
+  // Otherwise, just a div (no link)
+  return (
+    <div className={cardClasses}>
+      {cardContent}
     </div>
   )
 }
