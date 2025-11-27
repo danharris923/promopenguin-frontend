@@ -10,6 +10,7 @@ const STORE_AFFILIATE_LINKS: Record<string, string> = {
   'roots': 'https://shopstyle.it/l/cwE2E',
   'aritzia': 'https://shopstyle.it/l/cwE2N',
   'ardene': 'https://shopstyle.it/l/cwE8W',
+  'walmart': 'https://shopstyle.it/l/cw4cc',
 }
 
 // Build affiliate search URL if available
