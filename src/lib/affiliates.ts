@@ -297,7 +297,7 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-stone-700 to-stone-900',
     bgColor: 'bg-stone-100',
     textColor: 'text-stone-800',
-    image: '/images/affiliates/michael-kors/1.jpg',
+    image: '/images/affiliates/michael-kors/1.webp',
   },
 ]
 
