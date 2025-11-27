@@ -1,77 +1,23 @@
 // Server component - no hooks needed
 
-import Image from 'next/image'
+import { AFFILIATE_BRANDS, AffiliateBrand, getStoreAffiliateLink } from '@/lib/affiliates'
 
-// Featured brand affiliate links (ShopStyle)
-export const FEATURED_BRANDS = [
-  {
-    name: 'Lululemon',
-    slug: 'lululemon',
-    emoji: '🧘',
-    tagline: 'We Made Too Much Sale!',
-    description: 'Premium athletic wear from Vancouver',
-    url: 'https://shopstyle.it/l/cwE20',
-    color: 'from-pink-500 to-rose-600',
-    bgColor: 'bg-pink-50',
-    textColor: 'text-pink-700',
-  },
-  {
-    name: 'Roots',
-    slug: 'roots',
-    emoji: '🍁',
-    tagline: 'Roots Sale On Now!',
-    description: 'Canadian heritage leather & apparel',
-    url: 'https://shopstyle.it/l/cwE2E',
-    color: 'from-amber-500 to-orange-600',
-    bgColor: 'bg-amber-50',
-    textColor: 'text-amber-700',
-  },
-  {
-    name: 'Aritzia',
-    slug: 'aritzia',
-    emoji: '✨',
-    tagline: 'Aritzia Sale On Now!',
-    description: 'Elevated everyday fashion from Vancouver',
-    url: 'https://shopstyle.it/l/cwE2N',
-    color: 'from-purple-500 to-indigo-600',
-    bgColor: 'bg-purple-50',
-    textColor: 'text-purple-700',
-  },
-  {
-    name: 'Ardene',
-    slug: 'ardene',
-    emoji: '💃',
-    tagline: 'Ardene Sale On Now!',
-    description: 'Affordable trend-forward fashion from Montreal',
-    url: 'https://shopstyle.it/l/cwE8W',
-    color: 'from-teal-500 to-cyan-600',
-    bgColor: 'bg-teal-50',
-    textColor: 'text-teal-700',
-  },
-  {
-    name: 'Sephora',
-    slug: 'sephora',
-    emoji: '💄',
-    tagline: 'Sephora Sale On Now!',
-    description: 'Premium beauty and cosmetics',
-    url: 'https://shopstyle.it/l/cw4bZ',
-    color: 'from-black to-gray-800',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-900',
-  },
-]
+// Re-export for backwards compatibility
+export { AFFILIATE_BRANDS as FEATURED_BRANDS }
 
 // Single brand card - can be used anywhere
-export function FeaturedBrandCard({ brand, size = 'md' }: { brand: typeof FEATURED_BRANDS[0], size?: 'sm' | 'md' | 'lg' }) {
+export function FeaturedBrandCard({ brand, size = 'md' }: { brand: AffiliateBrand, size?: 'sm' | 'md' | 'lg' }) {
   const sizeClasses = {
     sm: 'p-3',
     md: 'p-4',
     lg: 'p-6',
   }
 
+  const affiliateUrl = getStoreAffiliateLink(brand.slug)
+
   return (
     <a
-      href={brand.url}
+      href={affiliateUrl || '#'}
       target="_blank"
       rel="noopener noreferrer"
       className={`
@@ -111,7 +57,7 @@ export function FeaturedBrandCard({ brand, size = 'md' }: { brand: typeof FEATUR
 export function FeaturedBrandsGrid() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {FEATURED_BRANDS.map(brand => (
+      {AFFILIATE_BRANDS.map(brand => (
         <FeaturedBrandCard key={brand.slug} brand={brand} size="md" />
       ))}
     </div>
@@ -122,7 +68,7 @@ export function FeaturedBrandsGrid() {
 export function FeaturedBrandsRow() {
   return (
     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-      {FEATURED_BRANDS.map(brand => (
+      {AFFILIATE_BRANDS.map(brand => (
         <div key={brand.slug} className="flex-shrink-0 w-64">
           <FeaturedBrandCard brand={brand} size="md" />
         </div>
@@ -133,7 +79,7 @@ export function FeaturedBrandsRow() {
 
 // Random single brand card (for sprinkling in deal grids)
 export function RandomBrandCard() {
-  const randomBrand = FEATURED_BRANDS[Math.floor(Math.random() * FEATURED_BRANDS.length)]
+  const randomBrand = AFFILIATE_BRANDS[Math.floor(Math.random() * AFFILIATE_BRANDS.length)]
   return <FeaturedBrandCard brand={randomBrand} size="md" />
 }
 
@@ -144,7 +90,7 @@ export function FeaturedBrandsSection() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900">
-            🇨🇦 Featured Canadian Brands
+            Featured Stores
           </h2>
           <span className="text-sm text-gray-500">Shop the best Canadian retailers</span>
         </div>
@@ -155,10 +101,12 @@ export function FeaturedBrandsSection() {
 }
 
 // Inline brand banner (for between deal sections)
-export function BrandBanner({ brand }: { brand: typeof FEATURED_BRANDS[0] }) {
+export function BrandBanner({ brand }: { brand: AffiliateBrand }) {
+  const affiliateUrl = getStoreAffiliateLink(brand.slug)
+
   return (
     <a
-      href={brand.url}
+      href={affiliateUrl || '#'}
       target="_blank"
       rel="noopener noreferrer"
       className={`

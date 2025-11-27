@@ -1,16 +1,9 @@
 import Link from 'next/link'
-
-// Featured brand affiliate links (ShopStyle)
-const FEATURED_BRANDS = [
-  { name: 'Lululemon', emoji: '🧘', text: 'We Made Too Much Sale!', url: 'https://shopstyle.it/l/cwE20' },
-  { name: 'Roots', emoji: '🍁', text: 'Roots Sale On Now!', url: 'https://shopstyle.it/l/cwE2E' },
-  { name: 'Aritzia', emoji: '✨', text: 'Aritzia Sale On Now!', url: 'https://shopstyle.it/l/cwE2N' },
-  { name: 'Ardene', emoji: '💃', text: 'Ardene Sale On Now!', url: 'https://shopstyle.it/l/cwE8W' },
-  { name: 'Sephora', emoji: '💄', text: 'Sephora Sale On Now!', url: 'https://shopstyle.it/l/cw4bZ' },
-]
+import { AFFILIATE_BRANDS, getStoreAffiliateLink } from '@/lib/affiliates'
 
 export function Header() {
-  const tickerItems = [...FEATURED_BRANDS, ...FEATURED_BRANDS, ...FEATURED_BRANDS]
+  // Triple the brands for seamless scrolling
+  const tickerItems = [...AFFILIATE_BRANDS, ...AFFILIATE_BRANDS, ...AFFILIATE_BRANDS]
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
@@ -19,15 +12,15 @@ export function Header() {
         <div className="animate-marquee whitespace-nowrap flex items-center">
           {tickerItems.map((brand, i) => (
             <a
-              key={i}
-              href={brand.url}
+              key={`${brand.slug}-${i}`}
+              href={getStoreAffiliateLink(brand.slug) || '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center mx-6 hover:text-yellow-300 transition-colors"
             >
               <span className="mr-1">{brand.emoji}</span>
               <span className="font-bold">{brand.name}:</span>
-              <span className="ml-1 uppercase text-yellow-200">{brand.text}</span>
+              <span className="ml-1 uppercase text-yellow-200">{brand.tagline}</span>
             </a>
           ))}
         </div>
@@ -54,15 +47,19 @@ export function Header() {
             </Link>
           </nav>
 
+          {/* Show first 2 brands as chips on desktop */}
           <div className="hidden lg:flex items-center gap-2">
-            <a href="https://shopstyle.it/l/cwE20" target="_blank" rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-full bg-pink-100 text-pink-700 text-xs font-bold hover:bg-pink-200 transition-colors">
-              🧘 Lululemon
-            </a>
-            <a href="https://shopstyle.it/l/cwE2E" target="_blank" rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold hover:bg-amber-200 transition-colors">
-              🍁 Roots
-            </a>
+            {AFFILIATE_BRANDS.slice(0, 2).map(brand => (
+              <a
+                key={brand.slug}
+                href={getStoreAffiliateLink(brand.slug) || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`px-3 py-1.5 rounded-full ${brand.bgColor} ${brand.textColor} text-xs font-bold hover:opacity-80 transition-opacity`}
+              >
+                {brand.emoji} {brand.name}
+              </a>
+            ))}
           </div>
 
           <div className="flex items-center gap-3">

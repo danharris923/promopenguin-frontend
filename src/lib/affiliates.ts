@@ -21,12 +21,15 @@ interface RakutenMerchant {
 
 const RAKUTEN_MERCHANTS: Record<string, RakutenMerchant> = {
   'bass-pro': {
-    mid: '46158',  // TODO: Find actual mid in Rakuten dashboard under Programs > My Advertisers > Bass Pro
+    mid: '50435',  // Bass Pro Shops & Cabela's Canada
     domain: 'https://www.basspro.com',
     searchPath: '/shop/en/bps/search?q=',
   },
-  // Add more Rakuten merchants here...
-  // 'cabelas': { mid: 'xxxxx', domain: 'https://www.cabelas.ca', searchPath: '/search?q=' },
+  'cabelas': {
+    mid: '50435',  // Same merchant ID as Bass Pro
+    domain: 'https://www.cabelas.ca',
+    searchPath: '/search?q=',
+  },
 }
 
 /**
@@ -147,14 +150,104 @@ export function getAffiliateStores(): string[] {
 }
 
 // =============================================================================
-// FEATURED BRANDS (for Header ticker, Featured section)
+// AFFILIATE BRAND CONFIG (single source of truth)
 // =============================================================================
 
-export const FEATURED_BRANDS = [
-  { name: 'Lululemon', slug: 'lululemon', emoji: '🧘', tagline: 'We Made Too Much Sale!' },
-  { name: 'Roots', slug: 'roots', emoji: '🍁', tagline: 'Roots Sale On Now!' },
-  { name: 'Aritzia', slug: 'aritzia', emoji: '✨', tagline: 'Aritzia Sale On Now!' },
-  { name: 'Ardene', slug: 'ardene', emoji: '💃', tagline: 'Ardene Sale On Now!' },
-  { name: 'Sephora', slug: 'sephora', emoji: '💄', tagline: 'Sephora Sale On Now!' },
-  { name: 'Bass Pro', slug: 'bass-pro', emoji: '🎣', tagline: 'Outdoor Deals!' },
+export interface AffiliateBrand {
+  name: string
+  slug: string
+  emoji: string
+  tagline: string
+  description: string
+  color: string        // Tailwind gradient classes
+  bgColor: string      // Light background for chips
+  textColor: string    // Text color for chips
+}
+
+// All affiliate brands with full styling config
+export const AFFILIATE_BRANDS: AffiliateBrand[] = [
+  {
+    name: 'Lululemon',
+    slug: 'lululemon',
+    emoji: '🧘',
+    tagline: 'We Made Too Much Sale!',
+    description: 'Premium athletic wear from Vancouver',
+    color: 'from-pink-500 to-rose-600',
+    bgColor: 'bg-pink-50',
+    textColor: 'text-pink-700',
+  },
+  {
+    name: 'Roots',
+    slug: 'roots',
+    emoji: '🍁',
+    tagline: 'Roots Sale On Now!',
+    description: 'Canadian heritage leather & apparel',
+    color: 'from-amber-500 to-orange-600',
+    bgColor: 'bg-amber-50',
+    textColor: 'text-amber-700',
+  },
+  {
+    name: 'Aritzia',
+    slug: 'aritzia',
+    emoji: '✨',
+    tagline: 'Aritzia Sale On Now!',
+    description: 'Elevated everyday fashion from Vancouver',
+    color: 'from-purple-500 to-indigo-600',
+    bgColor: 'bg-purple-50',
+    textColor: 'text-purple-700',
+  },
+  {
+    name: 'Ardene',
+    slug: 'ardene',
+    emoji: '💃',
+    tagline: 'Ardene Sale On Now!',
+    description: 'Affordable trend-forward fashion from Montreal',
+    color: 'from-teal-500 to-cyan-600',
+    bgColor: 'bg-teal-50',
+    textColor: 'text-teal-700',
+  },
+  {
+    name: 'Sephora',
+    slug: 'sephora',
+    emoji: '💄',
+    tagline: 'Sephora Sale On Now!',
+    description: 'Premium beauty and cosmetics',
+    color: 'from-black to-gray-800',
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-900',
+  },
+  {
+    name: 'Walmart',
+    slug: 'walmart',
+    emoji: '🛒',
+    tagline: 'Rollback Deals!',
+    description: 'Save money. Live better.',
+    color: 'from-blue-500 to-blue-700',
+    bgColor: 'bg-blue-50',
+    textColor: 'text-blue-700',
+  },
+  {
+    name: 'Bass Pro',
+    slug: 'bass-pro',
+    emoji: '🎣',
+    tagline: 'Outdoor Deals!',
+    description: 'Fishing, hunting & outdoor gear',
+    color: 'from-green-600 to-green-800',
+    bgColor: 'bg-green-50',
+    textColor: 'text-green-700',
+  },
 ]
+
+/**
+ * Get brand by slug
+ */
+export function getAffiliateBrand(slug: string): AffiliateBrand | null {
+  return AFFILIATE_BRANDS.find(b => b.slug === slug) || null
+}
+
+/**
+ * Get affiliate URL for a brand (base, no search)
+ */
+export function getBrandAffiliateUrl(slug: string): string | null {
+  return getStoreAffiliateLink(slug)
+}

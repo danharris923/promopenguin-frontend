@@ -4,7 +4,9 @@ import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { FeaturedBrandsSection, BrandBanner, FEATURED_BRANDS } from '@/components/FeaturedBrands'
+import { FeaturedBrandsSection, BrandBanner } from '@/components/FeaturedBrands'
+import { AffiliateDealCard, mixAffiliateCards, isAffiliateCard } from '@/components/AffiliateDealCard'
+import { AFFILIATE_BRANDS } from '@/lib/affiliates'
 
 // Revalidate every 15 minutes
 export const revalidate = 900
@@ -18,6 +20,9 @@ export default async function HomePage() {
 
   const websiteSchema = generateWebsiteSchema()
   const orgSchema = generateOrganizationSchema()
+
+  // Mix affiliate cards into the latest deals grid
+  const mixedLatestDeals = mixAffiliateCards(latestDeals, AFFILIATE_BRANDS, 4)
 
   return (
     <>
@@ -37,7 +42,7 @@ export default async function HomePage() {
             <div className="text-center max-w-3xl mx-auto">
               <h1 className="text-4xl md:text-6xl font-black mb-4">
                 Best Canadian Deals
-                <span className="block text-yellow-300">Save Money Today 🇨🇦</span>
+                <span className="block text-yellow-300">Save Money Today</span>
               </h1>
               <p className="text-lg md:text-xl text-white/90 mb-8">
                 AI-powered deal aggregator. We scan Amazon.ca, Walmart, Costco, Best Buy and 50+ Canadian retailers every 4 hours.
@@ -54,7 +59,7 @@ export default async function HomePage() {
                     shadow-lg
                   "
                 >
-                  🔥 Today's Hot Deals
+                  Today's Hot Deals
                 </Link>
                 <Link
                   href="/stores"
@@ -109,7 +114,7 @@ export default async function HomePage() {
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  🔥 Featured Deals
+                  Featured Deals
                 </h2>
                 <Link
                   href="/deals"
@@ -143,7 +148,7 @@ export default async function HomePage() {
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              🏪 Shop by Store
+              Shop by Store
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {[
@@ -178,12 +183,12 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Latest Deals */}
+        {/* Latest Deals - WITH AFFILIATE CARDS MIXED IN */}
         <section className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                ⚡ Latest Deals
+                Latest Deals
               </h2>
               <Link
                 href="/deals"
@@ -193,21 +198,33 @@ export default async function HomePage() {
               </Link>
             </div>
             <DealGrid>
-              {latestDeals.map(deal => (
-                <DealCard
-                  key={deal.id}
-                  id={deal.id}
-                  title={deal.title}
-                  slug={deal.slug}
-                  imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
-                  price={deal.price}
-                  originalPrice={deal.original_price}
-                  discountPercent={deal.discount_percent}
-                  store={deal.store || 'Unknown'}
-                  affiliateUrl={deal.affiliate_url}
-                  featured={deal.featured}
-                />
-              ))}
+              {mixedLatestDeals.map((item, index) => {
+                if (isAffiliateCard(item)) {
+                  return (
+                    <AffiliateDealCard
+                      key={`affiliate-${item.brand.slug}-${index}`}
+                      brand={item.brand}
+                      seed={item.seed}
+                    />
+                  )
+                }
+                const deal = item
+                return (
+                  <DealCard
+                    key={deal.id}
+                    id={deal.id}
+                    title={deal.title}
+                    slug={deal.slug}
+                    imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
+                    price={deal.price}
+                    originalPrice={deal.original_price}
+                    discountPercent={deal.discount_percent}
+                    store={deal.store || 'Unknown'}
+                    affiliateUrl={deal.affiliate_url}
+                    featured={deal.featured}
+                  />
+                )
+              })}
             </DealGrid>
 
             {/* Big CTA to view all deals */}
@@ -233,7 +250,7 @@ export default async function HomePage() {
         {/* Brand Banner - AFFILIATE */}
         <section className="py-6 bg-white">
           <div className="max-w-7xl mx-auto px-4">
-            <BrandBanner brand={FEATURED_BRANDS[0]} />
+            <BrandBanner brand={AFFILIATE_BRANDS[0]} />
           </div>
         </section>
 
@@ -241,7 +258,7 @@ export default async function HomePage() {
         <section className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              📂 Browse Categories
+              Browse Categories
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {[
@@ -287,9 +304,3 @@ export default async function HomePage() {
     </>
   )
 }
-
-
-
-
-
-
