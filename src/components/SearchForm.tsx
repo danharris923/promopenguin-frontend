@@ -29,6 +29,7 @@ const STORES = [
   { name: 'Roots', slug: 'roots', emoji: '🍁' },
   { name: 'Aritzia', slug: 'aritzia', emoji: '✨' },
   { name: 'Sephora', slug: 'sephora', emoji: '💄' },
+  { name: 'Michael Kors', slug: 'michael-kors', emoji: '👜' },
   { name: 'London Drugs', slug: 'london-drugs', emoji: '💊' },
   { name: 'Giant Tiger', slug: 'giant-tiger', emoji: '🐯' },
 ]

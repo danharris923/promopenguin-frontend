@@ -62,6 +62,8 @@ const ALL_STORES: { slug: string; name: string; emoji: string; category: string 
   { slug: 'lululemon', name: 'Lululemon', emoji: '🧘', category: 'Fashion' },
   { slug: 'roots', name: 'Roots', emoji: '🍁', category: 'Fashion' },
   { slug: 'aritzia', name: 'Aritzia', emoji: '👗', category: 'Fashion' },
+  { slug: 'ardene', name: 'Ardene', emoji: '💃', category: 'Fashion' },
+  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜', category: 'Fashion' },
   { slug: 'marks', name: "Mark's", emoji: '👔', category: 'Fashion' },
   { slug: 'sport-chek', name: 'Sport Chek', emoji: '⚽', category: 'Fashion' },
 

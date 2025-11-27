@@ -50,6 +50,8 @@ const ALL_STORES = [
   { slug: 'roots', name: 'Roots', emoji: '🍁' },
   { slug: 'aritzia', name: 'Aritzia', emoji: '👗' },
   { slug: 'sephora', name: 'Sephora', emoji: '💄' },
+  { slug: 'ardene', name: 'Ardene', emoji: '💃' },
+  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜' },
   { slug: 'london-drugs', name: 'London Drugs', emoji: '💊' },
   { slug: 'giant-tiger', name: 'Giant Tiger', emoji: '🐯' },
 ]

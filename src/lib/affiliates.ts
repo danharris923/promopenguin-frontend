@@ -55,6 +55,7 @@ const SHOPSTYLE_LINKS: Record<string, string> = {
   'roots': 'https://shopstyle.it/l/cwE2E',
   'aritzia': 'https://shopstyle.it/l/cwE2N',
   'ardene': 'https://shopstyle.it/l/cwE8W',
+  'michael-kors': 'https://shopstyle.it/l/cw4L3',
 
   // Beauty
   'sephora': 'https://shopstyle.it/l/cw4bZ',
@@ -286,6 +287,17 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     color: 'from-green-600 to-green-800',
     bgColor: 'bg-green-50',
     textColor: 'text-green-700',
+  },
+  {
+    name: 'Michael Kors',
+    slug: 'michael-kors',
+    emoji: '👜',
+    tagline: 'Luxury Sale On Now!',
+    description: 'Designer handbags, watches & accessories',
+    color: 'from-stone-700 to-stone-900',
+    bgColor: 'bg-stone-100',
+    textColor: 'text-stone-800',
+    image: '/images/affiliates/michael-kors/1.jpg',
   },
 ]
 
