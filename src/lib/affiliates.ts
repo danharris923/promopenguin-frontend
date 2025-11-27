@@ -269,16 +269,6 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     image: '/images/affiliates/sephora/1.jpeg',
   },
   {
-    name: 'Walmart',
-    slug: 'walmart',
-    emoji: '🛒',
-    tagline: 'Rollback Deals!',
-    description: 'Save money. Live better.',
-    color: 'from-blue-500 to-blue-700',
-    bgColor: 'bg-blue-50',
-    textColor: 'text-blue-700',
-  },
-  {
     name: 'Bass Pro',
     slug: 'bass-pro',
     emoji: '🎣',
