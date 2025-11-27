@@ -256,10 +256,21 @@ export async function getFlippDealsMultiStore(
 
 /**
  * Transform Flipp items to our deal format
+ * Filters out low-quality items (no price, too cheap, no image)
  */
 function transformFlippItems(items: FlippItem[]): FlippDeal[] {
   return items
-    .filter(item => item.name && item.current_price !== null)
+    .filter(item => {
+      // Must have name and price
+      if (!item.name || item.current_price === null) return false
+      // Skip items under $1 (often have bad cropped images)
+      if (item.current_price < 1) return false
+      // Must have an image
+      if (!item.clean_image_url && !item.clipping_image_url) return false
+      // Skip if name is just the store name (it's a logo/banner)
+      if (item.name.toLowerCase() === item.merchant_name.toLowerCase()) return false
+      return true
+    })
     .map(item => transformFlippItem(item))
 }
 

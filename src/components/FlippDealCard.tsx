@@ -23,8 +23,8 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
       transition-all duration-200
       hover:shadow-xl hover:-translate-y-1
     ">
-      {/* Image Container */}
-      <div className="relative aspect-square bg-gray-100">
+      {/* Image Container - with overflow hidden to crop borders */}
+      <div className="relative aspect-square bg-gray-100 overflow-hidden">
         {/* Discount Badge */}
         {hasDiscount && (
           <div className="absolute top-2 right-2 z-10">
@@ -77,12 +77,12 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
           </span>
         </div>
 
-        {/* Image */}
+        {/* Image - scale up slightly and use object-cover to crop borders */}
         <Image
           src={deal.imageUrl || '/placeholder-deal.jpg'}
           alt={deal.title}
           fill
-          className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
+          className="object-cover scale-110 group-hover:scale-115 transition-transform duration-200"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           unoptimized // Flipp images are external
         />
