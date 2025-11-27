@@ -5,7 +5,8 @@ import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { FeaturedBrandsSection, BrandBanner } from '@/components/FeaturedBrands'
-import { AffiliateDealCard, mixAffiliateCards, isAffiliateCard } from '@/components/AffiliateDealCard'
+import { AffiliateDealCard } from '@/components/AffiliateDealCard'
+import { mixAffiliateCards, isAffiliateCard } from '@/lib/affiliate-utils'
 import { AFFILIATE_BRANDS } from '@/lib/affiliates'
 
 // Revalidate every 15 minutes
