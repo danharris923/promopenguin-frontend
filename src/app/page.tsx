@@ -272,35 +272,13 @@ export default async function HomePage() {
         </section>
 
         {/* SEO Content */}
-        <section className="py-12 bg-white">
-          <div className="max-w-4xl mx-auto px-4 prose">
-            <h2>What is PromoPenguin?</h2>
-            <p>
-              A deal aggregator powered by AI. Our scraper monitors Canadian retailers
-              around the clock - Amazon.ca, Walmart, Costco, Best Buy, Canadian Tire,
-              and dozens more. Every 4 hours, fresh deals. No humans copy-pasting links.
-            </p>
-
-            <h3>How it works</h3>
-            <p>
-              AI scans retailer feeds and surfaces the sales worth knowing about.
-              Deals older than a week get automatically removed. What you see is what's
-              currently active (or close to it - stuff sells out).
-            </p>
-
-            <h3>The fine print</h3>
-            <ul>
-              <li>We use affiliate links - that's how we keep the lights on</li>
-              <li>Prices come from retailer feeds, not manually verified</li>
-              <li>Deals expire - if it's dead, sorry, it's dead</li>
-              <li>No account needed, no newsletter spam</li>
-            </ul>
-
-            <h3>Built in Canada</h3>
-            <p>
-              By Canadians, for Canadians. We only list deals that ship to Canada.
-              Click through, buy if it's good, move on. Simple.
-            </p>
+        <section className="py-8 bg-white">
+          <div className="max-w-4xl mx-auto px-4 prose prose-sm">
+            <h2 className="text-lg mb-2">What is PromoPenguin?</h2>
+            <p className="mb-3">A deal aggregator powered by AI. Our scraper monitors Canadian retailers around the clock - Amazon.ca, Walmart, Costco, Best Buy, Canadian Tire, and dozens more. Every 4 hours, fresh deals. No humans copy-pasting links.</p>
+            <p className="mb-3"><strong>How it works:</strong> AI scans retailer feeds and surfaces sales. Deals older than a week get auto-removed. What you see is what's currently active (or close to it - stuff sells out).</p>
+            <p className="mb-3"><strong>The fine print:</strong> We use affiliate links (that's how we keep the lights on). Prices from retailer feeds, not manually verified. Deals expire - if it's dead, it's dead. No account needed, no newsletter spam.</p>
+            <p className="mb-0"><strong>Built in Canada</strong> by Canadians, for Canadians. We only list deals that ship to Canada. Click through, buy if it's good, move on.</p>
           </div>
         </section>
       </main>
