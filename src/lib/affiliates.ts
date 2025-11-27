@@ -100,6 +100,35 @@ const RETAILER_SEARCH_URLS: Record<string, string> = {
   'winners': 'https://www.winners.ca/en', // No search, just homepage
   'dollarama': 'https://www.dollarama.com/en-CA/search?q=',
   'visions': 'https://www.visions.ca/Catalogue/Search?keywords=',
+  // Additional retailers
+  'wholesale-club': 'https://www.wholesaleclub.ca/search?search-bar=',
+  'eb-games': 'https://www.ebgames.ca/SearchResult/QuickSearch?q=',
+  'adonis': 'https://www.marchesadonis.com/en/search?q=',
+  'old-navy': 'https://oldnavy.gapcanada.ca/browse/search.do?searchText=',
+  'gap': 'https://www.gapcanada.ca/browse/search.do?searchText=',
+  'rexall': 'https://www.rexall.ca/search?q=',
+  'jean-coutu': 'https://www.jeancoutu.com/en/search/?q=',
+  'pharmaprix': 'https://www1.pharmaprix.ca/fr/search?q=',
+  'iga': 'https://www.iga.net/en/search?q=',
+  'maxi': 'https://www.maxi.ca/search?search-bar=',
+  'provigo': 'https://www.provigo.ca/search?search-bar=',
+  'super-c': 'https://www.superc.ca/search?search-bar=',
+  'walmart': 'https://www.walmart.ca/search?q=',
+  'amazon': 'https://www.amazon.ca/s?k=',
+  'indigo': 'https://www.indigo.ca/en-ca/search/?q=',
+  'michaels': 'https://canada.michaels.com/en/search?q=',
+  'party-city': 'https://www.partycity.ca/en/catalogsearch/result/?q=',
+  'lowes': 'https://www.lowes.ca/search?searchTerm=',
+  'reno-depot': 'https://www.renodepot.com/en/search?q=',
+  'tsc-stores': 'https://www.tscstores.com/search?q=',
+  'marshalls': 'https://www.marshalls.ca/en', // No search
+  'structube': 'https://www.structube.com/en_ca/catalogsearch/result/?q=',
+  'sleep-country': 'https://www.sleepcountry.ca/search?q=',
+  'the-source': 'https://www.thesource.ca/en-ca/search?text=',
+  'homesense': 'https://www.homesense.ca/en', // No search
+  'cabelas': 'https://www.cabelas.ca/search?q=',
+  'bass-pro': 'https://www.basspro.com/shop/en/bps/search?q=',
+  'peavey-mart': 'https://www.peaveymart.com/search?q=',
 }
 
 /**
