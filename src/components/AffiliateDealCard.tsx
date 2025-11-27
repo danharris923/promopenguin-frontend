@@ -42,9 +42,11 @@ const AFFILIATE_IMAGES: Record<string, string[]> = {
     '/images/affiliates/sephora/5.webp',
     '/images/affiliates/sephora/6.png',
   ],
-  'walmart': [],
-  'bass-pro': [],
-  'cabelas': [],
+  'michael-kors': [
+    '/images/affiliates/michael-kors/1.webp',
+    '/images/affiliates/michael-kors/2.webp',
+    '/images/affiliates/michael-kors/3.webp',
+  ],
 }
 
 /**
@@ -118,7 +120,7 @@ export function AffiliateDealCard({ brand, seed }: AffiliateDealCardProps) {
           </span>
         </div>
 
-        {/* Image or Emoji fallback */}
+        {/* Image or styled fallback */}
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -128,10 +130,14 @@ export function AffiliateDealCard({ brand, seed }: AffiliateDealCardProps) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-8xl opacity-90 group-hover:scale-110 transition-transform duration-200">
+          <div className="w-full h-full flex flex-col items-center justify-center p-4">
+            <span className="text-6xl mb-3 group-hover:scale-110 transition-transform duration-200">
               {brand.emoji}
             </span>
+            <div className="text-white text-center">
+              <div className="text-lg font-bold drop-shadow-lg">{brand.name}</div>
+              <div className="text-sm opacity-90 mt-1 drop-shadow">{brand.tagline}</div>
+            </div>
           </div>
         )}
       </div>
