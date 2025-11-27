@@ -170,7 +170,6 @@ export function DealCard({
             href={affiliateUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
             className="
               block w-full text-center
               bg-[#FF9900] hover:bg-[#e88b00]
