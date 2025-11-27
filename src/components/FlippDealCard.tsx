@@ -8,141 +8,70 @@ interface FlippDealCardProps {
   deal: FlippDeal
 }
 
+// Compact horizontal bar style for flyer deals
 export function FlippDealCard({ deal }: FlippDealCardProps) {
-  const hasPriceData = deal.price !== null && deal.price > 0
   const hasDiscount = deal.discountPercent !== null && deal.discountPercent > 0
-  const hasSavings = deal.originalPrice && deal.price && deal.originalPrice > deal.price
-
-  // Format expiry date
-  const expiresDate = new Date(deal.validTo)
-  const isExpiringSoon = expiresDate.getTime() - Date.now() < 2 * 24 * 60 * 60 * 1000 // 2 days
+  const hasPriceData = deal.price !== null && deal.price > 0
 
   // Check if this store has an affiliate link
   const affiliateUrl = getAffiliateSearchUrl(deal.storeSlug, deal.title)
 
   const cardClasses = `
-    group block
-    bg-white rounded-xl shadow-md overflow-hidden
+    group flex items-center gap-3
+    bg-white rounded-lg shadow-sm overflow-hidden
+    p-2 pr-4
     transition-all duration-200
-    hover:shadow-xl hover:-translate-y-1
+    hover:shadow-md hover:bg-gray-50
     ${affiliateUrl ? 'cursor-pointer' : ''}
   `
 
   const cardContent = (
     <>
-      {/* Image Container - with overflow hidden to crop borders */}
-      <div className="relative aspect-square bg-gray-100 overflow-hidden">
-        {/* Discount Badge */}
-        {hasDiscount && (
-          <div className="absolute top-2 right-2 z-10">
-            <span className="
-              bg-red-600 text-white
-              px-2 py-1 rounded-lg
-              font-bold text-sm
-              shadow-md
-            ">
-              -{deal.discountPercent}%
-            </span>
-          </div>
-        )}
-
-        {/* Sale Story Badge */}
-        {deal.saleStory && !hasDiscount && (
-          <div className="absolute top-2 right-2 z-10">
-            <span className="
-              bg-orange-500 text-white
-              px-2 py-1 rounded-lg
-              font-bold text-xs
-              shadow-md
-            ">
-              {deal.saleStory}
-            </span>
-          </div>
-        )}
-
-        {/* Expiring Soon Badge */}
-        {isExpiringSoon && (
-          <div className="absolute top-2 left-2 z-10">
-            <span className="
-              bg-yellow-400 text-yellow-900
-              px-2 py-1 rounded-lg
-              font-bold text-xs
-            ">
-              ENDS SOON
-            </span>
-          </div>
-        )}
-
-        {/* Flipp Source Badge */}
-        <div className="absolute bottom-2 left-2 z-10">
-          <span className="
-            bg-blue-600 text-white
-            px-2 py-0.5 rounded
-            font-medium text-xs
-          ">
-            Flyer Deal
-          </span>
-        </div>
-
-        {/* Image - scale up slightly and use object-cover to crop borders */}
+      {/* Thumbnail - small square */}
+      <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
         <Image
           src={deal.imageUrl || '/placeholder-deal.jpg'}
           alt={deal.title}
           fill
-          className="object-cover scale-110 group-hover:scale-115 transition-transform duration-200"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          unoptimized // Flipp images are external
+          className="object-cover scale-110"
+          sizes="64px"
+          unoptimized
         />
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        {/* Store */}
-        <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+      {/* Content - title and store */}
+      <div className="flex-1 min-w-0">
+        <div className="text-xs text-gray-400 uppercase tracking-wide">
           {deal.store}
         </div>
-
-        {/* Title */}
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+        <h3 className="font-medium text-gray-900 text-sm line-clamp-1 group-hover:text-orange-600 transition-colors">
           {deal.title}
         </h3>
+      </div>
 
-        {/* Price */}
-        <div className="flex items-baseline gap-2">
-          {hasPriceData ? (
-            <>
-              <span className="text-xl font-bold text-green-600">
-                ${deal.price?.toFixed(2)}
-              </span>
-              {hasSavings && (
-                <span className="text-sm text-gray-400 line-through">
-                  ${deal.originalPrice?.toFixed(2)}
-                </span>
-              )}
-            </>
-          ) : (
-            <span className="text-lg font-semibold text-orange-600">
-              See Flyer
-            </span>
-          )}
-        </div>
-
-        {/* Sale Story */}
-        {deal.saleStory && (
-          <div className="text-sm text-red-600 font-medium mt-1">
-            {deal.saleStory}
-          </div>
+      {/* Price/Discount - right side */}
+      <div className="flex-shrink-0 text-right">
+        {hasDiscount ? (
+          <span className="bg-red-600 text-white px-2 py-1 rounded font-bold text-sm">
+            -{deal.discountPercent}%
+          </span>
+        ) : hasPriceData ? (
+          <span className="text-green-600 font-bold">
+            ${deal.price?.toFixed(2)}
+          </span>
+        ) : deal.saleStory ? (
+          <span className="text-orange-600 font-medium text-sm">
+            {deal.saleStory.length > 12 ? deal.saleStory.slice(0, 12) + '...' : deal.saleStory}
+          </span>
+        ) : (
+          <span className="text-blue-600 text-xs font-medium">
+            Flyer
+          </span>
         )}
-
-        {/* Expiry */}
-        <div className="text-xs text-gray-400 mt-2">
-          Valid until {expiresDate.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
-        </div>
       </div>
     </>
   )
 
-  // If we have an affiliate link, wrap in anchor tag
   if (affiliateUrl) {
     return (
       <a
@@ -156,7 +85,6 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
     )
   }
 
-  // Otherwise, just a div (no link)
   return (
     <div className={cardClasses}>
       {cardContent}
@@ -164,10 +92,10 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
   )
 }
 
-// Grid wrapper for Flipp deal cards
+// Stack layout for horizontal bar cards
 export function FlippDealGrid({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    <div className="flex flex-col gap-2">
       {children}
     </div>
   )
