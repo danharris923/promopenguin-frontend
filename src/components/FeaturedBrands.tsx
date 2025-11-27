@@ -48,6 +48,17 @@ export const FEATURED_BRANDS = [
     bgColor: 'bg-teal-50',
     textColor: 'text-teal-700',
   },
+  {
+    name: 'Sephora',
+    slug: 'sephora',
+    emoji: '💄',
+    tagline: 'Sephora Sale On Now!',
+    description: 'Premium beauty and cosmetics',
+    url: 'https://shopstyle.it/l/cw4bZ',
+    color: 'from-black to-gray-800',
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-900',
+  },
 ]
 
 // Single brand card - can be used anywhere

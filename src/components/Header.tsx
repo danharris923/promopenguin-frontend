@@ -6,6 +6,7 @@ const FEATURED_BRANDS = [
   { name: 'Roots', emoji: '🍁', text: 'Roots Sale On Now!', url: 'https://shopstyle.it/l/cwE2E' },
   { name: 'Aritzia', emoji: '✨', text: 'Aritzia Sale On Now!', url: 'https://shopstyle.it/l/cwE2N' },
   { name: 'Ardene', emoji: '💃', text: 'Ardene Sale On Now!', url: 'https://shopstyle.it/l/cwE8W' },
+  { name: 'Sephora', emoji: '💄', text: 'Sephora Sale On Now!', url: 'https://shopstyle.it/l/cw4bZ' },
 ]
 
 export function Header() {
