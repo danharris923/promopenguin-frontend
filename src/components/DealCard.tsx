@@ -9,6 +9,24 @@ function storeNameToSlug(storeName: string): string {
   return storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
 
+// Amazon CTA button text variants
+const AMAZON_CTA_VARIANTS = [
+  'Shop on Amazon',
+  'View on Amazon',
+  'Get This Deal',
+  'See on Amazon',
+  'Buy on Amazon',
+  'Check it Out',
+  'Grab This Deal',
+  'Shop Now',
+]
+
+// Get a consistent but varied CTA based on deal id
+function getAmazonCTA(id: string): string {
+  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return AMAZON_CTA_VARIANTS[hash % AMAZON_CTA_VARIANTS.length]
+}
+
 export function DealCard({
   id,
   title,
@@ -37,8 +55,11 @@ export function DealCard({
   const storeSlug = storeNameToSlug(store)
   const externalUrl = getDealAffiliateUrl(affiliateUrl, storeSlug, title)
 
+  // Check if this is an Amazon deal with a direct affiliate link
+  const isAmazon = store.toLowerCase().includes('amazon')
+  const hasDirectAffiliateLink = affiliateUrl && affiliateUrl.length > 0
+
   // If we have an external link, use <a>, otherwise fall back to internal page
-  const CardWrapper = externalUrl ? 'a' : 'a'
   const cardProps = externalUrl
     ? { href: externalUrl, target: '_blank', rel: 'noopener noreferrer' }
     : { href: `/deals/${slug}` }
@@ -128,6 +149,23 @@ export function DealCard({
         {hasSavings && (
           <div className="text-sm text-red-600 font-medium mt-1">
             {"Save $" + savings}
+          </div>
+        )}
+
+        {/* Amazon Direct Buy Button */}
+        {isAmazon && hasDirectAffiliateLink && (
+          <div className="mt-3">
+            <span className="
+              block w-full text-center
+              bg-[#FF9900] hover:bg-[#e88b00]
+              text-white font-bold
+              py-2 px-3 rounded-lg
+              text-sm
+              transition-colors
+              shadow-sm
+            ">
+              {getAmazonCTA(id)}
+            </span>
           </div>
         )}
       </div>
