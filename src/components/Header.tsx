@@ -1,8 +1,13 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import { AFFILIATE_BRANDS, getStoreAffiliateLink } from '@/lib/affiliates'
 import { SearchForm } from './SearchForm'
 
 export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   // Triple the brands for seamless scrolling
   const tickerItems = [...AFFILIATE_BRANDS, ...AFFILIATE_BRANDS, ...AFFILIATE_BRANDS]
 
@@ -71,14 +76,80 @@ export function Header() {
               <span>🔥</span>
               <span>Hot Deals</span>
             </Link>
-            <button className="md:hidden p-2 text-gray-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+            {/* Hamburger button */}
+            <button
+              className="md:hidden p-2 text-gray-600"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-4">
+            {/* Mobile Search */}
+            <div className="mb-4">
+              <SearchForm compact />
+            </div>
+
+            {/* Mobile Nav Links */}
+            <nav className="flex flex-col gap-2">
+              <Link
+                href="/deals"
+                className="px-4 py-3 rounded-lg bg-gray-50 text-gray-900 font-medium hover:bg-gray-100 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🏷️ All Deals
+              </Link>
+              <Link
+                href="/deals/today"
+                className="px-4 py-3 rounded-lg bg-orange-50 text-orange-600 font-medium hover:bg-orange-100 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🔥 Hot Deals
+              </Link>
+              <Link
+                href="/stores"
+                className="px-4 py-3 rounded-lg bg-gray-50 text-gray-900 font-medium hover:bg-gray-100 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🏪 Stores
+              </Link>
+            </nav>
+
+            {/* Featured Partners */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Featured Retailers</p>
+              <div className="flex flex-wrap gap-2">
+                {AFFILIATE_BRANDS.slice(0, 4).map(brand => (
+                  <a
+                    key={brand.slug}
+                    href={getStoreAffiliateLink(brand.slug) || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`px-3 py-1.5 rounded-full ${brand.bgColor} ${brand.textColor} text-xs font-bold hover:opacity-80 transition-opacity`}
+                  >
+                    {brand.emoji} {brand.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
