@@ -1,8 +1,13 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 import { cleanTitle } from '@/lib/content-generator'
+import { getDealAffiliateUrl } from '@/lib/affiliates'
+
+// Convert store name to slug
+function storeNameToSlug(storeName: string): string {
+  return storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
 
 export function DealCard({
   id,
@@ -28,9 +33,19 @@ export function DealCard({
   const hasDiscount = discountPercent && discountPercent > 0
   const hasSavings = savings && parseFloat(savings) > 0
 
+  // Get external link - prefer existing affiliate URL, fall back to store search
+  const storeSlug = storeNameToSlug(store)
+  const externalUrl = getDealAffiliateUrl(affiliateUrl, storeSlug, title)
+
+  // If we have an external link, use <a>, otherwise fall back to internal page
+  const CardWrapper = externalUrl ? 'a' : 'a'
+  const cardProps = externalUrl
+    ? { href: externalUrl, target: '_blank', rel: 'noopener noreferrer' }
+    : { href: `/deals/${slug}` }
+
   return (
-    <Link
-      href={"/deals/" + slug}
+    <a
+      {...cardProps}
       className="
         group block
         bg-white rounded-xl shadow-md overflow-hidden
@@ -116,7 +131,7 @@ export function DealCard({
           </div>
         )}
       </div>
-    </Link>
+    </a>
   )
 }
 
