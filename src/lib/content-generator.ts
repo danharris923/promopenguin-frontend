@@ -14,21 +14,21 @@ import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 const DESCRIPTION_TEMPLATES = {
   default: [
-    `Our Canadian shopping experts found this incredible deal on {product} at {store}. Originally priced at ${'{original_price}'}, you can now get it for just ${'{current_price}'}, saving you ${'{savings}'} ({percent}% off). {benefits} {urgency}`,
+    `{product} at {store}. Was ${'{original_price}'}, now ${'{current_price}'} ({percent}% off). Found by our AI scraper.`,
 
-    `Looking for the best price on {product} in Canada? This {store} deal won't last long. With {percent}% off, you're saving ${'{savings}'} compared to the regular price. {benefits}`,
+    `{product} - {percent}% off at {store}. Sale price: ${'{current_price}'}. Automated find.`,
 
-    `Canadian deal alert! Save ${'{savings}'} on {product} at {store}. This {category} deal brings the price down from ${'{original_price}'} to just ${'{current_price}'}. {benefits} {urgency}`,
+    `{store} has {product} for ${'{current_price}'} (down from ${'{original_price}'}). AI-sourced.`,
 
-    `Score big savings on {product}! {store} is offering this {category} essential at {percent}% off. That's ${'{savings}'} back in your pocket. {benefits}`,
+    `{percent}% off {product} at {store}. Now ${'{current_price}'}. From retailer feed.`,
 
-    `Hot {category} deal for Canadian shoppers: {product} is now ${'{current_price}'} at {store} (regularly ${'{original_price}'}). {benefits} Don't miss out!`,
+    `{product} on sale at {store}: ${'{current_price}'} (was ${'{original_price}'}). Scraper find.`,
 
-    `{store} just dropped the price on {product} by {percent}%! Get it for ${'{current_price}'} instead of ${'{original_price}'} and save ${'{savings}'}. {benefits}`,
+    `{store} deal: {product} at ${'{current_price}'} ({percent}% off). Auto-found.`,
 
-    `Price drop alert: {product} at {store} is now {percent}% off! Canadian shoppers are saving ${'{savings}'} on this {category} deal. {benefits} {urgency}`,
+    `Price drop: {product} now ${'{current_price}'} at {store}. AI-sourced.`,
 
-    `This {category} deal is one of the best we've seen in Canada. {product} at {store} for just ${'{current_price}'} (was ${'{original_price}'}) - that's ${'{savings}'} in savings! {benefits}`,
+    `{product} at {store} - ${'{current_price}'} ({percent}% off). Verify at retailer.`,
   ],
 }
 
@@ -38,18 +38,18 @@ const DESCRIPTION_TEMPLATES = {
 
 const CATEGORY_BENEFITS: Record<string, string[]> = {
   electronics: [
-    'Perfect for Canadian tech enthusiasts who value quality and reliability.',
-    'Trusted by thousands of Canadian customers coast to coast.',
-    'Ideal for Canadian homes with fast, reliable shipping.',
-    'A top pick among Canadian tech reviewers.',
-    'Great for work-from-home setups across Canada.',
+    'Ships to Canada.',
+    '',
+    '',
+    '',
+    '',
   ],
   fashion: [
-    'Perfect for Canadian weather and style.',
-    'Loved by fashion-forward Canadians from Vancouver to Halifax.',
-    'Designed with Canadian comfort and durability in mind.',
-    'A wardrobe essential for Canadian seasons.',
-    'Free returns available at Canadian locations.',
+    'Ships to Canada.',
+    '',
+    '',
+    '',
+    'Check return policy.',
   ],
   home: [
     'Made for Canadian homes and families.',
@@ -89,12 +89,12 @@ const CATEGORY_BENEFITS: Record<string, string[]> = {
 // =============================================================================
 
 const URGENCY_PHRASES = [
-  'Limited time offer - act fast!',
-  'Selling quickly - grab yours now.',
-  'Popular deal - stock is limited.',
-  'Price may go back up soon.',
+  '',
+  '',
+  '',
+  '',
   'One of the best deals we\'ve seen this month.',
-  'Canadian shoppers are snapping this up.',
+  '',
   '',  // Sometimes no urgency
   '',
 ]
@@ -104,13 +104,13 @@ const URGENCY_PHRASES = [
 // =============================================================================
 
 const STORE_DESCRIPTIONS: Record<string, string> = {
-  'amazon': 'Amazon.ca offers fast Prime shipping across Canada with easy returns.',
-  'walmart': 'Walmart Canada provides everyday low prices with free shipping on orders over $35.',
-  'costco': 'Costco Canada is known for bulk savings and quality products for members.',
-  'best-buy': 'Best Buy Canada is your destination for electronics with price matching.',
-  'canadian-tire': 'Canadian Tire offers a wide selection of automotive, sports, and home products.',
-  'home-depot': 'Home Depot Canada is the go-to for home improvement and building materials.',
-  'shoppers': 'Shoppers Drug Mart offers health, beauty, and convenience products with PC Optimum points.',
+  'amazon': 'Amazon.ca - Prime members get free shipping.',
+  'walmart': 'Walmart Canada - Free shipping over $35.',
+  'costco': 'Costco Canada - Members only.',
+  'best-buy': 'Best Buy Canada - Price matching available.',
+  'canadian-tire': 'Canadian Tire - Auto, sports, home.',
+  'home-depot': 'Home Depot Canada - Home improvement.',
+  'shoppers': 'Shoppers Drug Mart - PC Optimum points.',
   'loblaws': 'Loblaws is one of Canada\'s largest grocery chains with PC Optimum rewards.',
 }
 

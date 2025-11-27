@@ -40,8 +40,7 @@ export default async function HomePage() {
                 <span className="block text-yellow-300">Save Money Today 🇨🇦</span>
               </h1>
               <p className="text-lg md:text-xl text-white/90 mb-8">
-                Find the hottest deals from Amazon.ca, Walmart, Costco, Best Buy
-                and more. Updated every 4 hours.
+                AI-powered deal aggregator. We scan Amazon.ca, Walmart, Costco, Best Buy and 50+ Canadian retailers every 4 hours.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -275,35 +274,32 @@ export default async function HomePage() {
         {/* SEO Content */}
         <section className="py-12 bg-white">
           <div className="max-w-4xl mx-auto px-4 prose">
-            <h2>About PromoPenguin - Your Canadian Deals Destination</h2>
+            <h2>What is PromoPenguin?</h2>
             <p>
-              PromoPenguin is your go-to destination for finding the best deals, sales,
-              and discounts from top Canadian retailers. We scour the web to bring you
-              verified deals from Amazon.ca, Walmart Canada, Costco, Best Buy, Canadian
-              Tire, and dozens more stores.
+              A deal aggregator powered by AI. Our scraper monitors Canadian retailers
+              around the clock - Amazon.ca, Walmart, Costco, Best Buy, Canadian Tire,
+              and dozens more. Every 4 hours, fresh deals. No humans copy-pasting links.
             </p>
 
-            <h3>How We Find Deals</h3>
+            <h3>How it works</h3>
             <p>
-              Our automated deal-finding system monitors major Canadian retailers and
-              deal aggregators around the clock. We update our listings every 4 hours
-              to ensure you always have access to the latest savings opportunities.
+              AI scans retailer feeds and surfaces the sales worth knowing about.
+              Deals older than a week get automatically removed. What you see is what's
+              currently active (or close to it - stuff sells out).
             </p>
 
-            <h3>Why Canadian Shoppers Trust Us</h3>
+            <h3>The fine print</h3>
             <ul>
-              <li>Real-time price tracking from major Canadian retailers</li>
-              <li>Verified deals - we only list active promotions</li>
-              <li>Easy-to-use interface designed for quick deal hunting</li>
-              <li>No registration required - just find deals and save</li>
+              <li>We use affiliate links - that's how we keep the lights on</li>
+              <li>Prices come from retailer feeds, not manually verified</li>
+              <li>Deals expire - if it's dead, sorry, it's dead</li>
+              <li>No account needed, no newsletter spam</li>
             </ul>
 
-            <h3>Start Saving Today</h3>
+            <h3>Built in Canada</h3>
             <p>
-              Browse our latest deals, explore your favorite stores, or search by
-              category to find exactly what you're looking for. Whether you're
-              shopping for electronics, fashion, home goods, or groceries, we've
-              got deals for every Canadian shopper.
+              By Canadians, for Canadians. We only list deals that ship to Canada.
+              Click through, buy if it's good, move on. Simple.
             </p>
           </div>
         </section>
@@ -313,3 +309,9 @@ export default async function HomePage() {
     </>
   )
 }
+
+
+
+
+
+

@@ -14,11 +14,11 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
-              Your destination for the best Canadian deals and discounts.
-              Save money shopping at top retailers.
+              AI-powered deal aggregator. We scan 50+ Canadian retailers every 4 hours.
+              
             </p>
             <p className="text-xs text-gray-500">
-              🇨🇦 Made for Canadian Shoppers
+              Built in Canada
             </p>
           </div>
 

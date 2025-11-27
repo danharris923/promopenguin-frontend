@@ -166,34 +166,20 @@ export default async function StorePage({ params }: PageProps) {
 
         {/* Bottom SEO Content */}
         <div className="mt-12 prose max-w-none">
-          <h2>Shopping at {storeName} in Canada</h2>
+          <h2>{storeName} Deals - How We Find Them</h2>
           <p>
-            {storeName} is a popular destination for Canadian shoppers looking for quality
-            products at competitive prices. We track all the latest {storeName} deals,
-            sales, and promotions to help you save money on your purchases.
+            Our AI scraper monitors {storeName}'s feeds every 4 hours for price drops
+            and sales. When something goes on sale, it shows up here automatically.
+            Deals older than a week get removed.
           </p>
 
-          <h3>Why Shop at {storeName}?</h3>
+          <h3>About this page</h3>
           <ul>
-            <li>Competitive prices on a wide selection of products</li>
-            <li>Convenient shopping options for Canadian customers</li>
-            <li>Regular sales and promotional events</li>
-            <li>Easy returns and customer support</li>
+            <li>Prices pulled from {storeName}'s feed - not manually verified</li>
+            <li>Deals can expire or sell out fast</li>
+            <li>We use affiliate links (that's how we keep the lights on)</li>
+            <li>Updated automatically every 4 hours</li>
           </ul>
-
-          <h3>How to Save at {storeName}</h3>
-          <p>
-            To maximize your savings at {storeName}, check this page regularly for the
-            latest deals. We update our listings multiple times per day to ensure you
-            never miss a sale.
-          </p>
-
-          <h3>{storeName} Shipping to Canada</h3>
-          <p>
-            {storeName} offers various shipping options for Canadian customers.
-            Many orders qualify for free shipping when you spend above a certain
-            threshold.
-          </p>
         </div>
       </main>
     </>
