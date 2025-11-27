@@ -31,7 +31,8 @@ const AFFILIATE_IMAGES: Record<string, string[]> = {
   ],
   'ardene': [
     '/images/affiliates/ardene/1.webp',
-    '/images/affiliates/ardene/2.jpeg',
+    '/images/affiliates/ardene/2.webp',
+    '/images/affiliates/ardene/3.webp',
   ],
   'sephora': [
     '/images/affiliates/sephora/1.jpeg',

@@ -92,10 +92,10 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
   )
 }
 
-// Stack layout for horizontal bar cards
+// 2-column grid on desktop, single column on mobile
 export function FlippDealGrid({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
       {children}
     </div>
   )
