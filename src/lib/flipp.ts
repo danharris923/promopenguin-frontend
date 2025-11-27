@@ -135,6 +135,8 @@ const STORE_SLUGS: Record<string, string> = {
   '2001 Audio Video': '2001-audio-video',
   'TeleTime': 'teletime',
   'Visions Electronics': 'visions',
+  'Bass Pro Shops': 'bass-pro',
+  'Cabela\'s': 'cabelas',
 }
 
 // Category mapping from Flipp _L1 to our categories
