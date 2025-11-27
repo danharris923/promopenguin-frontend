@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
+import { cleanTitle } from '@/lib/content-generator'
 
 export function DealCard({
   id,
@@ -18,6 +19,9 @@ export function DealCard({
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
+
+  // Clean noise from title
+  const displayTitle = cleanTitle(title)
 
   // Only show price if we have real data (not 0 or null)
   const hasPriceData = priceNum !== null && priceNum > 0
@@ -66,7 +70,7 @@ export function DealCard({
         {/* Image */}
         <Image
           src={imageUrl || '/placeholder-deal.jpg'}
-          alt={title}
+          alt={displayTitle}
           fill
           className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -82,7 +86,7 @@ export function DealCard({
 
         {/* Title */}
         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
-          {title}
+          {displayTitle}
         </h3>
 
         {/* Price */}

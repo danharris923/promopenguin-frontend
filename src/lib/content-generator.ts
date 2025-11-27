@@ -31,6 +31,25 @@ const SLOP_PATTERNS = [
   /Check it out!?/gi,
 ]
 
+// Patterns to strip from deal titles
+const TITLE_NOISE_PATTERNS = [
+  /🚀\s*Prime Eligible\s*/gi,
+  /Prime Eligible\s*/gi,
+  /at Amazon\.ca\s*/gi,
+  /^\s*at\s+/gi,  // Leading "at" after store removal
+]
+
+/**
+ * Clean noise from deal titles
+ */
+export function cleanTitle(title: string): string {
+  let cleaned = title
+  for (const pattern of TITLE_NOISE_PATTERNS) {
+    cleaned = cleaned.replace(pattern, '')
+  }
+  return cleaned.replace(/\s{2,}/g, ' ').trim()
+}
+
 /**
  * Strip AI slop from scraped content
  */
