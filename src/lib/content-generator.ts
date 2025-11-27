@@ -31,8 +31,8 @@ const SLOP_PATTERNS = [
   /Check it out!?/gi,
 ]
 
-// Patterns to strip from deal titles
-const TITLE_NOISE_PATTERNS = [
+// Patterns to strip from deal titles (only for non-Amazon deals)
+const TITLE_NOISE_PATTERNS_NON_AMAZON = [
   /🚀\s*Prime Eligible\s*/gi,
   /Prime Eligible\s*/gi,
   /at Amazon\.ca\s*/gi,
@@ -41,10 +41,15 @@ const TITLE_NOISE_PATTERNS = [
 
 /**
  * Clean noise from deal titles
+ * Only strips Amazon-specific text if the deal is NOT from Amazon
  */
-export function cleanTitle(title: string): string {
+export function cleanTitle(title: string, store?: string | null): string {
+  // If it's an Amazon deal, keep the Prime Eligible badge
+  const isAmazon = store?.toLowerCase().includes('amazon')
+  if (isAmazon) return title
+
   let cleaned = title
-  for (const pattern of TITLE_NOISE_PATTERNS) {
+  for (const pattern of TITLE_NOISE_PATTERNS_NON_AMAZON) {
     cleaned = cleaned.replace(pattern, '')
   }
   return cleaned.replace(/\s{2,}/g, ' ').trim()

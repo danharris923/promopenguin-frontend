@@ -36,43 +36,43 @@ export default async function HomePage() {
       <Header />
 
       <main>
-        {/* Hero Section */}
+        {/* Hero Section - Compact */}
         <section className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-6xl font-black mb-4">
+              <h1 className="text-3xl md:text-5xl font-black mb-3">
                 Best Canadian Deals
                 <span className="block text-yellow-300">Save Money Today</span>
               </h1>
-              <p className="text-lg md:text-xl text-white/90 mb-8">
-                AI-powered deal aggregator. We scan Amazon.ca, Walmart, Costco, Best Buy and 50+ Canadian retailers every 4 hours.
+              <p className="text-base md:text-lg text-white/90 mb-6">
+                AI-powered deal aggregator scanning 50+ Canadian retailers every hour.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-row gap-3 justify-center">
                 <Link
                   href="/deals/today"
                   className="
-                    px-8 py-4 rounded-xl
+                    px-6 py-3 rounded-xl
                     bg-white text-orange-600
-                    font-bold text-lg
+                    font-bold text-base
                     hover:bg-yellow-100
                     transition-colors
                     shadow-lg
                   "
                 >
-                  Today's Hot Deals
+                  Hot Deals
                 </Link>
                 <Link
                   href="/stores"
                   className="
-                    px-8 py-4 rounded-xl
+                    px-6 py-3 rounded-xl
                     bg-white/20 text-white
-                    font-bold text-lg
+                    font-bold text-base
                     hover:bg-white/30
                     transition-colors
                     border border-white/30
                   "
                 >
-                  Browse Stores
+                  Stores
                 </Link>
               </div>
             </div>
@@ -97,7 +97,7 @@ export default async function HomePage() {
               </div>
               <div>
                 <div className="text-2xl md:text-3xl font-bold text-yellow-400">
-                  4hrs
+                  1hr
                 </div>
                 <div className="text-sm text-gray-400">Update Frequency</div>
               </div>

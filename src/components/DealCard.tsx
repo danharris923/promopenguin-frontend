@@ -20,8 +20,8 @@ export function DealCard({
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
-  // Clean noise from title
-  const displayTitle = cleanTitle(title)
+  // Clean noise from title (only for non-Amazon deals)
+  const displayTitle = cleanTitle(title, store)
 
   // Only show price if we have real data (not 0 or null)
   const hasPriceData = priceNum !== null && priceNum > 0

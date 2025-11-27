@@ -53,12 +53,15 @@ export function FeaturedBrandCard({ brand, size = 'md' }: { brand: AffiliateBran
   )
 }
 
-// Grid of all featured brands
+// Grid of all featured brands - show 6 for even grid (2x3 mobile, 3x2 or 6 desktop)
 export function FeaturedBrandsGrid() {
+  // Take first 6 for clean grid layout
+  const brandsToShow = AFFILIATE_BRANDS.slice(0, 6)
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {AFFILIATE_BRANDS.map(brand => (
-        <FeaturedBrandCard key={brand.slug} brand={brand} size="md" />
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+      {brandsToShow.map(brand => (
+        <FeaturedBrandCard key={brand.slug} brand={brand} size="sm" />
       ))}
     </div>
   )
