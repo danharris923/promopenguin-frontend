@@ -10,8 +10,8 @@ export const revalidate = 900
 
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats] = await Promise.all([
-    getFeaturedDeals(8),
-    getLatestDeals(16),
+    getFeaturedDeals(12),
+    getLatestDeals(50),
     getStoreStats(),
   ])
 
@@ -206,6 +206,24 @@ export default async function HomePage() {
                 />
               ))}
             </DealGrid>
+
+            {/* Big CTA to view all deals */}
+            <div className="mt-10 text-center">
+              <Link
+                href="/deals"
+                className="
+                  inline-flex items-center gap-2
+                  px-8 py-4 rounded-xl
+                  bg-gradient-to-r from-orange-500 to-red-600
+                  text-white font-bold text-lg
+                  hover:from-orange-400 hover:to-red-500
+                  transition-all shadow-lg hover:shadow-xl
+                  hover:scale-105
+                "
+              >
+                View All Deals
+              </Link>
+            </div>
           </div>
         </section>
 
