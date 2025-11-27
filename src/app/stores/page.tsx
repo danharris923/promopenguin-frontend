@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 import { getStoreStats } from '@/lib/db'
+import { hasFlippSupport } from '@/lib/flipp'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 
@@ -85,10 +86,11 @@ export default async function StoresPage() {
   const storeStats = await getStoreStats()
   const dealCounts = Object.fromEntries(storeStats.map(s => [s.store, s.count]))
 
-  // Merge deal counts with all stores
+  // Merge deal counts with all stores, and check Flipp support
   const storesWithCounts = ALL_STORES.map(store => ({
     ...store,
     count: dealCounts[store.slug] || 0,
+    hasFlipp: hasFlippSupport(store.slug),
   }))
 
   // Group by category
@@ -146,6 +148,10 @@ export default async function StoresPage() {
                     <span className="text-xs text-green-600 font-medium mt-1">
                       {store.count} deals
                     </span>
+                  ) : store.hasFlipp ? (
+                    <span className="text-xs text-blue-600 font-medium mt-1">
+                      Flyer deals
+                    </span>
                   ) : (
                     <span className="text-xs text-gray-400 mt-1">
                       Coming soon
@@ -166,8 +172,8 @@ export default async function StoresPage() {
             Amazon.ca, Walmart Canada, Costco, Best Buy, Canadian Tire, and many more.
           </p>
           <p>
-            Our system updates every 4 hours. Click any store to see their current deals.
-            Stores marked "Coming soon" will have deals added as we expand our coverage.
+            Our system updates hourly. Click any store to see their current deals.
+            Stores with "Flyer deals" show weekly flyer promotions from Flipp.
           </p>
         </section>
       </main>

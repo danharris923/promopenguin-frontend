@@ -354,3 +354,17 @@ export function getStoreNameFromSlug(slug: string): string | null {
   }
   return null
 }
+
+/**
+ * Check if a store slug has Flipp flyer support
+ */
+export function hasFlippSupport(slug: string): boolean {
+  return Object.values(STORE_SLUGS).includes(slug)
+}
+
+/**
+ * Get all Flipp-supported store slugs
+ */
+export function getFlippStoreSlugs(): string[] {
+  return Object.values(STORE_SLUGS)
+}

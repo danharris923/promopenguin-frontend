@@ -63,6 +63,44 @@ const SHOPSTYLE_LINKS: Record<string, string> = {
   'walmart': 'https://shopstyle.it/l/cw4cc',
 }
 
+// Direct retailer search URLs (non-affiliate fallback)
+// Used when we don't have an affiliate program for the store
+const RETAILER_SEARCH_URLS: Record<string, string> = {
+  'costco': 'https://www.costco.ca/CatalogSearch?keyword=',
+  'best-buy': 'https://www.bestbuy.ca/en-ca/search?search=',
+  'canadian-tire': 'https://www.canadiantire.ca/en/search.html?q=',
+  'the-brick': 'https://www.thebrick.com/search?q=',
+  'leons': 'https://www.leons.ca/search?q=',
+  'shoppers': 'https://shop.shoppersdrugmart.ca/Shop/Search?q=',
+  'no-frills': 'https://www.nofrills.ca/search?search-bar=',
+  'superstore': 'https://www.realcanadiansuperstore.ca/search?search-bar=',
+  'loblaws': 'https://www.loblaws.ca/search?search-bar=',
+  'metro': 'https://www.metro.ca/en/online-grocery/search?filter=',
+  'food-basics': 'https://www.foodbasics.ca/search?filter=',
+  'freshco': 'https://www.freshco.com/search?q=',
+  'sobeys': 'https://www.sobeys.com/en/search/?q=',
+  'safeway': 'https://www.safeway.ca/search?q=',
+  'save-on-foods': 'https://www.saveonfoods.com/search?q=',
+  'london-drugs': 'https://www.londondrugs.com/search/?q=',
+  'staples': 'https://www.staples.ca/search?query=',
+  'home-depot': 'https://www.homedepot.ca/search?q=',
+  'rona': 'https://www.rona.ca/en/search?q=',
+  'home-hardware': 'https://www.homehardware.ca/en/search?q=',
+  'princess-auto': 'https://www.princessauto.com/search?q=',
+  'sport-chek': 'https://www.sportchek.ca/search.html?q=',
+  'marks': 'https://www.marks.com/en/search.html?q=',
+  'atmosphere': 'https://www.atmosphere.ca/search.html?q=',
+  'petsmart': 'https://www.petsmart.ca/search/?q=',
+  'pet-valu': 'https://www.petvalu.ca/search?q=',
+  'toys-r-us': 'https://www.toysrus.ca/en/toysrus/search?q=',
+  'giant-tiger': 'https://www.gianttiger.com/search?q=',
+  'ikea': 'https://www.ikea.com/ca/en/search/?q=',
+  'the-bay': 'https://www.thebay.com/search?q=',
+  'winners': 'https://www.winners.ca/en', // No search, just homepage
+  'dollarama': 'https://www.dollarama.com/en-CA/search?q=',
+  'visions': 'https://www.visions.ca/Catalogue/Search?keywords=',
+}
+
 /**
  * Build ShopStyle link with search query
  */
@@ -99,17 +137,24 @@ export function getStoreAffiliateLink(storeSlug: string | null): string | null {
 
 /**
  * Get affiliate link with product search query appended
+ * Falls back to direct retailer search if no affiliate available
  */
 export function getAffiliateSearchUrl(storeSlug: string | null, productTitle: string): string | null {
   if (!storeSlug) return null
 
-  // Try ShopStyle first
+  // Try ShopStyle first (affiliate)
   const shopStyleUrl = buildShopStyleLink(storeSlug, productTitle)
   if (shopStyleUrl) return shopStyleUrl
 
-  // Try Rakuten
+  // Try Rakuten (affiliate)
   const rakutenUrl = buildRakutenDeepLink(storeSlug, productTitle)
   if (rakutenUrl) return rakutenUrl
+
+  // Fall back to direct retailer search (non-affiliate)
+  const retailerSearchUrl = RETAILER_SEARCH_URLS[storeSlug]
+  if (retailerSearchUrl) {
+    return `${retailerSearchUrl}${encodeURIComponent(productTitle)}`
+  }
 
   return null
 }
