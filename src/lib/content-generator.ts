@@ -56,14 +56,89 @@ export function cleanDescription(text: string | null | undefined): string | null
 // =============================================================================
 
 const STORE_DESCRIPTIONS: Record<string, string> = {
+  // General / Big Box
   'amazon': 'Amazon.ca - Prime members get free shipping.',
   'walmart': 'Walmart Canada - Free shipping over $35.',
-  'costco': 'Costco Canada - Members only.',
+  'costco': 'Costco Canada - Members only warehouse club.',
+  'giant-tiger': 'Giant Tiger - Budget-friendly Canadian retailer.',
+  'dollarama': 'Dollarama - Dollar store deals across Canada.',
+
+  // Electronics
   'best-buy': 'Best Buy Canada - Price matching available.',
+  'the-source': 'The Source - Electronics and tech accessories.',
+  'staples': 'Staples Canada - Office supplies and tech.',
+  'visions': 'Visions Electronics - TVs, audio, appliances.',
+  'canada-computers': 'Canada Computers - PC parts and electronics.',
+  'memory-express': 'Memory Express - Computer hardware retailer.',
+
+  // Home Improvement
   'canadian-tire': 'Canadian Tire - Auto, sports, home.',
-  'home-depot': 'Home Depot Canada - Home improvement.',
-  'shoppers': 'Shoppers Drug Mart - PC Optimum points.',
+  'home-depot': 'Home Depot Canada - Home improvement warehouse.',
+  'lowes': "Lowe's Canada - Home improvement and appliances.",
+  'rona': 'RONA - Canadian hardware and building supplies.',
+  'home-hardware': 'Home Hardware - Locally owned hardware stores.',
+  'ikea': 'IKEA Canada - Furniture and home goods.',
+  'the-brick': 'The Brick - Furniture and appliances.',
+  'leons': "Leon's - Furniture and mattresses.",
+  'structube': 'Structube - Modern furniture at affordable prices.',
+  'wayfair': 'Wayfair Canada - Online furniture and decor.',
+  'bed-bath-beyond': 'Bed Bath & Beyond - Home and bath essentials.',
+
+  // Grocery
   'loblaws': 'Loblaws - PC Optimum rewards.',
+  'no-frills': 'No Frills - Low prices, no frills grocery.',
+  'superstore': 'Real Canadian Superstore - PC Optimum points.',
+  'metro': 'Metro - Grocery chain in Ontario and Quebec.',
+  'sobeys': 'Sobeys - Full-service grocery stores.',
+  'safeway': 'Safeway - Western Canada grocery chain.',
+  'freshco': 'FreshCo - Discount grocery stores.',
+  'food-basics': 'Food Basics - Low-price grocery in Ontario.',
+  'save-on-foods': 'Save-On-Foods - Western Canada grocery.',
+  'farm-boy': 'Farm Boy - Fresh and specialty foods.',
+  'whole-foods': 'Whole Foods Market - Organic and natural groceries.',
+  'longos': "Longo's - Premium grocery in GTA.",
+  't-and-t': 'T&T Supermarket - Asian grocery chain.',
+
+  // Health & Beauty
+  'shoppers': 'Shoppers Drug Mart - PC Optimum points.',
+  'rexall': 'Rexall - Pharmacy and health products.',
+  'london-drugs': 'London Drugs - Pharmacy, electronics, and more.',
+  'well-ca': 'Well.ca - Online health and baby products.',
+  'sephora': 'Sephora Canada - Beauty and cosmetics.',
+
+  // Fashion & Apparel
+  'lululemon': 'Lululemon - Athletic apparel from Vancouver.',
+  'gap': 'Gap - Casual clothing and basics.',
+  'old-navy': 'Old Navy - Affordable family fashion.',
+  'the-bay': "Hudson's Bay - Canadian department store.",
+  'sport-chek': 'Sport Chek - Sports gear and athletic wear.',
+  'marks': "Mark's - Work and casual wear.",
+  'winners': 'Winners - Designer brands at discount prices.',
+  'marshalls': 'Marshalls - Off-price department store.',
+  'simons': 'Simons - Quebec fashion retailer.',
+  'aritzia': 'Aritzia - Contemporary womens fashion.',
+  'roots': 'Roots - Canadian leather goods and apparel.',
+  'mec': 'MEC - Outdoor gear co-op.',
+  'atmosphere': 'Atmosphere - Outdoor and camping gear.',
+  'sporting-life': 'Sporting Life - Sports and outdoor equipment.',
+
+  // Office & Business
+  'bureau-en-gros': 'Bureau en Gros - Office supplies (Staples Quebec).',
+
+  // Specialty
+  'indigo': 'Indigo - Books, gifts, and lifestyle.',
+  'toys-r-us': 'Toys R Us Canada - Toys and baby products.',
+  'pet-valu': 'Pet Valu - Pet food and supplies.',
+  'petsmart': 'PetSmart - Pet supplies and services.',
+  'lcbo': 'LCBO - Ontario liquor and wine.',
+  'saq': 'SAQ - Quebec alcohol retailer.',
+  'bc-liquor': 'BC Liquor Stores - British Columbia.',
+  'princess-auto': 'Princess Auto - Tools and surplus.',
+  'lee-valley': 'Lee Valley - Woodworking and gardening tools.',
+  'michaels': 'Michaels - Arts, crafts, and framing.',
+  'sail': 'SAIL - Outdoor and fishing gear.',
+  'cabelas': "Cabela's - Hunting and outdoor equipment.",
+  'bass-pro': 'Bass Pro Shops - Fishing and outdoor gear.',
 }
 
 // =============================================================================
@@ -246,27 +321,89 @@ export function formatStoreName(slug: string | null): string {
   if (!slug) return 'this retailer'
 
   const storeNames: Record<string, string> = {
+    // General / Big Box
     'amazon': 'Amazon.ca',
     'walmart': 'Walmart Canada',
     'costco': 'Costco',
+    'giant-tiger': 'Giant Tiger',
+    'dollarama': 'Dollarama',
+
+    // Electronics
     'best-buy': 'Best Buy',
+    'the-source': 'The Source',
+    'staples': 'Staples',
+    'visions': 'Visions Electronics',
+    'canada-computers': 'Canada Computers',
+    'memory-express': 'Memory Express',
+
+    // Home Improvement
     'canadian-tire': 'Canadian Tire',
     'home-depot': 'Home Depot',
-    'shoppers': 'Shoppers Drug Mart',
+    'lowes': "Lowe's",
+    'rona': 'RONA',
+    'home-hardware': 'Home Hardware',
+    'ikea': 'IKEA',
+    'the-brick': 'The Brick',
+    'leons': "Leon's",
+    'structube': 'Structube',
+    'wayfair': 'Wayfair',
+    'bed-bath-beyond': 'Bed Bath & Beyond',
+
+    // Grocery
     'loblaws': 'Loblaws',
     'no-frills': 'No Frills',
+    'superstore': 'Real Canadian Superstore',
     'metro': 'Metro',
     'sobeys': 'Sobeys',
+    'safeway': 'Safeway',
+    'freshco': 'FreshCo',
+    'food-basics': 'Food Basics',
+    'save-on-foods': 'Save-On-Foods',
+    'farm-boy': 'Farm Boy',
+    'whole-foods': 'Whole Foods',
+    'longos': "Longo's",
+    't-and-t': 'T&T Supermarket',
+
+    // Health & Beauty
+    'shoppers': 'Shoppers Drug Mart',
+    'rexall': 'Rexall',
+    'london-drugs': 'London Drugs',
+    'well-ca': 'Well.ca',
+    'sephora': 'Sephora',
+
+    // Fashion & Apparel
     'lululemon': 'Lululemon',
     'gap': 'Gap',
     'old-navy': 'Old Navy',
     'the-bay': "Hudson's Bay",
     'sport-chek': 'Sport Chek',
     'marks': "Mark's",
-    'staples': 'Staples',
-    'rona': 'RONA',
-    'ikea': 'IKEA',
+    'winners': 'Winners',
+    'marshalls': 'Marshalls',
+    'simons': 'Simons',
+    'aritzia': 'Aritzia',
+    'roots': 'Roots',
+    'mec': 'MEC',
+    'atmosphere': 'Atmosphere',
+    'sporting-life': 'Sporting Life',
+
+    // Office
+    'bureau-en-gros': 'Bureau en Gros',
+
+    // Specialty
     'indigo': 'Indigo',
+    'toys-r-us': 'Toys R Us',
+    'pet-valu': 'Pet Valu',
+    'petsmart': 'PetSmart',
+    'lcbo': 'LCBO',
+    'saq': 'SAQ',
+    'bc-liquor': 'BC Liquor Stores',
+    'princess-auto': 'Princess Auto',
+    'lee-valley': 'Lee Valley',
+    'michaels': 'Michaels',
+    'sail': 'SAIL',
+    'cabelas': "Cabela's",
+    'bass-pro': 'Bass Pro Shops',
   }
 
   return storeNames[slug] || slug.split('-').map(word =>

@@ -4,7 +4,9 @@ import { getDealsByStore, getStores } from '@/lib/db'
 import { formatStoreName, getStoreDescription } from '@/lib/content-generator'
 import { generateItemListSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
+import { FlippDealCard, FlippDealGrid } from '@/components/FlippDealCard'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
+import { getFlippStoreDeals, getStoreNameFromSlug } from '@/lib/flipp'
 
 interface PageProps {
   params: { slug: string }
@@ -41,7 +43,11 @@ export default async function StorePage({ params }: PageProps) {
   const storeName = formatStoreName(storeSlug)
   const storeDescription = getStoreDescription(storeSlug)
 
-  const deals = await getDealsByStore(storeSlug)
+  // Fetch both DB deals and Flipp flyer deals in parallel
+  const [deals, flippDeals] = await Promise.all([
+    getDealsByStore(storeSlug),
+    getFlippStoreDeals(getStoreNameFromSlug(storeSlug) || storeName),
+  ])
 
   // Schema markup (only if we have deals)
   const itemListSchema = deals.length > 0
@@ -84,7 +90,7 @@ export default async function StorePage({ params }: PageProps) {
             {storeName} Deals in Canada
           </h1>
           <p className="text-gray-600">
-            {deals.length} active deals
+            {deals.length} online deals{flippDeals.length > 0 ? ` + ${flippDeals.length} flyer deals` : ''}
           </p>
         </div>
 
@@ -124,8 +130,8 @@ export default async function StorePage({ params }: PageProps) {
           </div>
         )}
 
-        {/* No Deals Message */}
-        {deals.length === 0 && (
+        {/* No Deals Message - only show if no DB deals AND no Flipp deals */}
+        {deals.length === 0 && flippDeals.length === 0 && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center mb-8">
             <div className="text-4xl mb-4">🔍</div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
@@ -143,25 +149,52 @@ export default async function StorePage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Deals Grid */}
+        {/* Online Deals Grid */}
         {deals.length > 0 && (
-          <DealGrid>
-            {deals.map(deal => (
-              <DealCard
-                key={deal.id}
-                id={deal.id}
-                title={deal.title}
-                slug={deal.slug}
-                imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
-                price={deal.price}
-                originalPrice={deal.original_price}
-                discountPercent={deal.discount_percent}
-                store={deal.store || 'Unknown'}
-                affiliateUrl={deal.affiliate_url}
-                featured={deal.featured}
-              />
-            ))}
-          </DealGrid>
+          <>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Online Deals
+            </h2>
+            <DealGrid>
+              {deals.map(deal => (
+                <DealCard
+                  key={deal.id}
+                  id={deal.id}
+                  title={deal.title}
+                  slug={deal.slug}
+                  imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
+                  price={deal.price}
+                  originalPrice={deal.original_price}
+                  discountPercent={deal.discount_percent}
+                  store={deal.store || 'Unknown'}
+                  affiliateUrl={deal.affiliate_url}
+                  featured={deal.featured}
+                />
+              ))}
+            </DealGrid>
+          </>
+        )}
+
+        {/* Flyer Deals Section */}
+        {flippDeals.length > 0 && (
+          <div className={deals.length > 0 ? 'mt-12' : ''}>
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900">
+                This Week's Flyer Deals
+              </h2>
+              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                {flippDeals.length} items
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm mb-6">
+              Deals from {storeName}'s weekly flyer. Valid for a limited time - check in-store or online for availability.
+            </p>
+            <FlippDealGrid>
+              {flippDeals.map(deal => (
+                <FlippDealCard key={deal.id} deal={deal} />
+              ))}
+            </FlippDealGrid>
+          </div>
         )}
 
         {/* Bottom SEO Content */}
