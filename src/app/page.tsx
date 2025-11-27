@@ -9,6 +9,7 @@ import { AffiliateDealCard } from '@/components/AffiliateDealCard'
 import { mixAffiliateCards, isAffiliateCard } from '@/lib/affiliate-utils'
 import { AFFILIATE_BRANDS } from '@/lib/affiliates'
 import { CountdownTimer } from '@/components/CountdownTimer'
+import { LiveDealCount, LiveStoreCount } from '@/components/LiveStats'
 
 // Revalidate every 15 minutes
 export const revalidate = 900
@@ -87,13 +88,13 @@ export default async function HomePage() {
             <div className="flex justify-center gap-8 md:gap-16 text-center">
               <div>
                 <div className="text-2xl md:text-3xl font-bold text-orange-400">
-                  500+
+                  <LiveDealCount />
                 </div>
                 <div className="text-sm text-gray-400">Active Deals</div>
               </div>
               <div>
                 <div className="text-2xl md:text-3xl font-bold text-green-400">
-                  50+
+                  <LiveStoreCount />
                 </div>
                 <div className="text-sm text-gray-400">Stores</div>
               </div>
