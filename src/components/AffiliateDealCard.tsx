@@ -11,14 +11,36 @@ import { AffiliateBrand, getStoreAffiliateLink } from '@/lib/affiliates'
 // Path: /images/affiliates/{slug}/1.jpg, 2.jpg, etc.
 const AFFILIATE_IMAGES: Record<string, string[]> = {
   'lululemon': [
-    // Add images when available:
-    // '/images/affiliates/lululemon/1.jpg',
-    // '/images/affiliates/lululemon/2.jpg',
+    '/images/affiliates/lululemon/1.avif',
+    '/images/affiliates/lululemon/2.webp',
   ],
-  'roots': [],
-  'aritzia': [],
-  'ardene': [],
-  'sephora': [],
+  'roots': [
+    '/images/affiliates/roots/1.jpg',
+    '/images/affiliates/roots/2.jpg',
+    '/images/affiliates/roots/3.jpg',
+    '/images/affiliates/roots/4.png',
+  ],
+  'aritzia': [
+    '/images/affiliates/aritzia/1.jpg',
+    '/images/affiliates/aritzia/2.webp',
+    '/images/affiliates/aritzia/3.jpg',
+    '/images/affiliates/aritzia/4.webp',
+    '/images/affiliates/aritzia/5.avif',
+    '/images/affiliates/aritzia/6.webp',
+    '/images/affiliates/aritzia/7.jpg',
+  ],
+  'ardene': [
+    '/images/affiliates/ardene/1.webp',
+    '/images/affiliates/ardene/2.jpeg',
+  ],
+  'sephora': [
+    '/images/affiliates/sephora/1.jpeg',
+    '/images/affiliates/sephora/2.webp',
+    '/images/affiliates/sephora/3.avif',
+    '/images/affiliates/sephora/4.jpg',
+    '/images/affiliates/sephora/5.webp',
+    '/images/affiliates/sephora/6.png',
+  ],
   'walmart': [],
   'bass-pro': [],
   'cabelas': [],
