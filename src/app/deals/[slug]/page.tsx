@@ -98,6 +98,13 @@ export default async function DealPage({ params }: PageProps) {
   const imageUrl = deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'
   const storeName = formatStoreName(deal.store)
 
+  // Check if we have real price data
+  const priceNum = toNumber(deal.price)
+  const hasPriceData = priceNum !== null && priceNum > 0
+  const hasDiscount = deal.discount_percent && deal.discount_percent > 0
+  const savingsAmount = calculateSavings(deal.original_price, deal.price)
+  const hasSavings = savingsAmount && parseFloat(savingsAmount) > 0
+
   return (
     <>
       {/* Schema.org JSON-LD */}
@@ -225,27 +232,42 @@ export default async function DealPage({ params }: PageProps) {
                 <TrustBadges storeName={storeName} />
               </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-xl p-4">
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {deal.discount_percent || 0}%
+              {/* Quick Stats - only show if we have price/discount data */}
+              {(hasPriceData || hasDiscount) ? (
+                <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-xl p-4">
+                  {hasDiscount && (
+                    <div>
+                      <div className="text-2xl font-bold text-green-600">
+                        {deal.discount_percent}%
+                      </div>
+                      <div className="text-xs text-gray-500">Discount</div>
+                    </div>
+                  )}
+                  {hasSavings && (
+                    <div>
+                      <div className="text-2xl font-bold text-gray-900">
+                        ${savingsAmount?.split('.')[0]}
+                      </div>
+                      <div className="text-xs text-gray-500">You Save</div>
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {urgencyData.purchaseCount}
+                    </div>
+                    <div className="text-xs text-gray-500">Sold Today</div>
                   </div>
-                  <div className="text-xs text-gray-500">Discount</div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    ${calculateSavings(deal.original_price, deal.price)?.split('.')[0] || '0'}
+              ) : (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                  <div className="text-blue-800 font-semibold mb-1">
+                    Price varies - Check store for current price
                   </div>
-                  <div className="text-xs text-gray-500">You Save</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-orange-600">
-                    {urgencyData.purchaseCount}
+                  <div className="text-blue-600 text-sm">
+                    Click the button above to see the latest price at {storeName}
                   </div>
-                  <div className="text-xs text-gray-500">Sold Today</div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 

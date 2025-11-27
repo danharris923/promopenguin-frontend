@@ -19,9 +19,14 @@ export function DealCard({
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
+  // Only show price if we have real data (not 0 or null)
+  const hasPriceData = priceNum !== null && priceNum > 0
+  const hasDiscount = discountPercent && discountPercent > 0
+  const hasSavings = savings && parseFloat(savings) > 0
+
   return (
     <Link
-      href={`/deals/${slug}`}
+      href={"/deals/" + slug}
       className="
         group block
         bg-white rounded-xl shadow-md overflow-hidden
@@ -31,8 +36,8 @@ export function DealCard({
     >
       {/* Image Container */}
       <div className="relative aspect-square bg-gray-100">
-        {/* Discount Badge */}
-        {discountPercent && discountPercent > 0 && (
+        {/* Discount Badge - only show if > 0 */}
+        {hasDiscount && (
           <div className="absolute top-2 right-2 z-10">
             <span className="
               bg-red-600 text-white
@@ -82,28 +87,28 @@ export function DealCard({
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          {priceNum !== null ? (
+          {hasPriceData ? (
             <>
               <span className="text-xl font-bold text-green-600">
-                ${formatPrice(priceNum)}
+                {"$" + formatPrice(priceNum)}
               </span>
-              {originalPriceNum !== null && (
+              {originalPriceNum !== null && originalPriceNum > priceNum && (
                 <span className="text-sm text-gray-400 line-through">
-                  ${formatPrice(originalPriceNum)}
+                  {"$" + formatPrice(originalPriceNum)}
                 </span>
               )}
             </>
           ) : (
-            <span className="text-lg font-semibold text-gray-800">
-              See Deal
+            <span className="text-lg font-semibold text-orange-600">
+              Check Price
             </span>
           )}
         </div>
 
-        {/* Savings */}
-        {savings && (
+        {/* Savings - only show if actually saving money */}
+        {hasSavings && (
           <div className="text-sm text-red-600 font-medium mt-1">
-            Save ${savings}
+            {"Save $" + savings}
           </div>
         )}
       </div>

@@ -37,13 +37,13 @@ export function StickyMobileCTA({ href, price, storeName }: StickyMobileCTAProps
       <div className="flex items-center gap-3">
         {/* Price summary */}
         <div className="flex-shrink-0">
-          {priceNum !== null ? (
+          {priceNum !== null && priceNum > 0 ? (
             <div className="text-xl font-black text-green-600">
               ${formatPrice(priceNum)}
             </div>
           ) : (
-            <div className="text-lg font-bold text-gray-800">
-              See Price
+            <div className="text-lg font-bold text-orange-600">
+              Check Price
             </div>
           )}
         </div>

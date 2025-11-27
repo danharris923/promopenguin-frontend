@@ -46,9 +46,10 @@ export function CTAButton({
     `,
   }
 
-  const buttonText = priceNum !== null
+  const hasPriceData = priceNum !== null && priceNum > 0
+  const buttonText = hasPriceData
     ? `GET THIS DEAL - $${formatPrice(priceNum)}`
-    : 'GET THIS DEAL NOW'
+    : 'CHECK AVAILABILITY'
 
   return (
     <a

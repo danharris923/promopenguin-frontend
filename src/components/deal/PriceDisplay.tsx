@@ -15,7 +15,10 @@ export function PriceDisplay({
   const original = originalPrice != null ? Number(originalPrice) : null
   const discount = discountPercent != null ? Number(discountPercent) : null
 
-  const savings = original && current && !isNaN(original) && !isNaN(current)
+  // Only show savings if there's actual savings (original > current and both > 0)
+  const hasPriceData = current != null && !isNaN(current) && current > 0
+  const hasOriginal = original != null && !isNaN(original) && original > 0
+  const savings = hasOriginal && hasPriceData && original > current
     ? (original - current).toFixed(2)
     : null
 
@@ -34,20 +37,20 @@ export function PriceDisplay({
 
   return (
     <div className="flex flex-col items-start gap-1">
-      {original != null && !isNaN(original) && (
+      {hasOriginal && hasPriceData && original > current && (
         <div className={originalClass}>
           ${original.toFixed(2)}
         </div>
       )}
 
       <div className="flex items-baseline gap-3">
-        {current != null && !isNaN(current) ? (
+        {hasPriceData ? (
           <span className={currentClass}>
             ${current.toFixed(2)}
           </span>
         ) : (
           <span className={currentClassAlt}>
-            See Price
+            Check Price
           </span>
         )}
 
@@ -58,7 +61,7 @@ export function PriceDisplay({
         )}
       </div>
 
-      {savings && (
+      {savings && parseFloat(savings) > 0 && (
         <div className={savingsClass}>
           You Save: ${savings}
         </div>
