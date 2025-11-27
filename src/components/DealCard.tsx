@@ -16,10 +16,26 @@ const AMAZON_CTA_VARIANTS = [
   'Shop Now',
 ]
 
-// Get a consistent but varied CTA based on deal id
-function getAmazonCTA(id: string): string {
+// Featured badge variants with different colors
+const BADGE_VARIANTS = [
+  { text: 'HOT', bg: 'bg-red-500', textColor: 'text-white' },
+  { text: 'Trending', bg: 'bg-orange-500', textColor: 'text-white' },
+  { text: 'Popular', bg: 'bg-pink-500', textColor: 'text-white' },
+  { text: 'Limited', bg: 'bg-purple-500', textColor: 'text-white' },
+  { text: 'Top Pick', bg: 'bg-blue-500', textColor: 'text-white' },
+  { text: 'Best Deal', bg: 'bg-green-500', textColor: 'text-white' },
+]
+
+// Get a consistent but varied value based on id
+function getHashedIndex(id: string, arrayLength: number): number {
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  return AMAZON_CTA_VARIANTS[hash % AMAZON_CTA_VARIANTS.length]
+  return hash % arrayLength
+}
+
+// Determine if this deal should show a badge (roughly 1/3)
+function shouldShowBadge(id: string): boolean {
+  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return hash % 3 === 0
 }
 
 export function DealCard({
@@ -50,6 +66,10 @@ export function DealCard({
   const isAmazon = store.toLowerCase().includes('amazon')
   const hasDirectAffiliateLink = affiliateUrl && affiliateUrl.length > 0
 
+  // Get badge info - only show on ~1/3 of featured items
+  const showBadge = featured && shouldShowBadge(id)
+  const badge = showBadge ? BADGE_VARIANTS[getHashedIndex(id, BADGE_VARIANTS.length)] : null
+
   return (
     <div className="
       group
@@ -75,15 +95,16 @@ export function DealCard({
             </div>
           )}
 
-          {/* Featured Badge */}
-          {featured && (
+          {/* Featured Badge - varied text and colors */}
+          {badge && (
             <div className="absolute top-2 left-2 z-10">
-              <span className="
-                bg-yellow-400 text-yellow-900
+              <span className={`
+                ${badge.bg} ${badge.textColor}
                 px-2 py-1 rounded-lg
                 font-bold text-xs
-              ">
-                HOT
+                shadow-sm
+              `}>
+                {badge.text}
               </span>
             </div>
           )}
@@ -110,7 +131,7 @@ export function DealCard({
             {displayTitle}
           </h3>
 
-          {/* Price */}
+          {/* Price - don't show "Check Price" for Amazon cards with button */}
           <div className="flex items-baseline gap-2">
             {hasPriceData ? (
               <>
@@ -124,9 +145,12 @@ export function DealCard({
                 )}
               </>
             ) : (
-              <span className="text-lg font-semibold text-orange-600">
-                Check Price
-              </span>
+              // Only show "Check Price" for non-Amazon deals
+              !isAmazon && (
+                <span className="text-lg font-semibold text-orange-600">
+                  Check Price
+                </span>
+              )
             )}
           </div>
 
@@ -157,7 +181,7 @@ export function DealCard({
               shadow-sm
             "
           >
-            {getAmazonCTA(id)}
+            {AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]}
           </a>
         </div>
       )}
