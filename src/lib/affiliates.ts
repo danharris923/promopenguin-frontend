@@ -347,8 +347,8 @@ export const AFFILIATE_BRANDS: AffiliateBrand[] = [
     image: '/images/affiliates/sephora/1.jpeg',
   },
   {
-    name: 'Bass Pro',
-    slug: 'bass-pro',
+    name: "Cabela's",
+    slug: 'cabelas',
     emoji: '🎣',
     tagline: 'Outdoor Deals!',
     description: 'Fishing, hunting & outdoor gear',
