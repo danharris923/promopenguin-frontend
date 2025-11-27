@@ -25,6 +25,7 @@ import {
 } from '@/lib/urgency'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
+import { getDealAffiliateUrl } from '@/lib/affiliates'
 import { UrgencyBanner } from '@/components/deal/UrgencyBanner'
 import { SocialProofBanner } from '@/components/deal/SocialProofBanner'
 import { PriceDisplay } from '@/components/deal/PriceDisplay'
@@ -99,6 +100,9 @@ export default async function DealPage({ params }: PageProps) {
 
   const imageUrl = deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'
   const storeName = formatStoreName(deal.store)
+
+  // Get best affiliate URL (deal's own URL or fallback to store affiliate)
+  const affiliateUrl = getDealAffiliateUrl(deal.affiliate_url, deal.store, deal.title)
 
   // Check if we have real price data
   const priceNum = toNumber(deal.price)
@@ -222,7 +226,7 @@ export default async function DealPage({ params }: PageProps) {
               {/* Primary CTA */}
               <div className="mb-4">
                 <CTAButton
-                  href={deal.affiliate_url}
+                  href={affiliateUrl || '#'}
                   price={deal.price}
                   storeName={storeName}
                   size="xl"
@@ -339,7 +343,7 @@ export default async function DealPage({ params }: PageProps) {
                   />
                   <div className="mt-4">
                     <CTAButton
-                      href={deal.affiliate_url}
+                      href={affiliateUrl || '#'}
                       storeName={storeName}
                       size="lg"
                     />
@@ -394,7 +398,7 @@ export default async function DealPage({ params }: PageProps) {
 
         {/* Sticky Mobile CTA */}
         <StickyMobileCTA
-          href={deal.affiliate_url}
+          href={affiliateUrl || '#'}
           price={deal.price}
           storeName={storeName}
         />

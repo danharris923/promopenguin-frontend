@@ -2,25 +2,7 @@
 
 import Image from 'next/image'
 import { FlippDeal } from '@/lib/flipp'
-
-// Store affiliate links - clicking flyer deals goes through affiliate + search
-const STORE_AFFILIATE_LINKS: Record<string, string> = {
-  'sephora': 'https://shopstyle.it/l/cw4bZ',
-  'lululemon': 'https://shopstyle.it/l/cwE20',
-  'roots': 'https://shopstyle.it/l/cwE2E',
-  'aritzia': 'https://shopstyle.it/l/cwE2N',
-  'ardene': 'https://shopstyle.it/l/cwE8W',
-  'walmart': 'https://shopstyle.it/l/cw4cc',
-}
-
-// Build affiliate search URL if available
-function getAffiliateUrl(storeSlug: string, productTitle: string): string | null {
-  const baseUrl = STORE_AFFILIATE_LINKS[storeSlug]
-  if (!baseUrl) return null
-  // Append search query to affiliate link
-  const searchQuery = encodeURIComponent(productTitle)
-  return `${baseUrl}?searchText=${searchQuery}`
-}
+import { getAffiliateSearchUrl } from '@/lib/affiliates'
 
 interface FlippDealCardProps {
   deal: FlippDeal
@@ -36,7 +18,7 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
   const isExpiringSoon = expiresDate.getTime() - Date.now() < 2 * 24 * 60 * 60 * 1000 // 2 days
 
   // Check if this store has an affiliate link
-  const affiliateUrl = getAffiliateUrl(deal.storeSlug, deal.title)
+  const affiliateUrl = getAffiliateSearchUrl(deal.storeSlug, deal.title)
 
   const cardClasses = `
     group block
