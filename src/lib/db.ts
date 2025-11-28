@@ -29,6 +29,33 @@ async function queryOne<T>(queryText: string, values?: unknown[]): Promise<T | n
   return rows[0] || null
 }
 
+// Get a seed that changes every 15 minutes (matches revalidate interval)
+function getTimeSeed(): number {
+  const now = Date.now()
+  const fifteenMinutes = 15 * 60 * 1000
+  return Math.floor(now / fifteenMinutes)
+}
+
+// Seeded shuffle - same seed = same order, different seed = different order
+function seededShuffle<T>(array: T[], seed: number): T[] {
+  const result = [...array]
+  let currentSeed = seed
+
+  // Simple seeded random
+  const random = () => {
+    currentSeed = (currentSeed * 9301 + 49297) % 233280
+    return currentSeed / 233280
+  }
+
+  // Fisher-Yates shuffle with seeded random
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+
+  return result
+}
+
 // =============================================================================
 // DEALS
 // =============================================================================
@@ -106,24 +133,42 @@ export async function getDeals(options: {
   }
 }
 
-export async function getFeaturedDeals(limit: number = 12): Promise<Deal[]> {
+export async function getFeaturedDeals(limit: number = 12, shuffle: boolean = true): Promise<Deal[]> {
   try {
-    return await query<Deal>(
+    // Fetch more than needed so shuffle has variety
+    const deals = await query<Deal>(
       'SELECT * FROM deals WHERE is_active = TRUE AND featured = TRUE ORDER BY date_added DESC LIMIT $1',
-      [limit]
+      [Math.min(limit * 3, 100)]
     )
+
+    if (shuffle && deals.length > limit) {
+      // Shuffle and take limit
+      const shuffled = seededShuffle(deals, getTimeSeed())
+      return shuffled.slice(0, limit)
+    }
+
+    return deals.slice(0, limit)
   } catch (error) {
     console.error('Error fetching featured deals:', error)
     return []
   }
 }
 
-export async function getLatestDeals(limit: number = 20): Promise<Deal[]> {
+export async function getLatestDeals(limit: number = 20, shuffle: boolean = true): Promise<Deal[]> {
   try {
-    return await query<Deal>(
+    // Fetch more than needed so shuffle has variety
+    const deals = await query<Deal>(
       'SELECT * FROM deals WHERE is_active = TRUE ORDER BY date_added DESC LIMIT $1',
-      [limit]
+      [Math.min(limit * 3, 150)]
     )
+
+    if (shuffle && deals.length > limit) {
+      // Shuffle and take limit
+      const shuffled = seededShuffle(deals, getTimeSeed())
+      return shuffled.slice(0, limit)
+    }
+
+    return deals.slice(0, limit)
   } catch (error) {
     console.error('Error fetching latest deals:', error)
     return []
