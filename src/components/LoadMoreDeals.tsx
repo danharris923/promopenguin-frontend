@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useMemo } from 'react'
 import { DealCard, DealGrid } from '@/components/DealCard'
+import { AffiliateDealCard } from '@/components/AffiliateDealCard'
 import { Deal } from '@/types/deal'
+import { AffiliateBrand, AFFILIATE_BRANDS } from '@/lib/affiliates'
 
 interface LoadMoreDealsProps {
   initialDeals: Deal[]
@@ -10,10 +12,37 @@ interface LoadMoreDealsProps {
   pageSize?: number
 }
 
+// Mix affiliate cards into deals - 1 affiliate every 6 deals
+function mixInAffiliates(deals: Deal[]): (Deal | { type: 'affiliate'; brand: AffiliateBrand; seed: number })[] {
+  const result: (Deal | { type: 'affiliate'; brand: AffiliateBrand; seed: number })[] = []
+  const affiliateInterval = 6 // Insert affiliate every 6 deals
+
+  deals.forEach((deal, index) => {
+    result.push(deal)
+
+    // After every 6 deals, insert an affiliate card
+    if ((index + 1) % affiliateInterval === 0) {
+      const brandIndex = Math.floor((index + 1) / affiliateInterval) - 1
+      const brand = AFFILIATE_BRANDS[brandIndex % AFFILIATE_BRANDS.length]
+      result.push({
+        type: 'affiliate',
+        brand,
+        seed: index * 1000 + brandIndex,
+      })
+    }
+  })
+
+  return result
+}
+
+function isAffiliateCard(item: unknown): item is { type: 'affiliate'; brand: AffiliateBrand; seed: number } {
+  return typeof item === 'object' && item !== null && 'type' in item && (item as any).type === 'affiliate'
+}
+
 export function LoadMoreDeals({
   initialDeals,
   totalCount,
-  pageSize = 20
+  pageSize = 24
 }: LoadMoreDealsProps) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals)
   const [offset, setOffset] = useState(initialDeals.length)
@@ -21,6 +50,9 @@ export function LoadMoreDeals({
   const [isLoading, setIsLoading] = useState(false)
 
   const hasMore = offset < totalCount
+
+  // Mix affiliates into deals on every render
+  const mixedDeals = useMemo(() => mixInAffiliates(deals), [deals])
 
   const loadMore = async () => {
     if (isLoading || !hasMore) return
@@ -44,21 +76,33 @@ export function LoadMoreDeals({
   return (
     <>
       <DealGrid>
-        {deals.map(deal => (
-          <DealCard
-            key={deal.id}
-            id={deal.id}
-            title={deal.title}
-            slug={deal.slug}
-            imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
-            price={deal.price}
-            originalPrice={deal.original_price}
-            discountPercent={deal.discount_percent}
-            store={deal.store || 'Unknown'}
-            affiliateUrl={deal.affiliate_url}
-            featured={deal.featured}
-          />
-        ))}
+        {mixedDeals.map((item, index) => {
+          if (isAffiliateCard(item)) {
+            return (
+              <AffiliateDealCard
+                key={`affiliate-${item.brand.slug}-${index}`}
+                brand={item.brand}
+                seed={item.seed}
+              />
+            )
+          }
+          const deal = item
+          return (
+            <DealCard
+              key={deal.id}
+              id={deal.id}
+              title={deal.title}
+              slug={deal.slug}
+              imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
+              price={deal.price}
+              originalPrice={deal.original_price}
+              discountPercent={deal.discount_percent}
+              store={deal.store || 'Unknown'}
+              affiliateUrl={deal.affiliate_url}
+              featured={deal.featured}
+            />
+          )
+        })}
       </DealGrid>
 
       {hasMore && (
