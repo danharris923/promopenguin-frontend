@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 import { cleanTitle } from '@/lib/content-generator'
+import { detectStoreFromTitle } from '@/lib/store-detector'
 
 // Amazon CTA button text variants
 const AMAZON_CTA_VARIANTS = [
@@ -54,8 +55,13 @@ export function DealCard({
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
+  // Detect store from title if not provided or "Unknown"
+  const detectedStore = detectStoreFromTitle(title, store)
+  const displayStore = detectedStore.name || store
+  const storeSearchUrl = detectedStore.searchUrl
+
   // Clean noise from title (only for non-Amazon deals)
-  const displayTitle = cleanTitle(title, store)
+  const displayTitle = cleanTitle(title, displayStore)
 
   // Only show price if we have real data (not 0 or null)
   const hasPriceData = priceNum !== null && priceNum > 0
@@ -63,7 +69,7 @@ export function DealCard({
   const hasSavings = savings && parseFloat(savings) > 0
 
   // Check if this is an Amazon deal with a direct affiliate link
-  const isAmazon = store.toLowerCase().includes('amazon')
+  const isAmazon = displayStore.toLowerCase().includes('amazon')
   const hasDirectAffiliateLink = affiliateUrl && affiliateUrl.length > 0
 
   // Get badge info - only show on ~1/3 of featured items
@@ -121,10 +127,12 @@ export function DealCard({
 
         {/* Content */}
         <div className="p-4">
-          {/* Store */}
-          <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
-            {store}
-          </div>
+          {/* Store - clickable link to search */}
+          {displayStore && displayStore !== 'Unknown' && (
+            <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+              {displayStore}
+            </div>
+          )}
 
           {/* Title */}
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
@@ -181,6 +189,28 @@ export function DealCard({
             "
           >
             {AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]}
+          </a>
+        </div>
+      )}
+
+      {/* Store Search Button - for non-Amazon deals with detected store */}
+      {!isAmazon && storeSearchUrl && displayStore && (
+        <div className="px-4 pb-4">
+          <a
+            href={storeSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              block w-full text-center
+              bg-orange-500 hover:bg-orange-600
+              text-white font-bold
+              py-2 px-3 rounded-lg
+              text-sm
+              transition-colors
+              shadow-sm
+            "
+          >
+            Shop at {displayStore} →
           </a>
         </div>
       )}
