@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DealCardProps } from '@/types/deal'
@@ -70,6 +73,7 @@ export function DealCard({
   affiliateUrl,
   featured,
 }: DealCardProps) {
+  const [imageError, setImageError] = useState(false)
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
@@ -154,14 +158,28 @@ export function DealCard({
             )
           })()}
 
-          {/* Image */}
-          <Image
-            src={imageUrl || '/placeholder-deal.jpg'}
-            alt={displayTitle}
-            fill
-            className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          />
+          {/* Image with fallback to store logo */}
+          {imageError ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+              <img
+                src={`/images/stores/${displayStore.toLowerCase().replace(/\s+/g, '-')}.png`}
+                alt={displayStore}
+                className="w-24 h-24 object-contain opacity-60"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }}
+              />
+            </div>
+          ) : (
+            <Image
+              src={imageUrl || '/placeholder-deal.jpg'}
+              alt={displayTitle}
+              fill
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              onError={() => setImageError(true)}
+            />
+          )}
         </div>
 
         {/* Content */}
