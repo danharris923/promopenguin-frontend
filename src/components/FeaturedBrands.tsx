@@ -147,7 +147,7 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
         {/* Sale Badge */}
         <div className="absolute top-2 right-2 z-10">
           <span className="
-            bg-red-600 text-white
+            bg-orange-500 text-white
             px-2 py-1 rounded-lg
             font-bold text-sm
             shadow-md
@@ -159,7 +159,7 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
         {/* Canadian Badge */}
         <div className="absolute top-2 left-2 z-10">
           <span className="
-            bg-red-700 text-white
+            bg-slate-800 text-white
             px-2 py-0.5 rounded
             font-medium text-xs
           ">
@@ -199,7 +199,7 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
 
         {/* CTA */}
         <div className="flex items-baseline gap-2">
-          <span className={`text-lg font-bold ${brand.textColor}`}>
+          <span className="text-lg font-bold text-orange-500">
             Shop Now →
           </span>
         </div>

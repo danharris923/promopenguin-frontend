@@ -17,14 +17,14 @@ const AMAZON_CTA_VARIANTS = [
   'Shop Now',
 ]
 
-// Featured badge variants with different colors
+// Featured badge variants - clean, professional
 const BADGE_VARIANTS = [
-  { text: 'HOT', bg: 'bg-red-500', textColor: 'text-white' },
-  { text: 'Trending', bg: 'bg-orange-500', textColor: 'text-white' },
-  { text: 'Popular', bg: 'bg-pink-500', textColor: 'text-white' },
-  { text: 'Limited', bg: 'bg-purple-500', textColor: 'text-white' },
-  { text: 'Top Pick', bg: 'bg-blue-500', textColor: 'text-white' },
-  { text: 'Best Deal', bg: 'bg-green-500', textColor: 'text-white' },
+  { text: 'HOT', bg: 'bg-orange-500', textColor: 'text-white' },
+  { text: 'Trending', bg: 'bg-slate-700', textColor: 'text-white' },
+  { text: 'Popular', bg: 'bg-slate-700', textColor: 'text-white' },
+  { text: 'Limited', bg: 'bg-orange-500', textColor: 'text-white' },
+  { text: 'Top Pick', bg: 'bg-slate-700', textColor: 'text-white' },
+  { text: 'Best Deal', bg: 'bg-emerald-600', textColor: 'text-white' },
 ]
 
 // Get a consistent but varied value based on id
@@ -143,7 +143,7 @@ export function DealCard({
           <div className="flex items-baseline gap-2">
             {hasPriceData ? (
               <>
-                <span className="text-xl font-bold text-green-600">
+                <span className="text-xl font-bold text-emerald-600">
                   {"$" + formatPrice(priceNum)}
                 </span>
                 {originalPriceNum !== null && originalPriceNum > priceNum && (
@@ -155,7 +155,7 @@ export function DealCard({
             ) : (
               // Only show "Check Price" for non-Amazon deals
               !isAmazon && (
-                <span className="text-lg font-semibold text-orange-600">
+                <span className="text-lg font-semibold text-orange-500">
                   Check Price
                 </span>
               )
@@ -164,7 +164,7 @@ export function DealCard({
 
           {/* Savings - only show if actually saving money */}
           {hasSavings && (
-            <div className="text-sm text-red-600 font-medium mt-1">
+            <div className="text-sm text-emerald-600 font-semibold mt-1">
               {"Save $" + savings}
             </div>
           )}
@@ -202,12 +202,11 @@ export function DealCard({
             rel="noopener noreferrer"
             className="
               block w-full text-center
-              bg-orange-500 hover:bg-orange-600
+              bg-slate-800 hover:bg-slate-700
               text-white font-bold
               py-2 px-3 rounded-lg
               text-sm
               transition-colors
-              shadow-sm
             "
           >
             Shop at {displayStore} →

@@ -9,15 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // CTR Warfare Colors
-        'cta-primary': '#FF6B00',
-        'cta-secondary': '#FF0000',
-        'urgency-red': '#FF0000',
-        'urgency-orange': '#FF6B00',
-        'urgency-yellow': '#FFC107',
-        'success-green': '#00AA00',
-        'trust-blue': '#0066CC',
-        'savings-green': '#22C55E',
+        // Clean Trust Palette
+        'cta': '#F97316',           // Orange-500
+        'cta-hover': '#EA580C',     // Orange-600
+        'price': '#059669',         // Emerald-600
+        'savings': '#10B981',       // Emerald-500
+        'discount': '#DC2626',      // Red-600
+        'surface-dark': '#1E293B',  // Slate-800
+        'surface-darker': '#0F172A', // Slate-900
       },
       animation: {
         'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -30,8 +29,8 @@ const config: Config = {
       },
       keyframes: {
         glow: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(255, 107, 0, 0.5)' },
-          '50%': { boxShadow: '0 0 40px rgba(255, 107, 0, 0.8)' },
+          '0%, 100%': { boxShadow: '0 0 15px rgba(249, 115, 22, 0.4)' },
+          '50%': { boxShadow: '0 0 25px rgba(249, 115, 22, 0.6)' },
         },
         shake: {
           '0%, 100%': { transform: 'translateX(0)' },

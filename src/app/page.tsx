@@ -39,43 +39,42 @@ export default async function HomePage() {
       <Header />
 
       <main>
-        {/* Hero Section - Compact */}
-        <section className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        {/* Hero Section - Clean Trust */}
+        <section className="bg-slate-900 text-white">
+          <div className="max-w-7xl mx-auto px-4 py-10 md:py-14">
             <div className="text-center max-w-3xl mx-auto">
               <h1 className="text-3xl md:text-5xl font-black mb-3">
                 Best Canadian Deals
-                <span className="block text-yellow-300">Save Money Today</span>
+                <span className="block text-orange-400 mt-1">Save Money Today</span>
               </h1>
-              <p className="text-base md:text-lg text-white/90 mb-6">
+              <p className="text-base md:text-lg text-slate-300 mb-6">
                 AI-powered deal aggregator scanning 50+ Canadian retailers every hour.
               </p>
               <div className="flex flex-row gap-3 justify-center">
                 <Link
                   href="/deals/today"
                   className="
-                    px-6 py-3 rounded-xl
-                    bg-white text-orange-600
+                    px-6 py-3 rounded-lg
+                    bg-orange-500 text-white
                     font-bold text-base
-                    hover:bg-yellow-100
+                    hover:bg-orange-600
                     transition-colors
                     shadow-lg
                   "
                 >
-                  Hot Deals
+                  🔥 Hot Deals
                 </Link>
                 <Link
                   href="/stores"
                   className="
-                    px-6 py-3 rounded-xl
-                    bg-white/20 text-white
+                    px-6 py-3 rounded-lg
+                    bg-slate-700 text-white
                     font-bold text-base
-                    hover:bg-white/30
+                    hover:bg-slate-600
                     transition-colors
-                    border border-white/30
                   "
                 >
-                  Stores
+                  Browse Stores
                 </Link>
               </div>
             </div>
@@ -83,26 +82,26 @@ export default async function HomePage() {
         </section>
 
         {/* Stats Bar */}
-        <section className="bg-gray-900 text-white py-4">
+        <section className="bg-slate-800 text-white py-4 border-t border-slate-700">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex justify-center gap-8 md:gap-16 text-center">
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-orange-400">
+                <div className="text-2xl md:text-3xl font-bold text-white">
                   <LiveDealCount />
                 </div>
-                <div className="text-sm text-gray-400">Active Deals</div>
+                <div className="text-sm text-slate-400">Active Deals</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-green-400">
+                <div className="text-2xl md:text-3xl font-bold text-white">
                   <LiveStoreCount />
                 </div>
-                <div className="text-sm text-gray-400">Stores</div>
+                <div className="text-sm text-slate-400">Stores</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-yellow-400">
+                <div className="text-2xl md:text-3xl font-bold text-orange-400">
                   <CountdownTimer />
                 </div>
-                <div className="text-sm text-gray-400">Next Update</div>
+                <div className="text-sm text-slate-400">Next Update</div>
               </div>
             </div>
           </div>
@@ -121,7 +120,7 @@ export default async function HomePage() {
                 </h2>
                 <Link
                   href="/deals"
-                  className="text-orange-600 hover:text-orange-700 font-semibold"
+                  className="text-orange-500 hover:text-orange-600 font-semibold"
                 >
                   View All →
                 </Link>
@@ -195,7 +194,7 @@ export default async function HomePage() {
               </h2>
               <Link
                 href="/deals"
-                className="text-orange-600 hover:text-orange-700 font-semibold"
+                className="text-orange-500 hover:text-orange-600 font-semibold"
               >
                 View All →
               </Link>
@@ -236,15 +235,14 @@ export default async function HomePage() {
                 href="/deals"
                 className="
                   inline-flex items-center gap-2
-                  px-8 py-4 rounded-xl
-                  bg-gradient-to-r from-orange-500 to-red-600
+                  px-8 py-4 rounded-lg
+                  bg-orange-500
                   text-white font-bold text-lg
-                  hover:from-orange-400 hover:to-red-500
-                  transition-all shadow-lg hover:shadow-xl
-                  hover:scale-105
+                  hover:bg-orange-600
+                  transition-colors shadow-lg
                 "
               >
-                View All Deals
+                View All Deals →
               </Link>
             </div>
           </div>

@@ -106,7 +106,7 @@ export function AffiliateDealCard({ brand, seed }: AffiliateDealCardProps) {
         {/* Sale Badge */}
         <div className="absolute top-2 right-2 z-10">
           <span className="
-            bg-yellow-400 text-yellow-900
+            bg-orange-500 text-white
             px-2 py-1 rounded-lg
             font-bold text-xs
             shadow-md
@@ -163,7 +163,7 @@ export function AffiliateDealCard({ brand, seed }: AffiliateDealCardProps) {
 
         {/* CTA instead of price */}
         <div className="flex items-baseline gap-2">
-          <span className={`text-lg font-bold ${brand.textColor}`}>
+          <span className="text-lg font-bold text-orange-500">
             Shop Now →
           </span>
         </div>

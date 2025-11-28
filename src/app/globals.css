@@ -2,15 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CTR Warfare Base Styles */
+/* Clean Trust Color Palette */
 :root {
-  --cta-primary: #FF6B00;
-  --cta-secondary: #FF0000;
-  --urgency-red: #FF0000;
-  --urgency-orange: #FF6B00;
-  --urgency-yellow: #FFC107;
-  --success-green: #00AA00;
-  --trust-blue: #0066CC;
+  --cta-primary: #F97316;     /* Orange-500 - main accent */
+  --cta-hover: #EA580C;       /* Orange-600 */
+  --price-green: #059669;     /* Emerald-600 - trustworthy */
+  --savings-green: #10B981;   /* Emerald-500 */
+  --badge-red: #DC2626;       /* Red-600 - discount badges */
+  --surface-dark: #1E293B;    /* Slate-800 */
+  --surface-darker: #0F172A;  /* Slate-900 */
+  --text-primary: #111827;    /* Gray-900 */
+  --text-secondary: #6B7280;  /* Gray-500 */
 }
 
 /* Smooth scrolling */
@@ -26,33 +28,35 @@ body {
 /* CTA Button Base */
 @layer components {
   .btn-cta {
-    @apply px-6 py-4 rounded-xl font-black text-white text-lg uppercase tracking-wide;
-    @apply bg-gradient-to-r from-orange-500 to-red-600;
-    @apply shadow-lg shadow-red-500/30;
-    @apply transition-all duration-200;
-    @apply hover:scale-105 hover:shadow-xl hover:shadow-red-500/40;
+    @apply px-6 py-3 rounded-lg font-bold text-white text-lg;
+    @apply bg-orange-500;
+    @apply shadow-lg;
+    @apply transition-colors duration-200;
+    @apply hover:bg-orange-600;
     @apply active:scale-95;
   }
 
-  .btn-cta-pulse {
-    @apply btn-cta animate-pulse;
+  .btn-cta-secondary {
+    @apply px-6 py-3 rounded-lg font-bold text-white text-lg;
+    @apply bg-slate-800;
+    @apply transition-colors duration-200;
+    @apply hover:bg-slate-700;
   }
 
-  /* Urgency Banner */
+  /* Urgency Banner - subdued */
   .urgency-banner {
-    @apply bg-gradient-to-r from-red-600 to-orange-500;
-    @apply text-white text-sm font-bold text-center py-2;
-    @apply animate-pulse;
+    @apply bg-slate-800;
+    @apply text-white text-sm font-semibold text-center py-2;
   }
 
   /* Social Proof Banner */
   .social-proof-banner {
-    @apply bg-yellow-100 text-yellow-800 text-sm font-medium text-center py-2;
+    @apply bg-slate-100 text-slate-700 text-sm font-medium text-center py-2;
   }
 
   /* Price Display */
   .price-current {
-    @apply text-4xl font-black text-green-600;
+    @apply text-3xl font-bold text-emerald-600;
   }
 
   .price-original {
@@ -60,16 +64,16 @@ body {
   }
 
   .price-savings {
-    @apply text-red-600 font-bold;
+    @apply text-emerald-600 font-semibold;
   }
 
   /* Discount Badge */
   .discount-badge {
     @apply absolute top-2 right-2;
     @apply bg-red-600 text-white;
-    @apply px-3 py-1 rounded-lg;
-    @apply font-black text-xl;
-    @apply shadow-lg;
+    @apply px-2 py-1 rounded-lg;
+    @apply font-bold text-sm;
+    @apply shadow-md;
   }
 
   /* Deal Card */
@@ -81,8 +85,8 @@ body {
 
   /* Stock Warning */
   .stock-warning {
-    @apply bg-yellow-50 border border-yellow-200 rounded-lg;
-    @apply px-3 py-2 text-sm text-yellow-800;
+    @apply bg-amber-50 border border-amber-200 rounded-lg;
+    @apply px-3 py-2 text-sm text-amber-800;
     @apply flex items-center gap-2;
   }
 

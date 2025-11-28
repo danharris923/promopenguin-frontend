@@ -14,7 +14,7 @@ export function Header() {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
       {/* Top deals ticker - AFFILIATE BRANDS */}
-      <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white py-2 overflow-hidden">
+      <div className="bg-slate-800 text-white py-2 overflow-hidden border-b border-slate-700">
         <div className="animate-marquee whitespace-nowrap flex items-center">
           {tickerItems.map((brand, i) => (
             <a
@@ -22,11 +22,11 @@ export function Header() {
               href={getStoreAffiliateLink(brand.slug) || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center mx-6 hover:text-yellow-300 transition-colors"
+              className="inline-flex items-center mx-6 hover:text-orange-400 transition-colors"
             >
               <span className="mr-1">{brand.emoji}</span>
-              <span className="font-bold">{brand.name}:</span>
-              <span className="ml-1 uppercase text-yellow-200">{brand.tagline}</span>
+              <span className="font-semibold">{brand.name}:</span>
+              <span className="ml-1 text-orange-400">{brand.tagline}</span>
             </a>
           ))}
         </div>
@@ -72,7 +72,7 @@ export function Header() {
 
           <div className="flex items-center gap-3">
             <Link href="/deals/today"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-colors">
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-colors">
               <span>🔥</span>
               <span>Hot Deals</span>
             </Link>
