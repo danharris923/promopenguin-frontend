@@ -1,0 +1,51 @@
+[
+  {
+    "title": "Apple Pencil",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/apple-ipad-11in-999x1024.jpg",
+    "price": 918,
+    "discount": 10,
+    "affiliateUrl": "https://amzn.to/3XIbJ9D"
+  },
+  {
+    "title": "Amazon Echo Show 5",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-75.png",
+    "price": 69.99,
+    "discount": 50,
+    "affiliateUrl": "https://amzn.to/4oXnGo2"
+  },
+  {
+    "title": "Hero Cosmetics Mighty Patch Original",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-148-834x1024.png",
+    "price": null,
+    "discount": 20,
+    "affiliateUrl": "https://amzn.to/4pCPVZc"
+  },
+  {
+    "title": "Crest 3D White Advanced Teeth Whitening Toothpaste, Radiant Mint, 4 Count",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-135.png",
+    "price": 0.21,
+    "discount": 23,
+    "affiliateUrl": "https://amzn.to/4izkEnx"
+  },
+  {
+    "title": "Canon Ivy 2 Mini Photo Printer",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-88.png",
+    "price": 99.99,
+    "discount": 38,
+    "affiliateUrl": "https://amzn.to/3MlStfF"
+  },
+  {
+    "title": "for $300 off",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-86.png",
+    "price": 300,
+    "discount": 15,
+    "affiliateUrl": "https://amzn.to/4ioV0ly"
+  },
+  {
+    "title": "Buy the 256GB Version",
+    "imageUrl": "https://www.save.ca/wp-content/uploads/2025/11/image-86.png",
+    "price": 1449.99,
+    "discount": 15,
+    "affiliateUrl": "https://amzn.to/44uFq1H"
+  }
+]
