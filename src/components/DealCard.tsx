@@ -4,6 +4,7 @@ import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 import { cleanTitle } from '@/lib/content-generator'
 import { detectStoreFromTitle } from '@/lib/store-detector'
+import { cleanAmazonUrl } from '@/lib/affiliates'
 
 // Amazon CTA button text variants
 const AMAZON_CTA_VARIANTS = [
@@ -72,6 +73,9 @@ export function DealCard({
   const isAmazon = displayStore.toLowerCase().includes('amazon')
   const hasDirectAffiliateLink = affiliateUrl && affiliateUrl.length > 0
 
+  // Clean Amazon URLs to use our affiliate tag
+  const cleanedAffiliateUrl = affiliateUrl ? cleanAmazonUrl(affiliateUrl) : null
+
   // Get badge info - only show on ~1/3 of featured items
   const showBadge = featured && shouldShowBadge(id)
   const badge = showBadge ? BADGE_VARIANTS[getHashedIndex(id, BADGE_VARIANTS.length)] : null
@@ -111,6 +115,20 @@ export function DealCard({
                 shadow-sm
               `}>
                 {badge.text}
+              </span>
+            </div>
+          )}
+
+          {/* New Price Badge - green, show when deal has affiliate link but no featured badge */}
+          {!badge && hasDirectAffiliateLink && (
+            <div className="absolute top-2 left-2 z-10">
+              <span className="
+                bg-emerald-600 text-white
+                px-2 py-1 rounded-lg
+                font-bold text-xs
+                shadow-sm
+              ">
+                New Price
               </span>
             </div>
           )}
@@ -165,32 +183,37 @@ export function DealCard({
       {/* CTA Button - Always show one */}
       <div className="px-4 pb-4">
         {isAmazon && hasDirectAffiliateLink ? (
-          // Amazon Direct Buy Button
+          // Amazon Direct Buy Button - dark orange with shimmer
           <a
-            href={affiliateUrl}
+            href={cleanedAffiliateUrl!}
             target="_blank"
             rel="noopener noreferrer"
             className="
+              relative overflow-hidden
               block w-full text-center
-              bg-[#FF9900] hover:bg-[#e88b00]
+              bg-orange-600 hover:bg-orange-700
               text-white font-bold
               py-2 px-3 rounded-lg
               text-sm
               transition-colors
               shadow-sm
+              before:absolute before:inset-0
+              before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+              before:translate-x-[-200%] hover:before:translate-x-[200%]
+              before:transition-transform before:duration-700
             "
           >
             {AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]}
           </a>
         ) : storeSearchUrl && displayStore && displayStore !== 'Unknown' ? (
-          // Store Search Button - for deals with detected store
+          // Store Search Button - dark orange (no shimmer - not affiliate)
           <a
             href={storeSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="
               block w-full text-center
-              bg-slate-800 hover:bg-slate-700
+              bg-slate-600 hover:bg-slate-700
               text-white font-bold
               py-2 px-3 rounded-lg
               text-sm
@@ -200,29 +223,34 @@ export function DealCard({
             Shop at {displayStore} →
           </a>
         ) : hasDirectAffiliateLink ? (
-          // Generic affiliate link button
+          // Generic affiliate link button - dark orange with shimmer
           <a
-            href={affiliateUrl}
+            href={cleanedAffiliateUrl!}
             target="_blank"
             rel="noopener noreferrer"
             className="
+              relative overflow-hidden
               block w-full text-center
-              bg-slate-800 hover:bg-slate-700
+              bg-orange-600 hover:bg-orange-700
               text-white font-bold
               py-2 px-3 rounded-lg
               text-sm
               transition-colors
+              before:absolute before:inset-0
+              before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+              before:translate-x-[-200%] hover:before:translate-x-[200%]
+              before:transition-transform before:duration-700
             "
           >
             View Deal →
           </a>
         ) : (
-          // Fallback: View deal on detail page
+          // Fallback: View deal on detail page - slate (no shimmer - not affiliate)
           <Link
             href={`/deals/${slug}`}
             className="
               block w-full text-center
-              bg-slate-800 hover:bg-slate-700
+              bg-slate-600 hover:bg-slate-700
               text-white font-bold
               py-2 px-3 rounded-lg
               text-sm

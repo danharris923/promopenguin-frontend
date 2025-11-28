@@ -29,6 +29,14 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
     <>
       {/* Thumbnail - small square */}
       <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+        {/* Trending badge overlay */}
+        {affiliateUrl && (
+          <div className="absolute top-0 left-0 z-10">
+            <span className="bg-emerald-600 text-white px-1 py-0.5 text-[10px] font-bold rounded-br">
+              Trending
+            </span>
+          </div>
+        )}
         <Image
           src={deal.imageUrl || '/placeholder-deal.jpg'}
           alt={deal.title}

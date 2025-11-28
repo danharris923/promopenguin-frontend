@@ -6,6 +6,45 @@
  */
 
 // =============================================================================
+// AMAZON AFFILIATE CONFIG
+// =============================================================================
+
+// PromoPenguin Amazon Associates tag
+const AMAZON_AFFILIATE_TAG = 'promopenguin-20'
+
+/**
+ * Clean an Amazon URL and replace any existing affiliate tag with ours
+ */
+export function cleanAmazonUrl(url: string): string {
+  if (!url) return url
+
+  // Check if it's an Amazon URL
+  if (!url.includes('amazon.ca') && !url.includes('amazon.com') && !url.includes('amzn.')) {
+    return url
+  }
+
+  try {
+    const urlObj = new URL(url)
+
+    // Remove any existing tag parameter
+    urlObj.searchParams.delete('tag')
+
+    // Add our affiliate tag
+    urlObj.searchParams.set('tag', AMAZON_AFFILIATE_TAG)
+
+    return urlObj.toString()
+  } catch {
+    // If URL parsing fails, try simple regex replacement
+    // Remove existing tag parameter
+    let cleanUrl = url.replace(/[?&]tag=[^&]+/gi, '')
+
+    // Add our tag
+    const separator = cleanUrl.includes('?') ? '&' : '?'
+    return `${cleanUrl}${separator}tag=${AMAZON_AFFILIATE_TAG}`
+  }
+}
+
+// =============================================================================
 // RAKUTEN CONFIG
 // =============================================================================
 
@@ -240,7 +279,7 @@ export function getAffiliateSearchUrl(storeSlug: string | null, productTitle: st
 
 /**
  * Get the best affiliate URL for a deal:
- * 1. Use deal's affiliate_url if it exists
+ * 1. Use deal's affiliate_url if it exists (cleaned for Amazon)
  * 2. Fall back to store affiliate link + product search
  * 3. Return null if no affiliate available
  */
@@ -249,9 +288,9 @@ export function getDealAffiliateUrl(
   storeSlug: string | null,
   productTitle: string
 ): string | null {
-  // If deal has its own affiliate URL, use that
+  // If deal has its own affiliate URL, use that (but clean Amazon URLs)
   if (dealAffiliateUrl) {
-    return dealAffiliateUrl
+    return cleanAmazonUrl(dealAffiliateUrl)
   }
 
   // Otherwise, try to build one from store affiliate + search

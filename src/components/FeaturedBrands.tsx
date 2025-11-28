@@ -147,7 +147,7 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
         {/* Sale Badge */}
         <div className="absolute top-2 right-2 z-10">
           <span className="
-            bg-orange-500 text-white
+            bg-orange-600 text-white
             px-2 py-1 rounded-lg
             font-bold text-sm
             shadow-md
@@ -156,14 +156,14 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
           </span>
         </div>
 
-        {/* Canadian Badge */}
+        {/* Hot Deal Badge - green */}
         <div className="absolute top-2 left-2 z-10">
           <span className="
-            bg-slate-800 text-white
+            bg-emerald-600 text-white
             px-2 py-0.5 rounded
-            font-medium text-xs
+            font-bold text-xs
           ">
-            Canadian
+            Live Now
           </span>
         </div>
 
@@ -197,9 +197,21 @@ function CanadianBrandDealCard({ brand, index }: { brand: AffiliateBrand, index:
           {brand.tagline}
         </h3>
 
-        {/* CTA */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-orange-500">
+        {/* CTA Button - dark orange with shimmer */}
+        <div className="mt-2">
+          <span className="
+            relative overflow-hidden
+            inline-block w-full text-center
+            bg-orange-600 group-hover:bg-orange-700
+            text-white font-bold
+            py-2 px-3 rounded-lg
+            text-sm
+            transition-colors
+            before:absolute before:inset-0
+            before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+            before:translate-x-[-200%] group-hover:before:translate-x-[200%]
+            before:transition-transform before:duration-700
+          ">
             Shop Now →
           </span>
         </div>

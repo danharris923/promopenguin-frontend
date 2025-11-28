@@ -33,13 +33,13 @@ export function CTAButton({
 
   const variantClasses = {
     primary: `
-      bg-orange-500
-      hover:bg-orange-600
+      bg-orange-600
+      hover:bg-orange-700
       shadow-lg
     `,
     secondary: `
-      bg-slate-800
-      hover:bg-slate-700
+      bg-orange-600
+      hover:bg-orange-700
       shadow-lg
     `,
   }
@@ -55,15 +55,19 @@ export function CTAButton({
       target="_blank"
       rel="noopener noreferrer nofollow"
       className={`
+        relative overflow-hidden
         inline-flex items-center justify-center
         ${sizeClasses[size]}
         ${variantClasses[variant]}
         ${fullWidth ? 'w-full' : ''}
-        ${animate ? 'animate-pulse hover:animate-none' : ''}
         text-white font-black uppercase tracking-wide
         rounded-xl
         transition-all duration-200
         hover:scale-105 active:scale-95
+        before:absolute before:inset-0
+        before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+        before:translate-x-[-200%] hover:before:translate-x-[200%]
+        before:transition-transform before:duration-700
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -77,7 +81,7 @@ export function CTAButton({
         }
       }}
     >
-      <span className={`transition-transform duration-200 ${isHovered ? 'scale-110' : ''}`}>
+      <span className={`relative z-10 transition-transform duration-200 ${isHovered ? 'scale-110' : ''}`}>
         {buttonText}
       </span>
     </a>
