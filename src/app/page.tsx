@@ -1,31 +1,28 @@
 import Link from 'next/link'
-import { getFeaturedDeals, getLatestDeals, getStores, getStoreStats } from '@/lib/db'
+import { getFeaturedDeals, getLatestDeals, getStoreStats, getDealCount } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { FeaturedBrandsSection, BrandBanner } from '@/components/FeaturedBrands'
-import { AffiliateDealCard } from '@/components/AffiliateDealCard'
-import { mixAffiliateCards, isAffiliateCard } from '@/lib/affiliate-utils'
 import { AFFILIATE_BRANDS } from '@/lib/affiliates'
 import { CountdownTimer } from '@/components/CountdownTimer'
 import { LiveDealCount, LiveStoreCount } from '@/components/LiveStats'
+import { LoadMoreDeals } from '@/components/LoadMoreDeals'
 
 // Revalidate every 15 minutes
 export const revalidate = 900
 
 export default async function HomePage() {
-  const [featuredDeals, latestDeals, storeStats] = await Promise.all([
+  const [featuredDeals, latestDeals, storeStats, totalDeals] = await Promise.all([
     getFeaturedDeals(12),
-    getLatestDeals(50),
+    getLatestDeals(24, false), // Don't shuffle initial load - we want consistent order for pagination
     getStoreStats(),
+    getDealCount(),
   ])
 
   const websiteSchema = generateWebsiteSchema()
   const orgSchema = generateOrganizationSchema()
-
-  // Mix affiliate cards into the latest deals grid
-  const mixedLatestDeals = mixAffiliateCards(latestDeals, AFFILIATE_BRANDS, 4)
 
   return (
     <>
@@ -185,66 +182,22 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Latest Deals - WITH AFFILIATE CARDS MIXED IN */}
+        {/* Latest Deals - WITH LOAD MORE */}
         <section className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                 Latest Deals
               </h2>
-              <Link
-                href="/deals"
-                className="text-orange-500 hover:text-orange-600 font-semibold"
-              >
-                View All →
-              </Link>
+              <span className="text-sm text-gray-500">
+                {totalDeals} deals available
+              </span>
             </div>
-            <DealGrid>
-              {mixedLatestDeals.map((item, index) => {
-                if (isAffiliateCard(item)) {
-                  return (
-                    <AffiliateDealCard
-                      key={`affiliate-${item.brand.slug}-${index}`}
-                      brand={item.brand}
-                      seed={item.seed}
-                    />
-                  )
-                }
-                const deal = item
-                return (
-                  <DealCard
-                    key={deal.id}
-                    id={deal.id}
-                    title={deal.title}
-                    slug={deal.slug}
-                    imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
-                    price={deal.price}
-                    originalPrice={deal.original_price}
-                    discountPercent={deal.discount_percent}
-                    store={deal.store || 'Unknown'}
-                    affiliateUrl={deal.affiliate_url}
-                    featured={deal.featured}
-                  />
-                )
-              })}
-            </DealGrid>
-
-            {/* Big CTA to view all deals */}
-            <div className="mt-10 text-center">
-              <Link
-                href="/deals"
-                className="
-                  inline-flex items-center gap-2
-                  px-8 py-4 rounded-lg
-                  bg-orange-500
-                  text-white font-bold text-lg
-                  hover:bg-orange-600
-                  transition-colors shadow-lg
-                "
-              >
-                View All Deals →
-              </Link>
-            </div>
+            <LoadMoreDeals
+              initialDeals={latestDeals}
+              totalCount={totalDeals}
+              pageSize={24}
+            />
           </div>
         </section>
 
