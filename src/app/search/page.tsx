@@ -146,7 +146,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       {/* Text */}
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-lg text-gray-900">{brand.name}</div>
-                        <div className="text-orange-600 font-semibold text-sm">{brand.tagline}</div>
+                        <div className="text-orange-500 font-semibold text-sm">{brand.tagline}</div>
                         <div className="text-gray-500 text-xs mt-1">{brand.description}</div>
                       </div>
                       {/* Arrow */}
@@ -232,7 +232,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 </p>
                 <p className="text-gray-400">
                   Try a different search term or browse our{' '}
-                  <Link href="/stores" className="text-orange-600 hover:underline">
+                  <Link href="/stores" className="text-orange-500 hover:underline">
                     stores
                   </Link>
                 </p>

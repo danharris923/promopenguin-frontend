@@ -42,12 +42,12 @@ export default async function TodayDealsPage() {
         </div>
 
         {/* Urgency Banner */}
-        <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl p-4 mb-8">
+        <div className="bg-slate-800 text-white rounded-xl p-4 mb-8">
           <div className="flex items-center justify-center gap-2">
             <span className="text-xl">⚡</span>
             <span className="font-bold">Limited Time Offers</span>
-            <span className="text-white/80">•</span>
-            <span>Prices may change at any time</span>
+            <span className="text-slate-400">•</span>
+            <span className="text-slate-300">Prices may change at any time</span>
           </div>
         </div>
 

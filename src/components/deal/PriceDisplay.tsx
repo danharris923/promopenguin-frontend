@@ -31,9 +31,9 @@ export function PriceDisplay({
 
   const classes = sizeClasses[size]
   const originalClass = classes.original + " text-gray-400 line-through"
-  const currentClass = classes.current + " font-black text-green-600"
+  const currentClass = classes.current + " font-black text-emerald-600"
   const currentClassAlt = classes.current + " font-black text-gray-800"
-  const savingsClass = classes.savings + " text-red-600 font-bold"
+  const savingsClass = classes.savings + " text-emerald-600 font-semibold"
 
   return (
     <div className="flex flex-col items-start gap-1">

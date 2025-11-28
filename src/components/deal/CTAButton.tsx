@@ -33,16 +33,14 @@ export function CTAButton({
 
   const variantClasses = {
     primary: `
-      bg-gradient-to-r from-orange-500 to-red-600
-      hover:from-orange-400 hover:to-red-500
-      shadow-lg shadow-red-500/30
-      hover:shadow-xl hover:shadow-red-500/40
+      bg-orange-500
+      hover:bg-orange-600
+      shadow-lg
     `,
     secondary: `
-      bg-gradient-to-r from-green-500 to-green-600
-      hover:from-green-400 hover:to-green-500
-      shadow-lg shadow-green-500/30
-      hover:shadow-xl hover:shadow-green-500/40
+      bg-slate-800
+      hover:bg-slate-700
+      shadow-lg
     `,
   }
 

@@ -96,7 +96,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
         {/* No Deals Message */}
         {deals.length === 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center mb-8">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center mb-8">
             <div className="text-4xl mb-4">🔍</div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
               No {categoryName} Deals Right Now
@@ -106,7 +106,7 @@ export default async function CategoryPage({ params }: PageProps) {
             </p>
             <a
               href="/"
-              className="inline-block px-6 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors"
+              className="inline-block px-6 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors"
             >
               Browse All Deals
             </a>

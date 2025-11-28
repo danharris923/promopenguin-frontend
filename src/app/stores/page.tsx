@@ -147,11 +147,11 @@ export default async function StoresPage() {
                     {store.name}
                   </span>
                   {store.count > 0 ? (
-                    <span className="text-xs text-green-600 font-medium mt-1">
+                    <span className="text-xs text-emerald-600 font-medium mt-1">
                       {store.count} deals
                     </span>
                   ) : store.hasFlipp ? (
-                    <span className="text-xs text-blue-600 font-medium mt-1">
+                    <span className="text-xs text-slate-600 font-medium mt-1">
                       Flyer deals
                     </span>
                   ) : (

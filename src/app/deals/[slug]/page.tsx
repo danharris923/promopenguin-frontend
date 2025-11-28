@@ -240,10 +240,10 @@ export default async function DealPage({ params }: PageProps) {
 
               {/* Quick Stats - only show if we have price/discount data */}
               {(hasPriceData || hasDiscount) ? (
-                <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-xl p-4">
+                <div className="grid grid-cols-3 gap-4 text-center bg-slate-50 rounded-xl p-4">
                   {hasDiscount && (
                     <div>
-                      <div className="text-2xl font-bold text-green-600">
+                      <div className="text-2xl font-bold text-emerald-600">
                         {deal.discount_percent}%
                       </div>
                       <div className="text-xs text-gray-500">Discount</div>
@@ -258,7 +258,7 @@ export default async function DealPage({ params }: PageProps) {
                     </div>
                   )}
                   <div>
-                    <div className="text-2xl font-bold text-orange-600">
+                    <div className="text-2xl font-bold text-slate-700">
                       {urgencyData.purchaseCount}
                     </div>
                     <div className="text-xs text-gray-500">Sold Today</div>
@@ -376,11 +376,11 @@ export default async function DealPage({ params }: PageProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-gray-900 truncate group-hover:text-orange-600">
+                              <div className="text-sm font-medium text-gray-900 truncate group-hover:text-orange-500">
                                 {related.title}
                               </div>
                               {related.price && (
-                                <div className="text-sm text-green-600 font-bold">
+                                <div className="text-sm text-emerald-600 font-bold">
                                   ${formatPrice(related.price)}
                                 </div>
                               )}

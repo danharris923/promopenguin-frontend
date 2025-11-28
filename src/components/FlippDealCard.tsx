@@ -56,15 +56,15 @@ export function FlippDealCard({ deal }: FlippDealCardProps) {
             -{deal.discountPercent}%
           </span>
         ) : hasPriceData ? (
-          <span className="text-green-600 font-bold">
+          <span className="text-emerald-600 font-bold">
             ${deal.price?.toFixed(2)}
           </span>
         ) : deal.saleStory ? (
-          <span className="text-orange-600 font-medium text-sm">
+          <span className="text-orange-500 font-medium text-sm">
             {deal.saleStory.length > 12 ? deal.saleStory.slice(0, 12) + '...' : deal.saleStory}
           </span>
         ) : (
-          <span className="text-blue-600 text-xs font-medium">
+          <span className="text-slate-600 text-xs font-medium">
             Flyer
           </span>
         )}

@@ -116,13 +116,13 @@ export default async function StorePage({ params }: PageProps) {
               <div className="text-sm text-gray-500">Active Deals</div>
             </div>
             <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold text-green-600">
+              <div className="text-3xl font-bold text-emerald-600">
                 {Math.max(...deals.map(d => d.discount_percent || 0))}%
               </div>
               <div className="text-sm text-gray-500">Max Discount</div>
             </div>
             <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold text-orange-600">
+              <div className="text-3xl font-bold text-slate-700">
                 {Object.keys(dealsByCategory).length}
               </div>
               <div className="text-sm text-gray-500">Categories</div>
@@ -182,7 +182,7 @@ export default async function StorePage({ params }: PageProps) {
               <h2 className="text-2xl font-bold text-gray-900">
                 This Week's Flyer Deals
               </h2>
-              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+              <span className="bg-slate-200 text-slate-700 text-xs font-medium px-2.5 py-0.5 rounded">
                 {flippDeals.length} items
               </span>
             </div>
