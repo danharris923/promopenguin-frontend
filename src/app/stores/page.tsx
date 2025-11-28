@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import { getStoreStats } from '@/lib/db'
 import { hasFlippSupport } from '@/lib/flipp'
@@ -14,70 +15,71 @@ export const metadata: Metadata = {
 }
 
 // All Canadian stores we want pages for
-const ALL_STORES: { slug: string; name: string; emoji: string; category: string }[] = [
+// logo: path to logo image, or null to use emoji fallback
+const ALL_STORES: { slug: string; name: string; emoji: string; logo: string | null; category: string }[] = [
   // Big Box / General
-  { slug: 'amazon', name: 'Amazon.ca', emoji: '📦', category: 'General' },
-  { slug: 'walmart', name: 'Walmart', emoji: '🛒', category: 'General' },
-  { slug: 'costco', name: 'Costco', emoji: '🏬', category: 'General' },
-  { slug: 'giant-tiger', name: 'Giant Tiger', emoji: '🐯', category: 'General' },
-  { slug: 'dollarama', name: 'Dollarama', emoji: '💵', category: 'General' },
+  { slug: 'amazon', name: 'Amazon.ca', emoji: '📦', logo: '/images/stores/amazon.png', category: 'General' },
+  { slug: 'walmart', name: 'Walmart', emoji: '🛒', logo: '/images/stores/walmart.png', category: 'General' },
+  { slug: 'costco', name: 'Costco', emoji: '🏬', logo: '/images/stores/costco.png', category: 'General' },
+  { slug: 'giant-tiger', name: 'Giant Tiger', emoji: '🐯', logo: '/images/stores/giant-tiger.png', category: 'General' },
+  { slug: 'dollarama', name: 'Dollarama', emoji: '💵', logo: '/images/stores/dollarama.png', category: 'General' },
 
   // Electronics
-  { slug: 'best-buy', name: 'Best Buy', emoji: '💻', category: 'Electronics' },
-  { slug: 'the-source', name: 'The Source', emoji: '🔌', category: 'Electronics' },
-  { slug: 'visions', name: 'Visions Electronics', emoji: '📺', category: 'Electronics' },
-  { slug: 'london-drugs', name: 'London Drugs', emoji: '💊', category: 'Electronics' },
+  { slug: 'best-buy', name: 'Best Buy', emoji: '💻', logo: '/images/stores/best-buy.png', category: 'Electronics' },
+  { slug: 'the-source', name: 'The Source', emoji: '🔌', logo: '/images/stores/the-source.png', category: 'Electronics' },
+  { slug: 'visions', name: 'Visions Electronics', emoji: '📺', logo: null, category: 'Electronics' },
+  { slug: 'london-drugs', name: 'London Drugs', emoji: '💊', logo: '/images/stores/london-drugs.png', category: 'Electronics' },
 
   // Home & Hardware
-  { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧', category: 'Home' },
-  { slug: 'home-depot', name: 'Home Depot', emoji: '🏠', category: 'Home' },
-  { slug: 'rona', name: 'RONA', emoji: '🪚', category: 'Home' },
-  { slug: 'home-hardware', name: 'Home Hardware', emoji: '🔨', category: 'Home' },
-  { slug: 'ikea', name: 'IKEA', emoji: '🪑', category: 'Home' },
-  { slug: 'the-brick', name: 'The Brick', emoji: '🛋️', category: 'Home' },
-  { slug: 'leons', name: "Leon's", emoji: '🛏️', category: 'Home' },
+  { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧', logo: '/images/stores/canadian-tire.png', category: 'Home' },
+  { slug: 'home-depot', name: 'Home Depot', emoji: '🏠', logo: '/images/stores/home-depot.png', category: 'Home' },
+  { slug: 'rona', name: 'RONA', emoji: '🪚', logo: '/images/stores/rona.png', category: 'Home' },
+  { slug: 'home-hardware', name: 'Home Hardware', emoji: '🔨', logo: '/images/stores/home-hardware.png', category: 'Home' },
+  { slug: 'ikea', name: 'IKEA', emoji: '🪑', logo: '/images/stores/ikea.png', category: 'Home' },
+  { slug: 'the-brick', name: 'The Brick', emoji: '🛋️', logo: '/images/stores/the-brick.png', category: 'Home' },
+  { slug: 'leons', name: "Leon's", emoji: '🛏️', logo: '/images/stores/leons.png', category: 'Home' },
 
   // Grocery
-  { slug: 'loblaws', name: 'Loblaws', emoji: '🍎', category: 'Grocery' },
-  { slug: 'no-frills', name: 'No Frills', emoji: '🛒', category: 'Grocery' },
-  { slug: 'superstore', name: 'Real Canadian Superstore', emoji: '🏪', category: 'Grocery' },
-  { slug: 'sobeys', name: 'Sobeys', emoji: '🥬', category: 'Grocery' },
-  { slug: 'metro', name: 'Metro', emoji: '🍞', category: 'Grocery' },
-  { slug: 'food-basics', name: 'Food Basics', emoji: '🥫', category: 'Grocery' },
-  { slug: 'freshco', name: 'FreshCo', emoji: '🥗', category: 'Grocery' },
-  { slug: 'save-on-foods', name: 'Save-On-Foods', emoji: '🛍️', category: 'Grocery' },
-  { slug: 'safeway', name: 'Safeway', emoji: '🧺', category: 'Grocery' },
+  { slug: 'loblaws', name: 'Loblaws', emoji: '🍎', logo: '/images/stores/loblaws.png', category: 'Grocery' },
+  { slug: 'no-frills', name: 'No Frills', emoji: '🛒', logo: '/images/stores/no-frills.png', category: 'Grocery' },
+  { slug: 'superstore', name: 'Real Canadian Superstore', emoji: '🏪', logo: '/images/stores/superstore.png', category: 'Grocery' },
+  { slug: 'sobeys', name: 'Sobeys', emoji: '🥬', logo: '/images/stores/sobeys.png', category: 'Grocery' },
+  { slug: 'metro', name: 'Metro', emoji: '🍞', logo: '/images/stores/metro.png', category: 'Grocery' },
+  { slug: 'food-basics', name: 'Food Basics', emoji: '🥫', logo: '/images/stores/food-basics.png', category: 'Grocery' },
+  { slug: 'freshco', name: 'FreshCo', emoji: '🥗', logo: '/images/stores/freshco.png', category: 'Grocery' },
+  { slug: 'save-on-foods', name: 'Save-On-Foods', emoji: '🛍️', logo: null, category: 'Grocery' },
+  { slug: 'safeway', name: 'Safeway', emoji: '🧺', logo: '/images/stores/safeway.png', category: 'Grocery' },
 
   // Health & Beauty
-  { slug: 'shoppers', name: 'Shoppers Drug Mart', emoji: '💊', category: 'Health' },
-  { slug: 'rexall', name: 'Rexall', emoji: '💉', category: 'Health' },
-  { slug: 'sephora', name: 'Sephora', emoji: '💄', category: 'Health' },
-  { slug: 'well-ca', name: 'Well.ca', emoji: '🧴', category: 'Health' },
+  { slug: 'shoppers', name: 'Shoppers Drug Mart', emoji: '💊', logo: '/images/stores/shoppers.png', category: 'Health' },
+  { slug: 'rexall', name: 'Rexall', emoji: '💉', logo: null, category: 'Health' },
+  { slug: 'sephora', name: 'Sephora', emoji: '💄', logo: '/images/stores/sephora.png', category: 'Health' },
+  { slug: 'well-ca', name: 'Well.ca', emoji: '🧴', logo: null, category: 'Health' },
 
   // Fashion
-  { slug: 'the-bay', name: "Hudson's Bay", emoji: '🏬', category: 'Fashion' },
-  { slug: 'winners', name: 'Winners', emoji: '🏷️', category: 'Fashion' },
-  { slug: 'old-navy', name: 'Old Navy', emoji: '👕', category: 'Fashion' },
-  { slug: 'gap', name: 'Gap', emoji: '👖', category: 'Fashion' },
-  { slug: 'lululemon', name: 'Lululemon', emoji: '🧘', category: 'Fashion' },
-  { slug: 'roots', name: 'Roots', emoji: '🍁', category: 'Fashion' },
-  { slug: 'aritzia', name: 'Aritzia', emoji: '👗', category: 'Fashion' },
-  { slug: 'ardene', name: 'Ardene', emoji: '💃', category: 'Fashion' },
-  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜', category: 'Fashion' },
-  { slug: 'marks', name: "Mark's", emoji: '👔', category: 'Fashion' },
-  { slug: 'sport-chek', name: 'Sport Chek', emoji: '⚽', category: 'Fashion' },
+  { slug: 'the-bay', name: "Hudson's Bay", emoji: '🏬', logo: '/images/stores/the-bay.png', category: 'Fashion' },
+  { slug: 'winners', name: 'Winners', emoji: '🏷️', logo: '/images/stores/winners.png', category: 'Fashion' },
+  { slug: 'old-navy', name: 'Old Navy', emoji: '👕', logo: '/images/stores/old-navy.png', category: 'Fashion' },
+  { slug: 'gap', name: 'Gap', emoji: '👖', logo: '/images/stores/gap.png', category: 'Fashion' },
+  { slug: 'lululemon', name: 'Lululemon', emoji: '🧘', logo: '/images/stores/lululemon.png', category: 'Fashion' },
+  { slug: 'roots', name: 'Roots', emoji: '🍁', logo: '/images/stores/roots.png', category: 'Fashion' },
+  { slug: 'aritzia', name: 'Aritzia', emoji: '👗', logo: '/images/stores/aritzia.png', category: 'Fashion' },
+  { slug: 'ardene', name: 'Ardene', emoji: '💃', logo: null, category: 'Fashion' },
+  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜', logo: null, category: 'Fashion' },
+  { slug: 'marks', name: "Mark's", emoji: '👔', logo: '/images/stores/marks.png', category: 'Fashion' },
+  { slug: 'sport-chek', name: 'Sport Chek', emoji: '⚽', logo: '/images/stores/sport-chek.png', category: 'Fashion' },
 
   // Office & Books
-  { slug: 'staples', name: 'Staples', emoji: '📎', category: 'Office' },
-  { slug: 'indigo', name: 'Indigo', emoji: '📚', category: 'Office' },
+  { slug: 'staples', name: 'Staples', emoji: '📎', logo: '/images/stores/staples.png', category: 'Office' },
+  { slug: 'indigo', name: 'Indigo', emoji: '📚', logo: '/images/stores/indigo.png', category: 'Office' },
 
   // Specialty
-  { slug: 'petsmart', name: 'PetSmart', emoji: '🐕', category: 'Specialty' },
-  { slug: 'pet-valu', name: 'Pet Valu', emoji: '🐱', category: 'Specialty' },
-  { slug: 'toys-r-us', name: 'Toys R Us', emoji: '🧸', category: 'Specialty' },
-  { slug: 'princess-auto', name: 'Princess Auto', emoji: '🔩', category: 'Specialty' },
-  { slug: 'mec', name: 'MEC', emoji: '🏔️', category: 'Specialty' },
-  { slug: 'atmosphere', name: 'Atmosphere', emoji: '⛺', category: 'Specialty' },
+  { slug: 'petsmart', name: 'PetSmart', emoji: '🐕', logo: '/images/stores/petsmart.png', category: 'Specialty' },
+  { slug: 'pet-valu', name: 'Pet Valu', emoji: '🐱', logo: null, category: 'Specialty' },
+  { slug: 'toys-r-us', name: 'Toys R Us', emoji: '🧸', logo: '/images/stores/toys-r-us.png', category: 'Specialty' },
+  { slug: 'princess-auto', name: 'Princess Auto', emoji: '🔩', logo: null, category: 'Specialty' },
+  { slug: 'mec', name: 'MEC', emoji: '🏔️', logo: '/images/stores/mec.png', category: 'Specialty' },
+  { slug: 'atmosphere', name: 'Atmosphere', emoji: '⛺', logo: null, category: 'Specialty' },
 ]
 
 // Group stores by category
@@ -140,9 +142,21 @@ export default async function StoresPage() {
                     group
                   "
                 >
-                  <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">
-                    {store.emoji}
-                  </span>
+                  {/* Logo or emoji fallback */}
+                  <div className="w-12 h-12 mb-2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {store.logo ? (
+                      <Image
+                        src={store.logo}
+                        alt={store.name}
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                        unoptimized
+                      />
+                    ) : (
+                      <span className="text-3xl">{store.emoji}</span>
+                    )}
+                  </div>
                   <span className="font-semibold text-gray-900 text-center text-sm">
                     {store.name}
                   </span>

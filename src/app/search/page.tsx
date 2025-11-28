@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { searchDeals } from '@/lib/db'
 import { searchFlippDeals } from '@/lib/flipp'
 import { AFFILIATE_BRANDS, hasStoreAffiliate, getStoreAffiliateLink } from '@/lib/affiliates'
@@ -25,35 +26,35 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   }
 }
 
-// All stores for store search
+// All stores for store search with logos
 const ALL_STORES = [
-  { slug: 'amazon', name: 'Amazon.ca', emoji: '📦' },
-  { slug: 'walmart', name: 'Walmart', emoji: '🛒' },
-  { slug: 'costco', name: 'Costco', emoji: '🏬' },
-  { slug: 'best-buy', name: 'Best Buy', emoji: '💻' },
-  { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧' },
-  { slug: 'shoppers', name: 'Shoppers Drug Mart', emoji: '💊' },
-  { slug: 'loblaws', name: 'Loblaws', emoji: '🍎' },
-  { slug: 'no-frills', name: 'No Frills', emoji: '🛒' },
-  { slug: 'superstore', name: 'Real Canadian Superstore', emoji: '🏪' },
-  { slug: 'home-depot', name: 'Home Depot', emoji: '🏠' },
-  { slug: 'ikea', name: 'IKEA', emoji: '🪑' },
-  { slug: 'the-brick', name: 'The Brick', emoji: '🛋️' },
-  { slug: 'leons', name: "Leon's", emoji: '🛏️' },
-  { slug: 'staples', name: 'Staples', emoji: '📎' },
-  { slug: 'petsmart', name: 'PetSmart', emoji: '🐕' },
-  { slug: 'sport-chek', name: 'Sport Chek', emoji: '⚽' },
-  { slug: 'marks', name: "Mark's", emoji: '👔' },
-  { slug: 'the-bay', name: "Hudson's Bay", emoji: '🏬' },
-  { slug: 'winners', name: 'Winners', emoji: '🏷️' },
-  { slug: 'lululemon', name: 'Lululemon', emoji: '🧘' },
-  { slug: 'roots', name: 'Roots', emoji: '🍁' },
-  { slug: 'aritzia', name: 'Aritzia', emoji: '👗' },
-  { slug: 'sephora', name: 'Sephora', emoji: '💄' },
-  { slug: 'ardene', name: 'Ardene', emoji: '💃' },
-  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜' },
-  { slug: 'london-drugs', name: 'London Drugs', emoji: '💊' },
-  { slug: 'giant-tiger', name: 'Giant Tiger', emoji: '🐯' },
+  { slug: 'amazon', name: 'Amazon.ca', emoji: '📦', logo: '/images/stores/amazon.png' },
+  { slug: 'walmart', name: 'Walmart', emoji: '🛒', logo: '/images/stores/walmart.png' },
+  { slug: 'costco', name: 'Costco', emoji: '🏬', logo: '/images/stores/costco.png' },
+  { slug: 'best-buy', name: 'Best Buy', emoji: '💻', logo: '/images/stores/best-buy.png' },
+  { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧', logo: '/images/stores/canadian-tire.png' },
+  { slug: 'shoppers', name: 'Shoppers Drug Mart', emoji: '💊', logo: '/images/stores/shoppers.png' },
+  { slug: 'loblaws', name: 'Loblaws', emoji: '🍎', logo: '/images/stores/loblaws.png' },
+  { slug: 'no-frills', name: 'No Frills', emoji: '🛒', logo: '/images/stores/no-frills.png' },
+  { slug: 'superstore', name: 'Real Canadian Superstore', emoji: '🏪', logo: '/images/stores/superstore.png' },
+  { slug: 'home-depot', name: 'Home Depot', emoji: '🏠', logo: '/images/stores/home-depot.png' },
+  { slug: 'ikea', name: 'IKEA', emoji: '🪑', logo: '/images/stores/ikea.png' },
+  { slug: 'the-brick', name: 'The Brick', emoji: '🛋️', logo: '/images/stores/the-brick.png' },
+  { slug: 'leons', name: "Leon's", emoji: '🛏️', logo: '/images/stores/leons.png' },
+  { slug: 'staples', name: 'Staples', emoji: '📎', logo: '/images/stores/staples.png' },
+  { slug: 'petsmart', name: 'PetSmart', emoji: '🐕', logo: '/images/stores/petsmart.png' },
+  { slug: 'sport-chek', name: 'Sport Chek', emoji: '⚽', logo: '/images/stores/sport-chek.png' },
+  { slug: 'marks', name: "Mark's", emoji: '👔', logo: '/images/stores/marks.png' },
+  { slug: 'the-bay', name: "Hudson's Bay", emoji: '🏬', logo: '/images/stores/the-bay.png' },
+  { slug: 'winners', name: 'Winners', emoji: '🏷️', logo: '/images/stores/winners.png' },
+  { slug: 'lululemon', name: 'Lululemon', emoji: '🧘', logo: '/images/stores/lululemon.png' },
+  { slug: 'roots', name: 'Roots', emoji: '🍁', logo: '/images/stores/roots.png' },
+  { slug: 'aritzia', name: 'Aritzia', emoji: '👗', logo: '/images/stores/aritzia.png' },
+  { slug: 'sephora', name: 'Sephora', emoji: '💄', logo: '/images/stores/sephora.png' },
+  { slug: 'ardene', name: 'Ardene', emoji: '💃', logo: null },
+  { slug: 'michael-kors', name: 'Michael Kors', emoji: '👜', logo: null },
+  { slug: 'london-drugs', name: 'London Drugs', emoji: '💊', logo: '/images/stores/london-drugs.png' },
+  { slug: 'giant-tiger', name: 'Giant Tiger', emoji: '🐯', logo: '/images/stores/giant-tiger.png' },
 ]
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
@@ -172,9 +173,22 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     <Link
                       key={store.slug}
                       href={`/stores/${store.slug}`}
-                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all"
+                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all group"
                     >
-                      <span className="text-3xl mb-2">{store.emoji}</span>
+                      <div className="w-10 h-10 mb-2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        {store.logo ? (
+                          <Image
+                            src={store.logo}
+                            alt={store.name}
+                            width={40}
+                            height={40}
+                            className="object-contain"
+                            unoptimized
+                          />
+                        ) : (
+                          <span className="text-3xl">{store.emoji}</span>
+                        )}
+                      </div>
                       <span className="font-semibold text-gray-900 text-sm text-center">
                         {store.name}
                       </span>
