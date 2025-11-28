@@ -151,12 +151,12 @@ export default async function HomePage() {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
               {[
-                { slug: 'amazon', name: 'Amazon.ca', emoji: '📦' },
-                { slug: 'walmart', name: 'Walmart', emoji: '🛒' },
-                { slug: 'costco', name: 'Costco', emoji: '🏬' },
-                { slug: 'best-buy', name: 'Best Buy', emoji: '💻' },
-                { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧' },
-                { slug: 'shoppers', name: 'Shoppers', emoji: '💊' },
+                { slug: 'amazon', name: 'Amazon.ca' },
+                { slug: 'walmart', name: 'Walmart' },
+                { slug: 'costco', name: 'Costco' },
+                { slug: 'best-buy', name: 'Best Buy' },
+                { slug: 'canadian-tire', name: 'Canadian Tire' },
+                { slug: 'shoppers', name: 'Shoppers' },
               ].map(store => (
                 <Link
                   key={store.slug}
@@ -170,9 +170,11 @@ export default async function HomePage() {
                     group
                   "
                 >
-                  <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">
-                    {store.emoji}
-                  </span>
+                  <img
+                    src={`/images/stores/${store.slug}.png`}
+                    alt={store.name}
+                    className="w-12 h-12 object-contain mb-2 group-hover:scale-110 transition-transform"
+                  />
                   <span className="font-semibold text-gray-900 text-sm text-center">
                     {store.name}
                   </span>
