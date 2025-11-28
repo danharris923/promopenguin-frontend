@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { searchDeals } from '@/lib/db'
+import { StoreLogo } from '@/components/StoreLogo'
 import { searchFlippDeals } from '@/lib/flipp'
 import { AFFILIATE_BRANDS, hasStoreAffiliate, getStoreAffiliateLink } from '@/lib/affiliates'
 import { Header } from '@/components/Header'
@@ -176,18 +176,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       className="flex flex-col items-center justify-center p-4 rounded-xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-md transition-all group"
                     >
                       <div className="w-10 h-10 mb-2 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        {store.logo ? (
-                          <Image
-                            src={store.logo}
-                            alt={store.name}
-                            width={40}
-                            height={40}
-                            className="object-contain"
-                            unoptimized
-                          />
-                        ) : (
-                          <span className="text-3xl">{store.emoji}</span>
-                        )}
+                        <StoreLogo
+                          src={store.logo}
+                          alt={store.name}
+                          emoji={store.emoji}
+                          size={40}
+                        />
                       </div>
                       <span className="font-semibold text-gray-900 text-sm text-center">
                         {store.name}

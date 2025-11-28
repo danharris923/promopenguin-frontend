@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 
 import { getStoreStats } from '@/lib/db'
+import { StoreLogo } from '@/components/StoreLogo'
 import { hasFlippSupport } from '@/lib/flipp'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -144,18 +144,12 @@ export default async function StoresPage() {
                 >
                   {/* Logo or emoji fallback */}
                   <div className="w-12 h-12 mb-2 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    {store.logo ? (
-                      <Image
-                        src={store.logo}
-                        alt={store.name}
-                        width={48}
-                        height={48}
-                        className="object-contain"
-                        unoptimized
-                      />
-                    ) : (
-                      <span className="text-3xl">{store.emoji}</span>
-                    )}
+                    <StoreLogo
+                      src={store.logo}
+                      alt={store.name}
+                      emoji={store.emoji}
+                      size={48}
+                    />
                   </div>
                   <span className="font-semibold text-gray-900 text-center text-sm">
                     {store.name}
