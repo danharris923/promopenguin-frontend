@@ -139,28 +139,19 @@ export function DealCard({
             {displayTitle}
           </h3>
 
-          {/* Price - don't show "Check Price" for Amazon cards with button */}
-          <div className="flex items-baseline gap-2">
-            {hasPriceData ? (
-              <>
-                <span className="text-xl font-bold text-emerald-600">
-                  {"$" + formatPrice(priceNum)}
+          {/* Price - only show if we have real data */}
+          {hasPriceData && (
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl font-bold text-emerald-600">
+                {"$" + formatPrice(priceNum)}
+              </span>
+              {originalPriceNum !== null && originalPriceNum > priceNum && (
+                <span className="text-sm text-gray-400 line-through">
+                  {"$" + formatPrice(originalPriceNum)}
                 </span>
-                {originalPriceNum !== null && originalPriceNum > priceNum && (
-                  <span className="text-sm text-gray-400 line-through">
-                    {"$" + formatPrice(originalPriceNum)}
-                  </span>
-                )}
-              </>
-            ) : (
-              // Only show "Check Price" for non-Amazon deals
-              !isAmazon && (
-                <span className="text-lg font-semibold text-orange-500">
-                  Check Price
-                </span>
-              )
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
           {/* Savings - only show if actually saving money */}
           {hasSavings && (
@@ -171,9 +162,10 @@ export function DealCard({
         </div>
       </Link>
 
-      {/* Amazon Direct Buy Button - separate link, goes straight to Amazon */}
-      {isAmazon && hasDirectAffiliateLink && (
-        <div className="px-4 pb-4">
+      {/* CTA Button - Always show one */}
+      <div className="px-4 pb-4">
+        {isAmazon && hasDirectAffiliateLink ? (
+          // Amazon Direct Buy Button
           <a
             href={affiliateUrl}
             target="_blank"
@@ -190,12 +182,8 @@ export function DealCard({
           >
             {AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]}
           </a>
-        </div>
-      )}
-
-      {/* Store Search Button - for non-Amazon deals with detected store */}
-      {!isAmazon && storeSearchUrl && displayStore && (
-        <div className="px-4 pb-4">
+        ) : storeSearchUrl && displayStore && displayStore !== 'Unknown' ? (
+          // Store Search Button - for deals with detected store
           <a
             href={storeSearchUrl}
             target="_blank"
@@ -211,8 +199,40 @@ export function DealCard({
           >
             Shop at {displayStore} →
           </a>
-        </div>
-      )}
+        ) : hasDirectAffiliateLink ? (
+          // Generic affiliate link button
+          <a
+            href={affiliateUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              block w-full text-center
+              bg-slate-800 hover:bg-slate-700
+              text-white font-bold
+              py-2 px-3 rounded-lg
+              text-sm
+              transition-colors
+            "
+          >
+            View Deal →
+          </a>
+        ) : (
+          // Fallback: View deal on detail page
+          <Link
+            href={`/deals/${slug}`}
+            className="
+              block w-full text-center
+              bg-slate-800 hover:bg-slate-700
+              text-white font-bold
+              py-2 px-3 rounded-lg
+              text-sm
+              transition-colors
+            "
+          >
+            View Deal →
+          </Link>
+        )}
+      </div>
     </div>
   )
 }
