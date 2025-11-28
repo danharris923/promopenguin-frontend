@@ -18,7 +18,7 @@ const AMAZON_CTA_VARIANTS = [
   'Shop Now',
 ]
 
-// Featured badge variants - clean, professional
+// Featured badge variants - clean, professional (for featured=true deals)
 const BADGE_VARIANTS = [
   { text: 'HOT', bg: 'bg-orange-500', textColor: 'text-white' },
   { text: 'Trending', bg: 'bg-slate-700', textColor: 'text-white' },
@@ -28,16 +28,34 @@ const BADGE_VARIANTS = [
   { text: 'Best Deal', bg: 'bg-emerald-600', textColor: 'text-white' },
 ]
 
+// Affiliate badge variants - shown sparingly on deals with affiliate links
+const AFFILIATE_BADGE_VARIANTS = [
+  { text: 'New Price', bg: 'bg-emerald-600', textColor: 'text-white' },
+  { text: 'Live Now', bg: 'bg-blue-600', textColor: 'text-white' },
+  { text: 'Today Only', bg: 'bg-red-500', textColor: 'text-white' },
+  { text: 'Sale', bg: 'bg-orange-500', textColor: 'text-white' },
+  { text: 'Deal', bg: 'bg-purple-600', textColor: 'text-white' },
+  { text: 'Save Now', bg: 'bg-emerald-500', textColor: 'text-white' },
+  { text: 'Price Drop', bg: 'bg-cyan-600', textColor: 'text-white' },
+  { text: 'Hot Deal', bg: 'bg-red-600', textColor: 'text-white' },
+]
+
 // Get a consistent but varied value based on id
 function getHashedIndex(id: string, arrayLength: number): number {
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
   return hash % arrayLength
 }
 
-// Determine if this deal should show a badge (roughly 1/3)
+// Determine if this deal should show a featured badge (roughly 1/3)
 function shouldShowBadge(id: string): boolean {
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
   return hash % 3 === 0
+}
+
+// Determine if this deal should show an affiliate badge (roughly 40%)
+function shouldShowAffiliateBadge(id: string): boolean {
+  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return hash % 5 < 2  // 2 out of 5 = 40%
 }
 
 export function DealCard({
@@ -119,19 +137,22 @@ export function DealCard({
             </div>
           )}
 
-          {/* New Price Badge - green, show when deal has affiliate link but no featured badge */}
-          {!badge && hasDirectAffiliateLink && (
-            <div className="absolute top-2 left-2 z-10">
-              <span className="
-                bg-emerald-600 text-white
-                px-2 py-1 rounded-lg
-                font-bold text-xs
-                shadow-sm
-              ">
-                New Price
-              </span>
-            </div>
-          )}
+          {/* Affiliate Badge - varied colors/text, shown sparingly (~40%) when deal has affiliate link but no featured badge */}
+          {!badge && hasDirectAffiliateLink && shouldShowAffiliateBadge(id) && (() => {
+            const affiliateBadge = AFFILIATE_BADGE_VARIANTS[getHashedIndex(id, AFFILIATE_BADGE_VARIANTS.length)]
+            return (
+              <div className="absolute top-2 left-2 z-10">
+                <span className={`
+                  ${affiliateBadge.bg} ${affiliateBadge.textColor}
+                  px-2 py-1 rounded-lg
+                  font-bold text-xs
+                  shadow-sm
+                `}>
+                  {affiliateBadge.text}
+                </span>
+              </div>
+            )
+          })()}
 
           {/* Image */}
           <Image
@@ -181,9 +202,10 @@ export function DealCard({
       </Link>
 
       {/* CTA Button - Always show one */}
+      {/* Priority: affiliate links (orange with shimmer) > store search (slate) > fallback */}
       <div className="px-4 pb-4">
-        {isAmazon && hasDirectAffiliateLink ? (
-          // Amazon Direct Buy Button - dark orange with shimmer
+        {hasDirectAffiliateLink ? (
+          // Affiliate link button - ALWAYS orange with shimmer (Amazon or any other)
           <a
             href={cleanedAffiliateUrl!}
             target="_blank"
@@ -203,10 +225,15 @@ export function DealCard({
               before:transition-transform before:duration-700
             "
           >
-            {AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]}
+            {isAmazon
+              ? AMAZON_CTA_VARIANTS[getHashedIndex(id, AMAZON_CTA_VARIANTS.length)]
+              : displayStore && displayStore !== 'Unknown'
+                ? `Shop at ${displayStore} →`
+                : 'View Deal →'
+            }
           </a>
         ) : storeSearchUrl && displayStore && displayStore !== 'Unknown' ? (
-          // Store Search Button - dark orange (no shimmer - not affiliate)
+          // Store Search Button - slate (no shimmer - NOT an affiliate link)
           <a
             href={storeSearchUrl}
             target="_blank"
@@ -221,28 +248,6 @@ export function DealCard({
             "
           >
             Shop at {displayStore} →
-          </a>
-        ) : hasDirectAffiliateLink ? (
-          // Generic affiliate link button - dark orange with shimmer
-          <a
-            href={cleanedAffiliateUrl!}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              relative overflow-hidden
-              block w-full text-center
-              bg-orange-600 hover:bg-orange-700
-              text-white font-bold
-              py-2 px-3 rounded-lg
-              text-sm
-              transition-colors
-              before:absolute before:inset-0
-              before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
-              before:translate-x-[-200%] hover:before:translate-x-[200%]
-              before:transition-transform before:duration-700
-            "
-          >
-            View Deal →
           </a>
         ) : (
           // Fallback: View deal on detail page - slate (no shimmer - not affiliate)

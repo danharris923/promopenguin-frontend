@@ -161,17 +161,28 @@ export function AffiliateDealCard({ brand, seed }: AffiliateDealCardProps) {
           {brand.tagline}
         </h3>
 
-        {/* CTA instead of price */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-orange-500">
-            Shop Now →
-          </span>
-        </div>
-
         {/* Description */}
-        <div className="text-sm text-gray-500 mt-1 line-clamp-1">
+        <div className="text-sm text-gray-500 mb-3 line-clamp-1">
           {brand.description}
         </div>
+
+        {/* CTA Button - matches DealCard affiliate button style */}
+        <span className="
+          relative overflow-hidden
+          block w-full text-center
+          bg-orange-600 group-hover:bg-orange-700
+          text-white font-bold
+          py-2 px-3 rounded-lg
+          text-sm
+          transition-colors
+          shadow-sm
+          before:absolute before:inset-0
+          before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+          before:translate-x-[-200%] group-hover:before:translate-x-[200%]
+          before:transition-transform before:duration-700
+        ">
+          Shop {brand.name} →
+        </span>
       </div>
     </a>
   )
