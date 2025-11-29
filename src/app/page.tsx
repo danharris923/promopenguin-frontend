@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getFeaturedDeals, getLatestDeals, getStoreStats, getDealCount } from '@/lib/db'
+import { getFeaturedDeals, getShuffledDeals, getStoreStats, getDealCount } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
@@ -16,7 +16,7 @@ export const revalidate = 900
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats, totalDeals] = await Promise.all([
     getFeaturedDeals(12),
-    getLatestDeals(24, false), // Don't shuffle initial load - we want consistent order for pagination
+    getShuffledDeals(24, 0), // Shuffled from full pool - offset 0 for initial load
     getStoreStats(),
     getDealCount(),
   ])

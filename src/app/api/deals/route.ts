@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDeals } from '@/lib/db'
+import { getShuffledDeals } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -7,12 +7,8 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 50) // Max 50
 
   try {
-    const deals = await getDeals({
-      limit,
-      offset,
-      orderBy: 'date_added',
-      orderDir: 'DESC'
-    })
+    // Use shuffled deals for consistent pagination across the full pool
+    const deals = await getShuffledDeals(limit, offset)
 
     return NextResponse.json(deals)
   } catch (error) {

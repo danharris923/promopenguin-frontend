@@ -154,16 +154,24 @@ export async function getFeaturedDeals(limit: number = 12, shuffle: boolean = tr
   }
 }
 
-export async function getLatestDeals(limit: number = 20, shuffle: boolean = true): Promise<Deal[]> {
+export async function getLatestDeals(limit: number = 20, shuffle: boolean = true, excludeIds: string[] = []): Promise<Deal[]> {
   try {
-    // Fetch more than needed so shuffle has variety
-    const deals = await query<Deal>(
-      'SELECT * FROM deals WHERE is_active = TRUE ORDER BY date_added DESC LIMIT $1',
-      [Math.min(limit * 3, 150)]
-    )
+    // Fetch ALL active deals for proper shuffling across the full pool
+    let queryText = 'SELECT * FROM deals WHERE is_active = TRUE'
+    const values: unknown[] = []
 
-    if (shuffle && deals.length > limit) {
-      // Shuffle and take limit
+    // Exclude specific IDs (e.g., featured deals already shown)
+    if (excludeIds.length > 0) {
+      queryText += ` AND id NOT IN (${excludeIds.map((_, i) => `$${i + 1}`).join(', ')})`
+      values.push(...excludeIds)
+    }
+
+    queryText += ' ORDER BY date_added DESC'
+
+    const deals = await query<Deal>(queryText, values)
+
+    if (shuffle && deals.length > 0) {
+      // Shuffle ALL deals, then slice - ensures variety across the full 160+ deals
       const shuffled = seededShuffle(deals, getTimeSeed())
       return shuffled.slice(0, limit)
     }
@@ -171,6 +179,28 @@ export async function getLatestDeals(limit: number = 20, shuffle: boolean = true
     return deals.slice(0, limit)
   } catch (error) {
     console.error('Error fetching latest deals:', error)
+    return []
+  }
+}
+
+// Get shuffled deals with offset support for pagination
+// Uses seeded shuffle so "load more" continues from where initial load left off
+export async function getShuffledDeals(limit: number = 24, offset: number = 0): Promise<Deal[]> {
+  try {
+    // Fetch ALL active deals
+    const deals = await query<Deal>(
+      'SELECT * FROM deals WHERE is_active = TRUE ORDER BY date_added DESC'
+    )
+
+    if (deals.length === 0) return []
+
+    // Shuffle ALL deals with time-based seed
+    const shuffled = seededShuffle(deals, getTimeSeed())
+
+    // Return the requested slice
+    return shuffled.slice(offset, offset + limit)
+  } catch (error) {
+    console.error('Error fetching shuffled deals:', error)
     return []
   }
 }
