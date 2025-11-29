@@ -219,6 +219,19 @@ const RETAILER_SEARCH_URLS: Record<string, string> = {
   'lee-valley-tools': 'https://www.leevalley.com/en-ca/search#q=',
 }
 
+
+// Cookie consent bypass - append after search query for sites with known popups
+const COOKIE_BYPASS_PARAMS: Record<string, string> = {
+  'metro': '&cookieConsent=accepted',
+  'sobeys': '&privacy_policy_accepted=true',
+  'safeway': '&privacy_policy_accepted=true',
+  'ikea': '&irclickid=bypass',
+  'the-bay': '&site_preference=desktop',
+  'hudsons-bay': '&site_preference=desktop',
+  'sport-chek': '&consent=1',
+  'marks': '&consent=1',
+}
+
 /**
  * Build ShopStyle link with search query
  */
@@ -271,7 +284,8 @@ export function getAffiliateSearchUrl(storeSlug: string | null, productTitle: st
   // Fall back to direct retailer search (non-affiliate)
   const retailerSearchUrl = RETAILER_SEARCH_URLS[storeSlug]
   if (retailerSearchUrl) {
-    return `${retailerSearchUrl}${encodeURIComponent(productTitle)}`
+    const bypassParam = COOKIE_BYPASS_PARAMS[storeSlug] || ''
+    return `${retailerSearchUrl}${encodeURIComponent(productTitle)}${bypassParam}`
   }
 
   return null
