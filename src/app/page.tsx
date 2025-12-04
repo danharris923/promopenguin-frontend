@@ -42,7 +42,7 @@ export default async function HomePage() {
             <div className="text-center max-w-3xl mx-auto">
               <h1 className="text-3xl md:text-5xl font-black mb-3">
                 Best Canadian Deals
-                <span className="block text-orange-400 mt-1">Cyber Monday</span>
+                <span className="block text-orange-400 mt-1">PromoPenguin</span>
               </h1>
               <p className="text-base md:text-lg text-slate-300 mb-6">
                 AI-powered deal aggregator scanning 50+ Canadian retailers every hour.
