@@ -34,6 +34,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-CA">
+      <head>
+        <script defer src="https://analytics.promopenguin.ca/script.js" data-website-id="715630ed-8d80-4747-a258-106d128f42a2"></script>
+      </head>
       <body className={inter.className}>
         {children}
         <Analytics />
