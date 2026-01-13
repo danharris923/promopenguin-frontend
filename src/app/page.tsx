@@ -4,6 +4,9 @@ import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { FashionCarousel } from '@/components/FashionCarousel'
+import { FASHION_BRANDS, FASHION_IMAGES_BASE_URL, FASHION_SEARCH_URLS } from '@/lib/fashion-brands'
+import { IMAGE_MANIFEST } from '@/lib/fashion-deals'
 
 // Revalidate every 15 minutes
 export const revalidate = 900
@@ -136,42 +139,26 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Store Shortcuts */}
-        <section className="py-12">
+        {/* Fashion Brands Carousel */}
+        <section className="py-8 bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              🏪 Shop by Store
+              Shop Top Brands
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              {[
-                { slug: 'amazon', name: 'Amazon.ca', emoji: '📦' },
-                { slug: 'walmart', name: 'Walmart', emoji: '🛒' },
-                { slug: 'costco', name: 'Costco', emoji: '🏬' },
-                { slug: 'best-buy', name: 'Best Buy', emoji: '💻' },
-                { slug: 'canadian-tire', name: 'Canadian Tire', emoji: '🔧' },
-                { slug: 'shoppers', name: 'Shoppers', emoji: '💊' },
-              ].map(store => (
-                <Link
-                  key={store.slug}
-                  href={`/stores/${store.slug}`}
-                  className="
-                    flex flex-col items-center justify-center
-                    p-4 rounded-xl
-                    bg-white border border-gray-200
-                    hover:border-orange-300 hover:shadow-md
-                    transition-all
-                    group
-                  "
-                >
-                  <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">
-                    {store.emoji}
-                  </span>
-                  <span className="font-semibold text-gray-900 text-sm text-center">
-                    {store.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
+            <FashionCarousel
+              cards={FASHION_BRANDS.map((brand, brandIdx) => {
+                const images = IMAGE_MANIFEST[brand.folder] || []
+                const img = images[brandIdx % images.length] || images[0]
+                return {
+                  slug: brand.slug,
+                  name: brand.name,
+                  title: brand.cardTitles[0],
+                  imageUrl: `${FASHION_IMAGES_BASE_URL}/${brand.folder}/${img}`,
+                  affiliateUrl: FASHION_SEARCH_URLS[brand.slug] || `/stores/${brand.slug}`,
+                }
+              })}
+              autoPlayInterval={60000}
+            />
           </div>
         </section>
 
