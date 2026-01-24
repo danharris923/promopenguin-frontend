@@ -95,7 +95,7 @@ export default async function DealPage({ params }: PageProps) {
   const breadcrumbSchema = generateBreadcrumbSchema(deal)
   const faqSchema = generateFAQSchema(deal)
 
-  const imageUrl = deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'
+  const imageUrl = deal.image_blob_url || deal.image_url || '/placeholder-deal.svg'
   const storeName = formatStoreName(deal.store)
 
   return (

@@ -1,5 +1,8 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
@@ -15,9 +18,19 @@ export function DealCard({
   affiliateUrl,
   featured,
 }: DealCardProps) {
+  const [imgSrc, setImgSrc] = useState(imageUrl || '/placeholder-deal.svg')
+  const [imgError, setImgError] = useState(false)
+
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
+
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true)
+      setImgSrc('/placeholder-deal.svg')
+    }
+  }
 
   return (
     <Link
@@ -60,11 +73,13 @@ export function DealCard({
 
         {/* Image */}
         <Image
-          src={imageUrl || '/placeholder-deal.jpg'}
+          src={imgSrc}
           alt={title}
           fill
           className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          onError={handleImageError}
+          unoptimized={imgError}
         />
       </div>
 

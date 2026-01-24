@@ -152,7 +152,7 @@ export default async function StorePage({ params }: PageProps) {
                 id={deal.id}
                 title={deal.title}
                 slug={deal.slug}
-                imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.jpg'}
+                imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.svg'}
                 price={deal.price}
                 originalPrice={deal.original_price}
                 discountPercent={deal.discount_percent}
