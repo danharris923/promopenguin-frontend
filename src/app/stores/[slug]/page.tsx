@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getDealsByStore, getStores } from '@/lib/db'
+import { getDealsByStore } from '@/lib/db'
 import { formatStoreName, getStoreDescription } from '@/lib/content-generator'
 import { generateItemListSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
@@ -12,15 +12,6 @@ interface PageProps {
 
 // Revalidate every 15 minutes for fresh data
 export const revalidate = 900
-
-// Generate static pages for all stores
-export async function generateStaticParams() {
-  const stores = await getStores()
-  return stores.map(store => ({ slug: store.slug }))
-}
-
-// Allow dynamic params (new stores added by scraper)
-export const dynamicParams = true
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

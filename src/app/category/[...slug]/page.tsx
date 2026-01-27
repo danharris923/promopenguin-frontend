@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 
-import { getDealsByCategory, getCategories } from '@/lib/db'
+import { getDealsByCategory } from '@/lib/db'
 import { formatCategoryName } from '@/lib/content-generator'
 import { generateItemListSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
@@ -15,12 +15,6 @@ export const revalidate = 900
 
 // Allow dynamic params
 export const dynamicParams = true
-
-// Generate static pages for all categories
-export async function generateStaticParams() {
-  const categories = await getCategories()
-  return categories.map(cat => ({ slug: [cat.slug] }))
-}
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

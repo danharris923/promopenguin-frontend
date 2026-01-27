@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-import { getDealBySlug, getRelatedDeals, getAllDealSlugs } from '@/lib/db'
+import { getDealBySlug, getRelatedDeals } from '@/lib/db'
 import {
   generateDealDescription,
   generateMetaDescription,
@@ -35,12 +35,6 @@ import { StickyMobileCTA } from '@/components/deal/StickyMobileCTA'
 
 interface PageProps {
   params: { slug: string }
-}
-
-// Generate static pages for all deals
-export async function generateStaticParams() {
-  const slugs = await getAllDealSlugs()
-  return slugs.map(slug => ({ slug }))
 }
 
 // Generate metadata
