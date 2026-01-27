@@ -219,27 +219,27 @@ export default async function DealPage({ params }: PageProps) {
                 <TrustBadges storeName={storeName} />
               </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-xl p-4">
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {deal.discount_percent || 0}%
-                  </div>
-                  <div className="text-xs text-gray-500">Discount</div>
+              {/* Quick Stats - only show stats with real data */}
+              {(deal.discount_percent && deal.discount_percent > 0) || calculateSavings(deal.original_price, deal.price) ? (
+                <div className="flex gap-4 text-center bg-gray-50 rounded-xl p-4">
+                  {deal.discount_percent && deal.discount_percent > 0 && (
+                    <div className="flex-1">
+                      <div className="text-2xl font-bold text-green-600">
+                        {deal.discount_percent}%
+                      </div>
+                      <div className="text-xs text-gray-500">Discount</div>
+                    </div>
+                  )}
+                  {calculateSavings(deal.original_price, deal.price) && (
+                    <div className="flex-1">
+                      <div className="text-2xl font-bold text-gray-900">
+                        ${calculateSavings(deal.original_price, deal.price)?.split('.')[0]}
+                      </div>
+                      <div className="text-xs text-gray-500">You Save</div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">
-                    ${calculateSavings(deal.original_price, deal.price)?.split('.')[0] || '0'}
-                  </div>
-                  <div className="text-xs text-gray-500">You Save</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-orange-600">
-                    {urgencyData.purchaseCount}
-                  </div>
-                  <div className="text-xs text-gray-500">Sold Today</div>
-                </div>
-              </div>
+              ) : null}
             </div>
           </div>
 

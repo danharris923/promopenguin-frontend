@@ -149,7 +149,9 @@ export function generateDealDescription(deal: Deal): string {
     .replace(/{original_price}/g, formatPrice(deal.original_price) || 'regular price')
     .replace(/{current_price}/g, formatPrice(deal.price) || 'sale price')
     .replace(/{savings}/g, savings)
-    .replace(/{percent}/g, deal.discount_percent?.toString() || '??')
+    .replace(/ \({percent}% off\)/g, deal.discount_percent && deal.discount_percent > 0 ? ` (${deal.discount_percent}% off)` : '')
+    .replace(/{percent}% off/g, deal.discount_percent && deal.discount_percent > 0 ? `${deal.discount_percent}% off` : 'on sale')
+    .replace(/{percent}/g, deal.discount_percent && deal.discount_percent > 0 ? deal.discount_percent.toString() : '')
     .replace(/{benefits}/g, benefit)
     .replace(/{urgency}/g, urgency)
 
@@ -163,7 +165,9 @@ export function generateMetaDescription(deal: Deal): string {
   const savingsAmount = calculateSavings(deal.original_price, deal.price)
   const savings = savingsAmount
     ? `Save $${savingsAmount}`
-    : `${deal.discount_percent}% off`
+    : deal.discount_percent && deal.discount_percent > 0
+      ? `${deal.discount_percent}% off`
+      : 'on sale'
 
   return `${deal.title} - ${savings} at ${formatStoreName(deal.store)}. Shop this Canadian deal now before it's gone.`
 }
@@ -231,9 +235,11 @@ export function generateFAQ(deal: Deal): { question: string; answer: string }[] 
     },
     {
       question: `How much can I save on this deal?`,
-      answer: deal.original_price && deal.price
-        ? `You save $${calculateSavings(deal.original_price, deal.price)} (${deal.discount_percent}% off) compared to the regular price of $${formatPrice(deal.original_price)}.`
-        : `This deal offers ${deal.discount_percent}% off the regular price.`,
+      answer: deal.original_price && deal.price && calculateSavings(deal.original_price, deal.price)
+        ? `You save $${calculateSavings(deal.original_price, deal.price)}${deal.discount_percent && deal.discount_percent > 0 ? ` (${deal.discount_percent}% off)` : ''} compared to the regular price of $${formatPrice(deal.original_price)}.`
+        : deal.discount_percent && deal.discount_percent > 0
+          ? `This deal offers ${deal.discount_percent}% off the regular price.`
+          : `Check the retailer for current pricing details.`,
     },
     {
       question: `How long will this deal last?`,
