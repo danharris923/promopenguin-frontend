@@ -5,6 +5,13 @@ import { useState } from 'react'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
+// Helper to generate store logo path from store name
+const getStoreLogoPath = (store: string | null | undefined): string | null => {
+  if (!store) return null
+  const slug = store.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  return `/images/stores/${slug}.png`
+}
+
 export function DealCard({
   id,
   title,
@@ -17,15 +24,31 @@ export function DealCard({
   affiliateUrl,
   featured,
 }: DealCardProps) {
-  const [imgSrc, setImgSrc] = useState(imageUrl || '/placeholder-deal.svg')
+  // Get store logo path for fallback
+  const storeLogoFallback = getStoreLogoPath(store)
+
+  // Determine initial image: use deal image, or store logo if no deal image
+  const getInitialImage = () => {
+    if (imageUrl) return imageUrl
+    if (storeLogoFallback) return storeLogoFallback
+    return '/placeholder-deal.svg'
+  }
+
+  const [imgSrc, setImgSrc] = useState(getInitialImage())
   const [imgError, setImgError] = useState(false)
+  const [triedStoreLogo, setTriedStoreLogo] = useState(!imageUrl)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
   const handleImageError = () => {
-    if (!imgError) {
+    if (!imgError && !triedStoreLogo && storeLogoFallback) {
+      // First error: try store logo
+      setTriedStoreLogo(true)
+      setImgSrc(storeLogoFallback)
+    } else if (!imgError) {
+      // Final fallback: placeholder
       setImgError(true)
       setImgSrc('/placeholder-deal.svg')
     }
