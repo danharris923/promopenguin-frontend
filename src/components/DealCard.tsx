@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { DealCardProps } from '@/types/deal'
@@ -72,14 +71,13 @@ export function DealCard({
         )}
 
         {/* Image */}
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={imgSrc}
           alt={title}
-          fill
-          className="object-contain p-4 group-hover:scale-105 transition-transform duration-200"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
           onError={handleImageError}
-          unoptimized={imgError}
+          loading="lazy"
         />
       </div>
 
