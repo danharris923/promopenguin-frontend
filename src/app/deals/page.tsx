@@ -20,7 +20,7 @@ export const revalidate = REVALIDATE_INTERVAL
 
 export default async function DealsPage() {
   const [deals, dealCount, stores] = await Promise.all([
-    getDeals({ limit: 100, orderBy: 'date_added', orderDir: 'DESC' }),
+    getDeals({ limit: 100, orderBy: 'random' }),
     getDealCount(),
     getStores(),
   ])

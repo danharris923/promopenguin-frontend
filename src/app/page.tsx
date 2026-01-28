@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getFeaturedDeals, getLatestDeals, getStores, getStoreStats } from '@/lib/db'
+import { getFeaturedDeals, getDeals, getStores, getStoreStats } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { DealCard, DealGrid } from '@/components/DealCard'
 import { Header } from '@/components/Header'
@@ -13,8 +13,8 @@ export const revalidate = 900
 
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats] = await Promise.all([
-    getFeaturedDeals(8),
-    getLatestDeals(16),
+    getFeaturedDeals(8, true),
+    getDeals({ limit: 16, orderBy: 'random' }),
     getStoreStats(),
   ])
 

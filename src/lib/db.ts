@@ -125,7 +125,7 @@ export async function getDeals(options: {
   store?: string
   category?: string
   featured?: boolean
-  orderBy?: 'date_added' | 'discount_percent' | 'price'
+  orderBy?: 'date_added' | 'discount_percent' | 'price' | 'random'
   orderDir?: 'ASC' | 'DESC'
 } = {}): Promise<Deal[]> {
   const {
@@ -157,7 +157,11 @@ export async function getDeals(options: {
       values.push(featured)
     }
 
-    queryText += ` ORDER BY ${orderBy} ${orderDir}`
+    if (orderBy === 'random') {
+      queryText += ' ORDER BY RANDOM()'
+    } else {
+      queryText += ` ORDER BY ${orderBy} ${orderDir}`
+    }
     queryText += ` LIMIT $${paramIndex++} OFFSET $${paramIndex++}`
     values.push(limit, offset)
 
@@ -168,10 +172,11 @@ export async function getDeals(options: {
   }
 }
 
-export async function getFeaturedDeals(limit: number = 12): Promise<Deal[]> {
+export async function getFeaturedDeals(limit: number = 12, random: boolean = false): Promise<Deal[]> {
   try {
+    const order = random ? 'RANDOM()' : 'date_added DESC'
     return await query<Deal>(
-      'SELECT * FROM deals WHERE is_active = TRUE AND featured = TRUE ORDER BY date_added DESC LIMIT $1',
+      `SELECT * FROM deals WHERE is_active = TRUE AND featured = TRUE ORDER BY ${order} LIMIT $1`,
       [limit]
     )
   } catch (error) {
