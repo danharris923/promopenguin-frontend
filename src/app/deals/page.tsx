@@ -4,7 +4,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
-import { SITE_URL, REVALIDATE_INTERVAL } from '@/lib/config'
+import { SITE_URL } from '@/lib/config'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 // Revalidate every 15 minutes
-export const revalidate = REVALIDATE_INTERVAL
+export const revalidate = 900
 
 export default async function DealsPage() {
   const [deals, dealCount, stores] = await Promise.all([

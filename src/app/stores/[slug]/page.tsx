@@ -5,14 +5,11 @@ import { formatStoreName, getStoreDescription } from '@/lib/content-generator'
 import { generateItemListSchema } from '@/lib/schema'
 import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
-import { REVALIDATE_INTERVAL } from '@/lib/config'
-
 interface PageProps {
   params: { slug: string }
 }
 
-// Revalidate every 15 minutes for fresh data
-export const revalidate = REVALIDATE_INTERVAL
+export const revalidate = 900
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

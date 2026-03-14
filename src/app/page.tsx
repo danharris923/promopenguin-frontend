@@ -4,9 +4,7 @@ import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
 import { FeaturedDealCard, DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { REVALIDATE_INTERVAL } from '@/lib/config'
-
-export const revalidate = REVALIDATE_INTERVAL
+export const revalidate = 900
 
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats] = await Promise.all([
