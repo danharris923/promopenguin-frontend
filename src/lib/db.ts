@@ -293,7 +293,7 @@ export async function getStoreBySlug(slug: string): Promise<Store | null> {
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    return await query<Category>('SELECT * FROM categories ORDER BY deal_count DESC')
+    return await query<Category>('SELECT * FROM categories ORDER BY name ASC')
   } catch (error) {
     console.error('getCategories error:', error)
     return []

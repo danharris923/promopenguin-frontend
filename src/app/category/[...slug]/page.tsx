@@ -3,7 +3,8 @@ import { Metadata } from 'next'
 import { getDealsByCategory } from '@/lib/db'
 import { formatCategoryName } from '@/lib/content-generator'
 import { generateItemListSchema } from '@/lib/schema'
-import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
+import { DealCard, DealGrid } from '@/components/DealCard'
+import { dealToCardProps } from '@/lib/deal-utils'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
 interface PageProps {
   params: { slug: string[] }

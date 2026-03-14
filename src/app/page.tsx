@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { getFeaturedDeals, getDeals, getStoreStats } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
-import { FeaturedDealCard, DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
+import { FeaturedDealCard, DealCard, DealGrid } from '@/components/DealCard'
+import { dealToCardProps } from '@/lib/deal-utils'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 export const revalidate = 900

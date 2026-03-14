@@ -2,26 +2,10 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Deal, DealCardProps } from '@/types/deal'
+import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 const PLACEHOLDER_IMAGE = '/placeholder-deal.svg'
-
-/** Convert a Deal (DB row) to DealCardProps */
-export function dealToCardProps(deal: Deal): DealCardProps {
-  return {
-    id: deal.id,
-    title: deal.title,
-    slug: deal.slug,
-    imageUrl: deal.image_blob_url || deal.image_url || PLACEHOLDER_IMAGE,
-    price: deal.price,
-    originalPrice: deal.original_price,
-    discountPercent: deal.discount_percent,
-    store: deal.store || 'Unknown',
-    affiliateUrl: deal.affiliate_url,
-    featured: deal.featured,
-  }
-}
 
 const getStoreLogoPath = (store: string | null | undefined): string | null => {
   if (!store) return null
