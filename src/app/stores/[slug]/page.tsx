@@ -7,14 +7,15 @@ import { DealCard, DealGrid } from '@/components/DealCard'
 import { dealToCardProps } from '@/lib/deal-utils'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export const revalidate = 900
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const storeName = formatStoreName(params.slug)
+  const { slug } = await params
+  const storeName = formatStoreName(slug)
 
   return {
     title: `${storeName} Deals & Sales in Canada`,
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function StorePage({ params }: PageProps) {
-  const storeSlug = params.slug
+  const { slug } = await params
+  const storeSlug = slug
   const storeName = formatStoreName(storeSlug)
   const storeDescription = getStoreDescription(storeSlug)
 

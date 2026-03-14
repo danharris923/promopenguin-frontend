@@ -220,7 +220,7 @@ export function DealCard({
     >
       {/* Image */}
       <div className="relative aspect-square bg-gray-50">
-        {discountPercent && discountPercent > 0 && (
+        {discountPercent != null && discountPercent > 0 && (
           <div className="absolute top-2 right-2 z-10">
             <span className="bg-savings text-white px-2 py-0.5 rounded text-xs font-semibold">
               -{discountPercent}%

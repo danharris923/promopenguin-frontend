@@ -34,12 +34,13 @@ import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
 import { StickyMobileCTA } from '@/components/deal/StickyMobileCTA'
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const deal = await getDealBySlug(params.slug)
+  const { slug } = await params
+  const deal = await getDealBySlug(slug)
 
   if (!deal) {
     return { title: 'Deal Not Found' }
@@ -68,7 +69,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function DealPage({ params }: PageProps) {
-  const deal = await getDealBySlug(params.slug)
+  const { slug } = await params
+  const deal = await getDealBySlug(slug)
 
   if (!deal) {
     notFound()

@@ -7,7 +7,7 @@ import { DealCard, DealGrid } from '@/components/DealCard'
 import { dealToCardProps } from '@/lib/deal-utils'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
 interface PageProps {
-  params: { slug: string[] }
+  params: Promise<{ slug: string[] }>
 }
 
 export const revalidate = 900
@@ -17,7 +17,8 @@ export const dynamicParams = true
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const categorySlug = params.slug[params.slug.length - 1]
+  const { slug } = await params
+  const categorySlug = slug[slug.length - 1]
   const categoryName = formatCategoryName(categorySlug)
 
   return {
@@ -31,7 +32,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CategoryPage({ params }: PageProps) {
-  const categorySlug = params.slug[params.slug.length - 1]
+  const { slug } = await params
+  const categorySlug = slug[slug.length - 1]
   const categoryName = formatCategoryName(categorySlug)
 
   const deals = await getDealsByCategory(categorySlug)
@@ -45,9 +47,9 @@ export default async function CategoryPage({ params }: PageProps) {
   const breadcrumbs = [
     { label: 'Home', href: '/' },
     { label: 'Categories', href: '/category' },
-    ...params.slug.map((s, i) => ({
+    ...slug.map((s, i) => ({
       label: formatCategoryName(s),
-      href: `/category/${params.slug.slice(0, i + 1).join('/')}`,
+      href: `/category/${slug.slice(0, i + 1).join('/')}`,
     })),
   ]
 
