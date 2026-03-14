@@ -31,7 +31,7 @@ export function FashionCarousel({ cards, autoPlayInterval = 60000 }: FashionCaro
     return 3                                 // Desktop: 3
   }, [])
 
-  const [visibleCount, setVisibleCount] = useState(4)
+  const [visibleCount, setVisibleCount] = useState(3)
 
   useEffect(() => {
     setVisibleCount(getVisibleCount())

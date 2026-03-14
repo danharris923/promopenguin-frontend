@@ -88,7 +88,10 @@ export default function AdminPage() {
 
   const loadStores = async () => {
     setLoading(true)
-    const res = await fetch('/api/admin/stores')
+    const token = localStorage.getItem('admin_token')
+    const res = await fetch('/api/admin/stores', {
+      headers: { 'Authorization': token || '' },
+    })
     if (res.ok) {
       const data = await res.json()
       setStores(data.stores || [])

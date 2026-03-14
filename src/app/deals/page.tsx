@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { getDeals, getDealCount, getStores, getCategories } from '@/lib/db'
+import { getDeals, getDealCount, getStores } from '@/lib/db'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { DealCard, DealGrid } from '@/components/DealCard'
+import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
 import { SITE_URL, REVALIDATE_INTERVAL } from '@/lib/config'
 import type { Metadata } from 'next'
@@ -62,19 +62,7 @@ export default async function DealsPage() {
                 </div>
                 <DealGrid>
                   {deals.map(deal => (
-                    <DealCard
-                      key={deal.id}
-                      id={deal.id}
-                      title={deal.title}
-                      slug={deal.slug}
-                      imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.svg'}
-                      price={deal.price}
-                      originalPrice={deal.original_price}
-                      discountPercent={deal.discount_percent}
-                      store={deal.store || null}
-                      affiliateUrl={deal.affiliate_url}
-                      featured={deal.featured}
-                    />
+                    <DealCard key={deal.id} {...dealToCardProps(deal)} />
                   ))}
                 </DealGrid>
               </>

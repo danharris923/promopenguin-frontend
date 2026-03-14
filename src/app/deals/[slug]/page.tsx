@@ -22,7 +22,7 @@ import {
   generateCountdown,
   getStockWarning,
 } from '@/lib/urgency'
-import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
+import { formatPrice, calculateSavings } from '@/lib/price-utils'
 
 import { UrgencyBanner } from '@/components/deal/UrgencyBanner'
 import { SocialProofBanner } from '@/components/deal/SocialProofBanner'

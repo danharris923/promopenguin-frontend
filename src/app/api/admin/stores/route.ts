@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server'
+import { timingSafeEqual } from 'crypto'
 import { getAllStoresAdmin, updateStoreUrls, addStore, checkStoreSlugExists } from '@/lib/db'
 
 function checkAuth(request: Request): boolean {
   const adminPassword = process.env.ADMIN_PASSWORD
   if (!adminPassword) return false
   const auth = request.headers.get('Authorization')
-  return auth === adminPassword
+  if (!auth || auth.length !== adminPassword.length) return false
+  return timingSafeEqual(Buffer.from(auth), Buffer.from(adminPassword))
 }
 
 // GET all stores
-export async function GET() {
+export async function GET(request: Request) {
+  if (!checkAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const stores = await getAllStoresAdmin()
     return NextResponse.json({ stores })

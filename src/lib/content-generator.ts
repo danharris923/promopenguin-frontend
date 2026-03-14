@@ -5,7 +5,7 @@
  * unique content for each deal page.
  */
 
-import { Deal, ContentContext } from '@/types/deal'
+import { Deal } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
 // =============================================================================
@@ -261,7 +261,7 @@ export function generateFAQ(deal: Deal): { question: string; answer: string }[] 
 // HELPERS
 // =============================================================================
 
-function hashString(str: string): number {
+export function hashString(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i)

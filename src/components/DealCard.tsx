@@ -2,8 +2,26 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { DealCardProps } from '@/types/deal'
+import { Deal, DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
+
+const PLACEHOLDER_IMAGE = '/placeholder-deal.svg'
+
+/** Convert a Deal (DB row) to DealCardProps */
+export function dealToCardProps(deal: Deal): DealCardProps {
+  return {
+    id: deal.id,
+    title: deal.title,
+    slug: deal.slug,
+    imageUrl: deal.image_blob_url || deal.image_url || PLACEHOLDER_IMAGE,
+    price: deal.price,
+    originalPrice: deal.original_price,
+    discountPercent: deal.discount_percent,
+    store: deal.store || 'Unknown',
+    affiliateUrl: deal.affiliate_url,
+    featured: deal.featured,
+  }
+}
 
 // Helper to generate store logo path from store name
 const getStoreLogoPath = (store: string | null | undefined): string | null => {
@@ -31,7 +49,7 @@ export function DealCard({
   const getInitialImage = () => {
     if (imageUrl) return imageUrl
     if (storeLogoFallback) return storeLogoFallback
-    return '/placeholder-deal.svg'
+    return PLACEHOLDER_IMAGE
   }
 
   const [imgSrc, setImgSrc] = useState(getInitialImage())
@@ -50,7 +68,7 @@ export function DealCard({
     } else if (!imgError) {
       // Final fallback: placeholder
       setImgError(true)
-      setImgSrc('/placeholder-deal.svg')
+      setImgSrc(PLACEHOLDER_IMAGE)
     }
   }
 

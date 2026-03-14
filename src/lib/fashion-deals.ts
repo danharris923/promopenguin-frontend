@@ -5,17 +5,14 @@
  * Cards rotate every 15 minutes to match the site's shuffle timing.
  *
  * Usage:
- *   import { getFashionDeals, getTopTierFashionDeals } from './fashion-deals'
+ *   import { getFashionDeals } from './fashion-deals'
  *   const fashionDeals = await getFashionDeals()
  */
 
 import { Deal } from '@/types/deal'
 import {
   FASHION_BRANDS,
-  FashionBrand,
   generateFashionDeal,
-  getPremiumBrands,
-  getTopTierBrands,
 } from './fashion-brands'
 import { getStoreBySlug } from './db'
 
@@ -152,54 +149,3 @@ export async function getFashionDeals(): Promise<Deal[]> {
   return deals
 }
 
-/**
- * Get premium-tier fashion deals (highest priority)
- */
-export async function getPremiumFashionDeals(): Promise<Deal[]> {
-  const allDeals = await getFashionDeals()
-  const premiumSlugs = new Set(getPremiumBrands().map(b => b.slug))
-
-  return allDeals.filter(deal => {
-    const match = deal.id.match(/^fashion-(.+)-\d+$/)
-    if (!match) return false
-    return premiumSlugs.has(match[1])
-  })
-}
-
-/**
- * Get top-tier fashion deals (for page 1 priority)
- */
-export async function getTopTierFashionDeals(): Promise<Deal[]> {
-  const allDeals = await getFashionDeals()
-  const topTierSlugs = new Set(getTopTierBrands().map(b => b.slug))
-
-  return allDeals.filter(deal => {
-    const match = deal.id.match(/^fashion-(.+)-\d+$/)
-    if (!match) return false
-    return topTierSlugs.has(match[1])
-  })
-}
-
-/**
- * Check if a deal is a fashion affiliate deal
- */
-export function isFashionDeal(deal: Deal): boolean {
-  return deal.id.startsWith('fashion-')
-}
-
-/**
- * Get the brand slug from a fashion deal ID
- */
-export function getBrandSlugFromDeal(deal: Deal): string | null {
-  const match = deal.id.match(/^fashion-(.+)-\d+$/)
-  return match ? match[1] : null
-}
-
-/**
- * Get brand configuration for a fashion deal
- */
-export function getBrandForDeal(deal: Deal): FashionBrand | null {
-  const slug = getBrandSlugFromDeal(deal)
-  if (!slug) return null
-  return FASHION_BRANDS.find(b => b.slug === slug) || null
-}

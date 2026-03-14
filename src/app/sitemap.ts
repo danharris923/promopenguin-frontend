@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllDealSlugs, getStores, getCategories } from '@/lib/db'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://promopenguin.ca'
+import { SITE_URL } from '@/lib/config'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [dealSlugs, stores, categories] = await Promise.all([

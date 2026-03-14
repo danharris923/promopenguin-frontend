@@ -1,3 +1,5 @@
+import { calculateSavings } from "@/lib/price-utils"
+
 interface PriceDisplayProps {
   currentPrice: number | string | null
   originalPrice: number | string | null
@@ -15,9 +17,7 @@ export function PriceDisplay({
   const original = originalPrice != null ? Number(originalPrice) : null
   const discount = discountPercent != null ? Number(discountPercent) : null
 
-  const savings = original && current && !isNaN(original) && !isNaN(current)
-    ? (original - current).toFixed(2)
-    : null
+  const savings = calculateSavings(original, current)
 
   const sizeClasses = {
     sm: { current: "text-2xl", original: "text-sm", savings: "text-xs" },

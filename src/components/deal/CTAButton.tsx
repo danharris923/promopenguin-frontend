@@ -70,8 +70,8 @@ export function CTAButton({
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => {
         // Track click event (analytics placeholder)
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'click', {
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'click', {
             event_category: 'affiliate',
             event_label: storeName || 'unknown',
           })
@@ -81,31 +81,6 @@ export function CTAButton({
       <span className={`transition-transform duration-200 ${isHovered ? 'scale-110' : ''}`}>
         {buttonText}
       </span>
-    </a>
-  )
-}
-
-// Secondary CTA for "Compare Prices" etc
-export function SecondaryCTA({
-  href,
-  children,
-}: {
-  href: string
-  children: React.ReactNode
-}) {
-  return (
-    <a
-      href={href}
-      className="
-        inline-flex items-center justify-center
-        py-3 px-6 w-full
-        bg-gray-100 hover:bg-gray-200
-        text-gray-700 font-medium
-        rounded-xl
-        transition-colors duration-200
-      "
-    >
-      {children}
     </a>
   )
 }

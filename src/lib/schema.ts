@@ -4,14 +4,13 @@
 
 import { Deal } from '@/types/deal'
 import { formatStoreName, generateBreadcrumbs, generateFAQ } from './content-generator'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://promopenguin.ca'
+import { SITE_URL } from './config'
 
 /**
  * Generate Product schema for deal pages
  */
 export function generateProductSchema(deal: Deal) {
-  const schema: any = {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: deal.title,
@@ -33,7 +32,8 @@ export function generateProductSchema(deal: Deal) {
 
   // Add price validity if we have original price
   if (deal.original_price) {
-    schema.offers.priceValidUntil = new Date(
+    const offers = schema.offers as Record<string, unknown>
+    offers.priceValidUntil = new Date(
       Date.now() + 7 * 24 * 60 * 60 * 1000
     ).toISOString().split('T')[0]
   }
@@ -135,11 +135,4 @@ export function generateItemListSchema(deals: Deal[], listName: string) {
       name: deal.title,
     })),
   }
-}
-
-/**
- * Combine multiple schemas into a single JSON-LD block
- */
-export function combineSchemas(...schemas: any[]) {
-  return JSON.stringify(schemas)
 }

@@ -372,23 +372,6 @@ export const COOKIE_BYPASS_PARAMS: Record<string, string> = {
 // =============================================================================
 
 /**
- * Get affiliate link for a store (base URL without search)
- * Now only supports Rakuten merchants - other stores should use affiliate_url from DB
- */
-export function getStoreAffiliateLink(storeSlug: string | null): string | null {
-  if (!storeSlug) return null
-
-  // Check Rakuten (return base link to homepage)
-  const rakutenMerchant = RAKUTEN_MERCHANTS[storeSlug]
-  if (rakutenMerchant) {
-    const encodedUrl = encodeURIComponent(rakutenMerchant.domain)
-    return `https://click.linksynergy.com/deeplink?id=${RAKUTEN_PUBLISHER_ID}&mid=${rakutenMerchant.mid}&murl=${encodedUrl}`
-  }
-
-  return null
-}
-
-/**
  * Extract clean search terms from a product title
  * Strips out prices, sale language, sizes, and other noise
  */
@@ -725,33 +708,3 @@ export function getDealAffiliateUrl(
   return getAffiliateSearchUrl(storeSlug, productTitle)
 }
 
-/**
- * Check if a store has a Rakuten affiliate link
- */
-export function hasStoreAffiliate(storeSlug: string | null): boolean {
-  if (!storeSlug) return false
-  return storeSlug in RAKUTEN_MERCHANTS
-}
-
-/**
- * Get list of all Rakuten affiliate store slugs
- */
-export function getAffiliateStores(): string[] {
-  return Object.keys(RAKUTEN_MERCHANTS)
-}
-
-// =============================================================================
-// AFFILIATE BRAND TYPE (for components that need it)
-// =============================================================================
-
-export interface AffiliateBrand {
-  name: string
-  slug: string
-  emoji: string
-  tagline: string
-  description: string
-  color: string        // Tailwind gradient classes
-  bgColor: string      // Light background for chips
-  textColor: string    // Text color for chips
-  image?: string       // Primary image for the brand
-}

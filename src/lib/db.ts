@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { Deal, Store, Category, StoreCardData } from '@/types/deal'
+import { Deal, Store, Category } from '@/types/deal'
 
 /**
  * Database queries for deals, stores, and categories.
@@ -9,7 +9,7 @@ import { Deal, Store, Category, StoreCardData } from '@/types/deal'
 // Create a connection pool
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production' ? true : { rejectUnauthorized: false }
 })
 
 // Transform PostgreSQL row data to serializable format for React Server Components
@@ -107,18 +107,6 @@ export async function getDealBySlug(slug: string): Promise<Deal | null> {
   }
 }
 
-export async function getDealById(id: string): Promise<Deal | null> {
-  try {
-    return await queryOne<Deal>(
-      'SELECT * FROM deals WHERE id = $1 AND is_active = TRUE LIMIT 1',
-      [id]
-    )
-  } catch (error) {
-    console.error('getDealById error:', error)
-    return null
-  }
-}
-
 export async function getDeals(options: {
   limit?: number
   offset?: number
@@ -157,6 +145,17 @@ export async function getDeals(options: {
       values.push(featured)
     }
 
+    const ALLOWED_ORDER_COLUMNS = ['date_added', 'discount_percent', 'price', 'random'] as const
+    const ALLOWED_ORDER_DIRS = ['ASC', 'DESC'] as const
+
+    // Validate orderBy against whitelist
+    if (!ALLOWED_ORDER_COLUMNS.includes(orderBy as any)) {
+      throw new Error(`Invalid orderBy: ${orderBy}`)
+    }
+    if (!ALLOWED_ORDER_DIRS.includes(orderDir as any)) {
+      throw new Error(`Invalid orderDir: ${orderDir}`)
+    }
+
     if (orderBy === 'random') {
       queryText += ' ORDER BY RANDOM()'
     } else {
@@ -181,18 +180,6 @@ export async function getFeaturedDeals(limit: number = 12, random: boolean = fal
     )
   } catch (error) {
     console.error('getFeaturedDeals error:', error)
-    return []
-  }
-}
-
-export async function getLatestDeals(limit: number = 20): Promise<Deal[]> {
-  try {
-    return await query<Deal>(
-      'SELECT * FROM deals WHERE is_active = TRUE ORDER BY date_added DESC LIMIT $1',
-      [limit]
-    )
-  } catch (error) {
-    console.error('getLatestDeals error:', error)
     return []
   }
 }
@@ -270,15 +257,12 @@ export async function getAllDealSlugs(): Promise<string[]> {
 // STORES (queries stores table)
 // =============================================================================
 
+const STORE_COLUMNS = 'id, name, slug, type, logo_url, website_url, affiliate_url, color, tagline, description, badges, top_categories, is_canadian, province, return_policy, loyalty_program_name, loyalty_program_desc, shipping_info, price_match_policy, affiliate_network, screenshot_url, deal_count'
+
 export async function getStores(): Promise<Store[]> {
   try {
     return await query<Store>(`
-      SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
+      SELECT ${STORE_COLUMNS}
       FROM stores
       ORDER BY deal_count DESC
     `)
@@ -291,12 +275,7 @@ export async function getStores(): Promise<Store[]> {
 export async function getStoreBySlug(slug: string): Promise<Store | null> {
   try {
     return await queryOne<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
+      `SELECT ${STORE_COLUMNS}
       FROM stores
       WHERE slug = $1
       LIMIT 1`,
@@ -305,154 +284,6 @@ export async function getStoreBySlug(slug: string): Promise<Store | null> {
   } catch (error) {
     console.error('getStoreBySlug error:', error)
     return null
-  }
-}
-
-/**
- * Get minimal store data for deal cards - reduces payload size
- */
-export async function getStoreForCard(slug: string): Promise<StoreCardData | null> {
-  try {
-    return await queryOne<StoreCardData>(
-      `SELECT name, slug, logo_url, color, badges, return_policy, shipping_info
-      FROM stores
-      WHERE slug = $1
-      LIMIT 1`,
-      [slug]
-    )
-  } catch (error) {
-    console.error('getStoreForCard error:', error)
-    return null
-  }
-}
-
-/**
- * Get Canadian brands - stores where type='brand' OR is_canadian=true
- */
-export async function getCanadianBrands(): Promise<Store[]> {
-  try {
-    return await query<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
-      FROM stores
-      WHERE type = 'brand' OR is_canadian = TRUE
-      ORDER BY deal_count DESC`
-    )
-  } catch (error) {
-    console.error('getCanadianBrands error:', error)
-    return []
-  }
-}
-
-/**
- * Get all Canadian brand slugs for static params generation
- */
-export async function getCanadianBrandSlugs(): Promise<string[]> {
-  try {
-    const rows = await query<{ slug: string }>(
-      `SELECT slug FROM stores WHERE type = 'brand' OR is_canadian = TRUE`
-    )
-    return rows.map(row => row.slug)
-  } catch (error) {
-    console.error('getCanadianBrandSlugs error:', error)
-    return []
-  }
-}
-
-/**
- * Get related Canadian brands (same top_categories)
- */
-export async function getRelatedCanadianBrands(brand: Store, limit: number = 6): Promise<Store[]> {
-  try {
-    const categories = brand.top_categories || []
-    if (categories.length === 0) {
-      return await query<Store>(
-        `SELECT
-          id, name, slug, type, logo_url, website_url, affiliate_url,
-          color, tagline, description, badges, top_categories,
-          is_canadian, province, return_policy, loyalty_program_name,
-          loyalty_program_desc, shipping_info, price_match_policy,
-          affiliate_network, screenshot_url, deal_count
-        FROM stores
-        WHERE (type = 'brand' OR is_canadian = TRUE)
-          AND slug != $1
-        ORDER BY deal_count DESC
-        LIMIT $2`,
-        [brand.slug, limit]
-      )
-    }
-
-    return await query<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
-      FROM stores
-      WHERE (type = 'brand' OR is_canadian = TRUE)
-        AND slug != $1
-        AND top_categories && $2::text[]
-      ORDER BY deal_count DESC
-      LIMIT $3`,
-      [brand.slug, categories, limit]
-    )
-  } catch (error) {
-    console.error('getRelatedCanadianBrands error:', error)
-    return []
-  }
-}
-
-/**
- * Get Canadian brands by category
- */
-export async function getCanadianBrandsByCategory(category: string): Promise<Store[]> {
-  try {
-    return await query<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
-      FROM stores
-      WHERE (type = 'brand' OR is_canadian = TRUE)
-        AND $1 = ANY(top_categories)
-      ORDER BY deal_count DESC`,
-      [category]
-    )
-  } catch (error) {
-    console.error('getCanadianBrandsByCategory error:', error)
-    return []
-  }
-}
-
-/**
- * Get unique categories from Canadian brands with counts
- */
-export async function getCanadianBrandCategories(): Promise<{ name: string; slug: string; count: number }[]> {
-  try {
-    const rows = await query<{ category: string; count: string }>(
-      `SELECT unnest(top_categories) as category, COUNT(*) as count
-       FROM stores
-       WHERE (type = 'brand' OR is_canadian = TRUE)
-         AND top_categories IS NOT NULL
-         AND array_length(top_categories, 1) > 0
-       GROUP BY category
-       ORDER BY count DESC`
-    )
-    return rows.map(row => ({
-      name: row.category,
-      slug: row.category.toLowerCase().replace(/\s+/g, '-'),
-      count: parseInt(row.count, 10)
-    }))
-  } catch (error) {
-    console.error('getCanadianBrandCategories error:', error)
-    return []
   }
 }
 
@@ -466,18 +297,6 @@ export async function getCategories(): Promise<Category[]> {
   } catch (error) {
     console.error('getCategories error:', error)
     return []
-  }
-}
-
-export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  try {
-    return await queryOne<Category>(
-      'SELECT * FROM categories WHERE slug = $1 LIMIT 1',
-      [slug]
-    )
-  } catch (error) {
-    console.error('getCategoryBySlug error:', error)
-    return null
   }
 }
 
@@ -514,93 +333,19 @@ export async function getStoreStats(): Promise<{ store: string; count: number }[
 }
 
 // =============================================================================
-// SEARCH (queries deals/stores tables)
-// =============================================================================
-
-export async function searchDeals(searchQuery: string, limit: number = 50): Promise<Deal[]> {
-  if (!searchQuery || searchQuery.trim().length < 2) return []
-
-  try {
-    const searchTerm = `%${searchQuery.trim().toLowerCase()}%`
-    return await query<Deal>(
-      `SELECT * FROM deals
-       WHERE is_active = TRUE
-       AND (LOWER(title) LIKE $1 OR LOWER(store) LIKE $1 OR LOWER(category) LIKE $1)
-       ORDER BY featured DESC, date_added DESC
-       LIMIT $2`,
-      [searchTerm, limit]
-    )
-  } catch (error) {
-    console.error('searchDeals error:', error)
-    return []
-  }
-}
-
-/**
- * Search stores by keyword - returns stores that sell products matching the search term
- * Prioritizes affiliated stores (has affiliate_url)
- */
-export async function searchStoresByKeyword(searchQuery: string, limit: number = 12): Promise<Store[]> {
-  if (!searchQuery || searchQuery.trim().length < 2) return []
-
-  try {
-    const searchTerm = searchQuery.trim().toLowerCase()
-    return await query<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count, keywords
-      FROM stores
-      WHERE $1 = ANY(keywords)
-         OR LOWER(name) LIKE $2
-         OR LOWER(tagline) LIKE $2
-      ORDER BY
-        CASE WHEN affiliate_url IS NOT NULL THEN 0 ELSE 1 END,
-        CASE WHEN $1 = ANY(keywords) THEN 0 ELSE 1 END,
-        deal_count DESC
-      LIMIT $3`,
-      [searchTerm, `%${searchTerm}%`, limit]
-    )
-  } catch (error) {
-    console.error('searchStoresByKeyword error:', error)
-    return []
-  }
-}
-
-// =============================================================================
 // ADMIN FUNCTIONS (queries stores table)
 // =============================================================================
 
 export async function getAllStoresAdmin(): Promise<Store[]> {
   try {
     return await query<Store>(
-      `SELECT
-        id, name, slug, type, logo_url, website_url, affiliate_url,
-        color, tagline, description, badges, top_categories,
-        is_canadian, province, return_policy, loyalty_program_name,
-        loyalty_program_desc, shipping_info, price_match_policy,
-        affiliate_network, screenshot_url, deal_count
+      `SELECT ${STORE_COLUMNS}
       FROM stores
       ORDER BY name ASC`
     )
   } catch (error) {
     console.error('getAllStoresAdmin error:', error)
     return []
-  }
-}
-
-export async function updateStoreAffiliateUrl(id: number, affiliateUrl: string | null): Promise<boolean> {
-  try {
-    await query(
-      'UPDATE stores SET affiliate_url = $1 WHERE id = $2',
-      [affiliateUrl, id]
-    )
-    return true
-  } catch (error) {
-    console.error('updateStoreAffiliateUrl error:', error)
-    return false
   }
 }
 

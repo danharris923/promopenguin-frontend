@@ -1,15 +1,17 @@
 import Link from 'next/link'
-import { getFeaturedDeals, getDeals, getStores, getStoreStats } from '@/lib/db'
+import { getFeaturedDeals, getDeals, getStoreStats } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
-import { DealCard, DealGrid } from '@/components/DealCard'
+import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { FashionCarousel } from '@/components/FashionCarousel'
-import { FASHION_BRANDS, FASHION_IMAGES_BASE_URL, FASHION_SEARCH_URLS } from '@/lib/fashion-brands'
+import { FASHION_BRANDS, FASHION_IMAGES_BASE_URL } from '@/lib/fashion-brands'
+import { RETAILER_SEARCH_URLS } from '@/lib/affiliates'
 import { IMAGE_MANIFEST } from '@/lib/fashion-deals'
+import { REVALIDATE_INTERVAL } from '@/lib/config'
 
 // Revalidate every 15 minutes
-export const revalidate = 900
+export const revalidate = REVALIDATE_INTERVAL
 
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats] = await Promise.all([
@@ -120,19 +122,7 @@ export default async function HomePage() {
               </div>
               <DealGrid>
                 {featuredDeals.map(deal => (
-                  <DealCard
-                    key={deal.id}
-                    id={deal.id}
-                    title={deal.title}
-                    slug={deal.slug}
-                    imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.svg'}
-                    price={deal.price}
-                    originalPrice={deal.original_price}
-                    discountPercent={deal.discount_percent}
-                    store={deal.store || 'Unknown'}
-                    affiliateUrl={deal.affiliate_url}
-                    featured={true}
-                  />
+                  <DealCard key={deal.id} {...dealToCardProps(deal)} />
                 ))}
               </DealGrid>
             </div>
@@ -154,7 +144,7 @@ export default async function HomePage() {
                   name: brand.name,
                   title: brand.cardTitles[0],
                   imageUrl: `${FASHION_IMAGES_BASE_URL}/${brand.folder}/${img}`,
-                  affiliateUrl: FASHION_SEARCH_URLS[brand.slug] || `/stores/${brand.slug}`,
+                  affiliateUrl: RETAILER_SEARCH_URLS[brand.slug] || `/stores/${brand.slug}`,
                 }
               })}
               autoPlayInterval={60000}
@@ -178,19 +168,7 @@ export default async function HomePage() {
             </div>
             <DealGrid>
               {latestDeals.map(deal => (
-                <DealCard
-                  key={deal.id}
-                  id={deal.id}
-                  title={deal.title}
-                  slug={deal.slug}
-                  imageUrl={deal.image_blob_url || deal.image_url || '/placeholder-deal.svg'}
-                  price={deal.price}
-                  originalPrice={deal.original_price}
-                  discountPercent={deal.discount_percent}
-                  store={deal.store || 'Unknown'}
-                  affiliateUrl={deal.affiliate_url}
-                  featured={deal.featured}
-                />
+                <DealCard key={deal.id} {...dealToCardProps(deal)} />
               ))}
             </DealGrid>
           </div>

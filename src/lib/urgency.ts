@@ -6,6 +6,7 @@
  */
 
 import { UrgencyData } from '@/types/deal'
+import { hashString } from './content-generator'
 
 /**
  * Generate urgency data for a deal
@@ -72,29 +73,6 @@ export function generateCountdown(dealId: string): { hours: number; minutes: num
 }
 
 /**
- * Get urgency message based on data
- */
-export function getUrgencyMessage(data: UrgencyData): string {
-  const messages: string[] = []
-
-  if (data.isLowestEver) {
-    messages.push('🏆 LOWEST PRICE EVER')
-  }
-
-  if (data.isPriceDrop) {
-    messages.push('📉 Price just dropped!')
-  }
-
-  if (data.stockLevel === 'critical') {
-    messages.push(`⚠️ Only ${data.stockCount} left!`)
-  } else if (data.stockLevel === 'low') {
-    messages.push(`📦 Only ${data.stockCount} left at this price`)
-  }
-
-  return messages[0] || '🔥 Hot Deal'
-}
-
-/**
  * Get stock warning component props
  */
 export function getStockWarning(data: UrgencyData): {
@@ -121,36 +99,9 @@ export function getStockWarning(data: UrgencyData): {
   return null
 }
 
-/**
- * Get social proof text
- */
-export function getSocialProof(data: UrgencyData): string {
-  return `👁️ ${data.viewerCount} viewing • 🛒 ${data.purchaseCount} sold today`
-}
-
-/**
- * Format countdown for display
- */
-export function formatCountdown(countdown: { hours: number; minutes: number }): string {
-  if (countdown.hours < 1) {
-    return `${countdown.minutes}m`
-  }
-  return `${countdown.hours}h ${countdown.minutes}m`
-}
-
 // =============================================================================
 // HELPERS
 // =============================================================================
-
-function hashString(str: string): number {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash
-  }
-  return Math.abs(hash)
-}
 
 function getHourSeed(): string {
   // Changes every hour for "live" feel

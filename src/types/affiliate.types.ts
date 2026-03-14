@@ -17,21 +17,8 @@ export interface AffiliateClickResult {
   error?: string
 }
 
-export interface AffiliateClickHandler {
-  (props: AffiliateClickProps): Promise<AffiliateClickResult>
-}
-
 export interface UseAffiliateClickReturn {
   handleClick: (props: AffiliateClickProps) => Promise<void>
   isLoading: boolean
   error: string | null
-}
-
-export interface DealCardClickProps {
-  id: string | number
-  title: string
-  slug: string
-  store?: string | null
-  affiliateUrl?: string | null
-  price?: number | string | null
 }
