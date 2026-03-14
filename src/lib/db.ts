@@ -9,7 +9,7 @@ import { Deal, Store, Category } from '@/types/deal'
 // Create a connection pool
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? true : { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false }
 })
 
 // Transform PostgreSQL row data to serializable format for React Server Components
