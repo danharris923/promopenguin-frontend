@@ -23,15 +23,17 @@ export function dealToCardProps(deal: Deal): DealCardProps {
   }
 }
 
-// Helper to generate store logo path from store name
 const getStoreLogoPath = (store: string | null | undefined): string | null => {
   if (!store) return null
   const slug = store.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   return `/images/stores/${slug}.png`
 }
 
-export function DealCard({
-  id,
+/**
+ * Featured deal card — large format matching DealRadar style.
+ * Store logo top-left, product image right, price prominent, "View Deal" button.
+ */
+export function FeaturedDealCard({
   title,
   slug,
   imageUrl,
@@ -39,13 +41,165 @@ export function DealCard({
   originalPrice,
   discountPercent,
   store,
-  affiliateUrl,
   featured,
 }: DealCardProps) {
-  // Get store logo path for fallback
   const storeLogoFallback = getStoreLogoPath(store)
 
-  // Determine initial image: use deal image, or store logo if no deal image
+  const getInitialImage = () => {
+    if (imageUrl && imageUrl !== PLACEHOLDER_IMAGE) return imageUrl
+    if (storeLogoFallback) return storeLogoFallback
+    return PLACEHOLDER_IMAGE
+  }
+
+  const [imgSrc, setImgSrc] = useState(getInitialImage())
+  const [imgError, setImgError] = useState(false)
+
+  const priceNum = toNumber(price)
+  const originalPriceNum = toNumber(originalPrice)
+  const savings = calculateSavings(originalPrice, price)
+
+  const handleImageError = () => {
+    if (!imgError && storeLogoFallback && imgSrc !== storeLogoFallback) {
+      setImgSrc(storeLogoFallback)
+    } else if (!imgError) {
+      setImgError(true)
+      setImgSrc(PLACEHOLDER_IMAGE)
+    }
+  }
+
+  // Generate a short description
+  const description = savings
+    ? `Save $${savings} on this deal.`
+    : 'Great price — shop now.'
+
+  // Badge logic
+  const showEndsSoon = featured && discountPercent && discountPercent >= 30
+  const savingsBadgeText = discountPercent && discountPercent > 0
+    ? `${discountPercent}% Off`
+    : savings
+      ? `Save $${savings}`
+      : null
+
+  return (
+    <Link
+      href={`/deals/${slug}`}
+      className="
+        group block bg-white rounded-xl border border-gray-200
+        hover:shadow-lg transition-shadow duration-200
+        overflow-hidden
+      "
+    >
+      <div className="p-5 flex flex-col h-full">
+        {/* Top row: store logo + badge */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="h-6">
+            {storeLogoFallback ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={storeLogoFallback}
+                alt={store || ''}
+                className="h-6 w-auto object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                  if (target.nextElementSibling) {
+                    (target.nextElementSibling as HTMLElement).style.display = 'block'
+                  }
+                }}
+              />
+            ) : null}
+            <span
+              className="text-sm font-bold text-gray-700"
+              style={storeLogoFallback ? { display: 'none' } : {}}
+            >
+              {store}
+            </span>
+          </div>
+          {showEndsSoon && (
+            <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">
+              Ends Soon
+            </span>
+          )}
+        </div>
+
+        {/* Content: title + price left, image right */}
+        <div className="flex gap-4 flex-1 min-h-0">
+          <div className="flex-1 flex flex-col min-w-0">
+            {/* Title */}
+            <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-3">
+              {title}
+            </h3>
+
+            {/* Price */}
+            <div className="mb-2">
+              {priceNum !== null ? (
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-2xl font-bold text-gray-900">
+                    ${formatPrice(priceNum)}
+                  </span>
+                  {originalPriceNum !== null && (
+                    <span className="text-sm text-gray-400 line-through">
+                      ${formatPrice(originalPriceNum)}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <span className="text-lg font-semibold text-gray-900">
+                  See Deal
+                </span>
+              )}
+            </div>
+
+            {/* Savings badge */}
+            {savingsBadgeText && (
+              <span className="inline-block text-xs font-semibold text-white bg-savings px-2.5 py-1 rounded w-fit mb-2">
+                {savingsBadgeText}
+              </span>
+            )}
+
+            {/* Description */}
+            <p className="text-xs text-gray-500 mt-auto line-clamp-2">
+              {description}
+            </p>
+          </div>
+
+          {/* Product image */}
+          <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imgSrc}
+              alt={title}
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+              onError={handleImageError}
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        {/* View Deal button */}
+        <div className="mt-4">
+          <span className="btn-deal">View Deal</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+/**
+ * Standard compact deal card for grids (used on listing pages).
+ */
+export function DealCard({
+  title,
+  slug,
+  imageUrl,
+  price,
+  originalPrice,
+  discountPercent,
+  store,
+  featured,
+}: DealCardProps) {
+  const storeLogoFallback = getStoreLogoPath(store)
+
   const getInitialImage = () => {
     if (imageUrl) return imageUrl
     if (storeLogoFallback) return storeLogoFallback
@@ -62,11 +216,9 @@ export function DealCard({
 
   const handleImageError = () => {
     if (!imgError && !triedStoreLogo && storeLogoFallback) {
-      // First error: try store logo
       setTriedStoreLogo(true)
       setImgSrc(storeLogoFallback)
     } else if (!imgError) {
-      // Final fallback: placeholder
       setImgError(true)
       setImgSrc(PLACEHOLDER_IMAGE)
     }
@@ -77,41 +229,21 @@ export function DealCard({
       href={`/deals/${slug}`}
       className="
         group block
-        bg-white rounded-xl shadow-md overflow-hidden
+        bg-white rounded-xl border border-gray-200 overflow-hidden
         transition-all duration-200
-        hover:shadow-xl hover:-translate-y-1
+        hover:shadow-lg hover:-translate-y-0.5
       "
     >
-      {/* Image Container */}
-      <div className="relative aspect-square bg-gray-100">
-        {/* Discount Badge */}
+      {/* Image */}
+      <div className="relative aspect-square bg-gray-50">
         {discountPercent && discountPercent > 0 && (
           <div className="absolute top-2 right-2 z-10">
-            <span className="
-              bg-red-600 text-white
-              px-2 py-1 rounded-lg
-              font-bold text-sm
-              shadow-md
-            ">
+            <span className="bg-savings text-white px-2 py-0.5 rounded text-xs font-semibold">
               -{discountPercent}%
             </span>
           </div>
         )}
 
-        {/* Featured Badge */}
-        {featured && (
-          <div className="absolute top-2 left-2 z-10">
-            <span className="
-              bg-yellow-400 text-yellow-900
-              px-2 py-1 rounded-lg
-              font-bold text-xs
-            ">
-              HOT
-            </span>
-          </div>
-        )}
-
-        {/* Image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imgSrc}
@@ -124,21 +256,18 @@ export function DealCard({
 
       {/* Content */}
       <div className="p-4">
-        {/* Store */}
-        <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+        <div className="text-xs text-gray-400 mb-1 font-medium">
           {store}
         </div>
 
-        {/* Title */}
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm group-hover:text-brand-blue transition-colors">
           {title}
         </h3>
 
-        {/* Price */}
         <div className="flex items-baseline gap-2">
           {priceNum !== null ? (
             <>
-              <span className="text-xl font-bold text-green-600">
+              <span className="text-lg font-bold text-gray-900">
                 ${formatPrice(priceNum)}
               </span>
               {originalPriceNum !== null && (
@@ -148,15 +277,14 @@ export function DealCard({
               )}
             </>
           ) : (
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-base font-semibold text-gray-800">
               See Deal
             </span>
           )}
         </div>
 
-        {/* Savings */}
         {savings && (
-          <div className="text-sm text-red-600 font-medium mt-1">
+          <div className="text-xs text-savings font-semibold mt-1">
             Save ${savings}
           </div>
         )}
@@ -165,7 +293,6 @@ export function DealCard({
   )
 }
 
-// Grid wrapper for deal cards
 export function DealGrid({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

@@ -1,22 +1,17 @@
 import Link from 'next/link'
 import { getFeaturedDeals, getDeals, getStoreStats } from '@/lib/db'
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema'
-import { DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
+import { FeaturedDealCard, DealCard, DealGrid, dealToCardProps } from '@/components/DealCard'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { FashionCarousel } from '@/components/FashionCarousel'
-import { FASHION_BRANDS, FASHION_IMAGES_BASE_URL } from '@/lib/fashion-brands'
-import { RETAILER_SEARCH_URLS } from '@/lib/affiliates'
-import { IMAGE_MANIFEST } from '@/lib/fashion-deals'
 import { REVALIDATE_INTERVAL } from '@/lib/config'
 
-// Revalidate every 15 minutes
 export const revalidate = REVALIDATE_INTERVAL
 
 export default async function HomePage() {
   const [featuredDeals, latestDeals, storeStats] = await Promise.all([
-    getFeaturedDeals(8, true),
-    getDeals({ limit: 16, orderBy: 'random' }),
+    getFeaturedDeals(4, true),
+    getDeals({ limit: 12, orderBy: 'random' }),
     getStoreStats(),
   ])
 
@@ -35,173 +30,104 @@ export default async function HomePage() {
       <Header />
 
       <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-            <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-6xl font-black mb-4">
-                Best Canadian Deals
-                <span className="block text-yellow-300">Save Money Today 🇨🇦</span>
-              </h1>
-              <p className="text-lg md:text-xl text-white/90 mb-8">
-                Find the hottest deals from Amazon.ca, Walmart, Costco, Best Buy
-                and more. Updated every 4 hours.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/deals/today"
-                  className="
-                    px-8 py-4 rounded-xl
-                    bg-white text-orange-600
-                    font-bold text-lg
-                    hover:bg-yellow-100
-                    transition-colors
-                    shadow-lg
-                  "
-                >
-                  🔥 Today's Hot Deals
-                </Link>
-                <Link
-                  href="/stores"
-                  className="
-                    px-8 py-4 rounded-xl
-                    bg-white/20 text-white
-                    font-bold text-lg
-                    hover:bg-white/30
-                    transition-colors
-                    border border-white/30
-                  "
-                >
-                  Browse Stores
-                </Link>
-              </div>
-            </div>
+        {/* Hero */}
+        <section className="bg-white py-12 md:py-20">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal text-gray-900 mb-4 leading-tight">
+              Today&rsquo;s Best Deals,{' '}
+              <span className="block">All in One Place.</span>
+            </h1>
+            <p className="text-gray-500 text-lg md:text-xl max-w-xl mx-auto">
+              Real discounts worth your click&mdash;no fluff, just savings.
+            </p>
           </div>
         </section>
 
-        {/* Stats Bar */}
-        <section className="bg-gray-900 text-white py-4">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex justify-center gap-8 md:gap-16 text-center">
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-orange-400">
-                  {latestDeals.length + featuredDeals.length}+
-                </div>
-                <div className="text-sm text-gray-400">Active Deals</div>
-              </div>
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-green-400">
-                  {storeStats.length}+
-                </div>
-                <div className="text-sm text-gray-400">Stores</div>
-              </div>
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-yellow-400">
-                  4hrs
-                </div>
-                <div className="text-sm text-gray-400">Update Frequency</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Deals */}
+        {/* Featured Deals — 2x2 grid, large cards */}
         {featuredDeals.length > 0 && (
-          <section className="py-12 bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  🔥 Featured Deals
-                </h2>
-                <Link
-                  href="/deals"
-                  className="text-orange-600 hover:text-orange-700 font-semibold"
-                >
-                  View All →
-                </Link>
-              </div>
-              <DealGrid>
+          <section className="pb-12 md:pb-16">
+            <div className="max-w-5xl mx-auto px-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {featuredDeals.map(deal => (
-                  <DealCard key={deal.id} {...dealToCardProps(deal)} />
+                  <FeaturedDealCard key={deal.id} {...dealToCardProps(deal)} />
                 ))}
-              </DealGrid>
+              </div>
             </div>
           </section>
         )}
 
-        {/* Fashion Brands Carousel */}
-        <section className="py-8 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              Shop Top Brands
-            </h2>
-            <FashionCarousel
-              cards={FASHION_BRANDS.map((brand, brandIdx) => {
-                const images = IMAGE_MANIFEST[brand.folder] || []
-                const img = images[brandIdx % images.length] || images[0]
-                return {
-                  slug: brand.slug,
-                  name: brand.name,
-                  title: brand.cardTitles[0],
-                  imageUrl: `${FASHION_IMAGES_BASE_URL}/${brand.folder}/${img}`,
-                  affiliateUrl: RETAILER_SEARCH_URLS[brand.slug] || `/stores/${brand.slug}`,
-                }
-              })}
-              autoPlayInterval={60000}
-            />
-          </div>
-        </section>
-
-        {/* Latest Deals */}
-        <section className="py-12 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                ⚡ Latest Deals
-              </h2>
+        {/* Tabbed deals section */}
+        <section className="py-12 md:py-16 bg-white">
+          <div className="max-w-6xl mx-auto px-4">
+            {/* Section tabs */}
+            <div className="flex gap-8 mb-8 border-b border-gray-200">
+              <span className="pb-3 border-b-2 border-gray-900 font-semibold text-gray-900 text-sm">
+                Biggest Price Drops
+              </span>
               <Link
                 href="/deals"
-                className="text-orange-600 hover:text-orange-700 font-semibold"
+                className="pb-3 text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors"
               >
-                View All →
+                Ending Soon
+              </Link>
+              <Link
+                href="/deals"
+                className="pb-3 text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors"
+              >
+                Trending Now
               </Link>
             </div>
+
             <DealGrid>
               {latestDeals.map(deal => (
                 <DealCard key={deal.id} {...dealToCardProps(deal)} />
               ))}
             </DealGrid>
+
+            <div className="text-center mt-10">
+              <Link
+                href="/deals"
+                className="
+                  inline-block px-8 py-3 rounded-lg
+                  border-2 border-brand-navy text-brand-navy
+                  font-semibold text-sm
+                  hover:bg-brand-navy hover:text-white
+                  transition-colors
+                "
+              >
+                View All Deals
+              </Link>
+            </div>
           </div>
         </section>
 
         {/* Categories */}
         <section className="py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              📂 Browse Categories
+          <div className="max-w-6xl mx-auto px-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+              Browse by Category
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {[
-                { slug: 'electronics', name: 'Electronics', emoji: '📱' },
-                { slug: 'fashion', name: 'Fashion', emoji: '👕' },
-                { slug: 'home', name: 'Home', emoji: '🏠' },
-                { slug: 'grocery', name: 'Grocery', emoji: '🛒' },
-                { slug: 'beauty', name: 'Beauty', emoji: '💄' },
-                { slug: 'sports', name: 'Sports', emoji: '⚽' },
+                { slug: 'electronics', name: 'Electronics' },
+                { slug: 'fashion', name: 'Fashion' },
+                { slug: 'home', name: 'Home' },
+                { slug: 'grocery', name: 'Grocery' },
+                { slug: 'beauty', name: 'Beauty' },
+                { slug: 'sports', name: 'Sports' },
               ].map(cat => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
                   className="
-                    flex items-center gap-3
-                    p-4 rounded-xl
+                    text-center py-3 px-4 rounded-lg
                     bg-white border border-gray-200
-                    hover:border-orange-300 hover:shadow-md
-                    transition-all
+                    hover:border-brand-blue hover:shadow-sm
+                    transition-all text-sm font-medium text-gray-700
+                    hover:text-brand-navy
                   "
                 >
-                  <span className="text-2xl">{cat.emoji}</span>
-                  <span className="font-semibold text-gray-900">{cat.name}</span>
+                  {cat.name}
                 </Link>
               ))}
             </div>
@@ -210,37 +136,19 @@ export default async function HomePage() {
 
         {/* SEO Content */}
         <section className="py-12 bg-white">
-          <div className="max-w-4xl mx-auto px-4 prose">
-            <h2>About PromoPenguin - Your Canadian Deals Destination</h2>
+          <div className="max-w-3xl mx-auto px-4 prose prose-gray">
+            <h2>About PromoPenguin</h2>
             <p>
-              PromoPenguin is your go-to destination for finding the best deals, sales,
-              and discounts from top Canadian retailers. We scour the web to bring you
-              verified deals from Amazon.ca, Walmart Canada, Costco, Best Buy, Canadian
-              Tire, and dozens more stores.
+              PromoPenguin helps Canadians discover the best deals from top
+              retailers like Amazon.ca, Walmart, Costco, Best Buy, Canadian Tire,
+              and more. We update our listings daily so you never miss a sale.
             </p>
-
-            <h3>How We Find Deals</h3>
-            <p>
-              Our automated deal-finding system monitors major Canadian retailers and
-              deal aggregators around the clock. We update our listings every 4 hours
-              to ensure you always have access to the latest savings opportunities.
-            </p>
-
-            <h3>Why Canadian Shoppers Trust Us</h3>
+            <h3>Why Shoppers Trust Us</h3>
             <ul>
               <li>Real-time price tracking from major Canadian retailers</li>
-              <li>Verified deals - we only list active promotions</li>
-              <li>Easy-to-use interface designed for quick deal hunting</li>
-              <li>No registration required - just find deals and save</li>
+              <li>Only verified, active promotions</li>
+              <li>No registration required</li>
             </ul>
-
-            <h3>Start Saving Today</h3>
-            <p>
-              Browse our latest deals, explore your favorite stores, or search by
-              category to find exactly what you're looking for. Whether you're
-              shopping for electronics, fashion, home goods, or groceries, we've
-              got deals for every Canadian shopper.
-            </p>
           </div>
         </section>
       </main>
