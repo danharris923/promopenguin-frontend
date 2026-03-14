@@ -29,13 +29,12 @@ export default async function HomePage() {
 
       <main>
         {/* Hero */}
-        <section className="bg-white py-12 md:py-20">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal text-gray-900 mb-4 leading-tight">
-              Today&rsquo;s Best Deals,{' '}
-              <span className="block">All in One Place.</span>
+        <section className="bg-white py-6 md:py-8">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h1 className="font-serif text-3xl md:text-4xl font-normal text-gray-900 mb-2">
+              Today&rsquo;s Best Deals, All in One Place.
             </h1>
-            <p className="text-gray-500 text-lg md:text-xl max-w-xl mx-auto">
+            <p className="text-gray-500 text-base">
               Real discounts worth your click&mdash;no fluff, just savings.
             </p>
           </div>
