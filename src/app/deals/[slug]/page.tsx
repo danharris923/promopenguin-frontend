@@ -37,6 +37,8 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+export const dynamicParams = true
+
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params

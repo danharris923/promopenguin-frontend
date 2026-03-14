@@ -10,6 +10,7 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+export const dynamicParams = true
 export const revalidate = 900
 
 // Generate metadata
