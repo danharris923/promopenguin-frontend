@@ -293,7 +293,13 @@ export async function getStoreBySlug(slug: string): Promise<Store | null> {
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    return await query<Category>('SELECT * FROM categories ORDER BY name ASC')
+    return await query<Category>(
+      `SELECT c.*, COUNT(d.id)::int AS deal_count
+       FROM categories c
+       LEFT JOIN deals d ON d.category = c.slug AND d.is_active = true
+       GROUP BY c.id
+       ORDER BY c.name ASC`
+    )
   } catch (error) {
     console.error('getCategories error:', error)
     return []
