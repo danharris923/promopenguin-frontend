@@ -194,13 +194,6 @@ export function generateBreadcrumbs(deal: Deal): { label: string; href: string }
     { label: 'Deals', href: '/deals' },
   ]
 
-  if (deal.category) {
-    breadcrumbs.push({
-      label: formatCategoryName(deal.category),
-      href: `/category/${deal.category}`,
-    })
-  }
-
   if (deal.store) {
     breadcrumbs.push({
       label: formatStoreName(deal.store),
