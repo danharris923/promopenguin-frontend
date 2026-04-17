@@ -141,39 +141,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Categories */}
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Browse by Category
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-              {[
-                { slug: 'electronics', name: 'Electronics' },
-                { slug: 'fashion', name: 'Fashion' },
-                { slug: 'home', name: 'Home' },
-                { slug: 'grocery', name: 'Grocery' },
-                { slug: 'beauty', name: 'Beauty' },
-                { slug: 'sports', name: 'Sports' },
-              ].map(cat => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  className="
-                    text-center py-3 px-4 rounded-lg
-                    bg-white border border-gray-200
-                    hover:border-brand-blue hover:shadow-sm
-                    transition-all text-sm font-medium text-gray-700
-                    hover:text-brand-navy
-                  "
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* SEO Content */}
         <section className="py-12 bg-white">
           <div className="max-w-3xl mx-auto px-4 prose prose-gray">
