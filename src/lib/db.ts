@@ -184,6 +184,75 @@ export async function getFeaturedDeals(limit: number = 12, random: boolean = fal
   }
 }
 
+// Bucketed fetchers for the 3-source mix. Only surface rows added in the
+// last 30 days so stale deals don't pile up in the feed — the external
+// scraper writes daily, so 30 days of window is plenty.
+//   Guru  = deals ingested from savingsguru.cc (slug prefix 'guru-').
+//   RFD   = everything else in the DB, primarily the daily RFD scraper's
+//           output (store = retailer, affiliate_url = retailer search).
+const FRESH_WINDOW = `AND date_added > NOW() - interval '30 days'`
+
+export async function getGuruDeals(limit: number): Promise<Deal[]> {
+  try {
+    return await query<Deal>(
+      `SELECT * FROM deals
+         WHERE is_active = TRUE
+         ${FRESH_WINDOW}
+         AND slug LIKE 'guru-%'
+       ORDER BY RANDOM() LIMIT $1`,
+      [limit]
+    )
+  } catch (error) {
+    console.error('getGuruDeals error:', error)
+    return []
+  }
+}
+
+export async function getRfdDeals(limit: number): Promise<Deal[]> {
+  try {
+    return await query<Deal>(
+      `SELECT * FROM deals
+         WHERE is_active = TRUE
+         ${FRESH_WINDOW}
+         AND slug NOT LIKE 'guru-%'
+       ORDER BY RANDOM() LIMIT $1`,
+      [limit]
+    )
+  } catch (error) {
+    console.error('getRfdDeals error:', error)
+    return []
+  }
+}
+
+export async function searchDeals(
+  searchQuery: string,
+  limit: number = 50,
+  options: { bucket?: 'all' | 'guru' | 'non-guru' } = {}
+): Promise<Deal[]> {
+  if (!searchQuery || searchQuery.trim().length < 2) return []
+
+  try {
+    const searchTerm = `%${searchQuery.trim().toLowerCase()}%`
+    const bucket = options.bucket ?? 'all'
+    const bucketFilter =
+      bucket === 'guru' ? `AND slug LIKE 'guru-%'`
+      : bucket === 'non-guru' ? `AND slug NOT LIKE 'guru-%'`
+      : ''
+    return await query<Deal>(
+      `SELECT * FROM deals
+       WHERE is_active = TRUE
+       ${bucketFilter}
+       AND (LOWER(title) LIKE $1 OR LOWER(store) LIKE $1 OR LOWER(category) LIKE $1)
+       ORDER BY featured DESC, date_added DESC
+       LIMIT $2`,
+      [searchTerm, limit]
+    )
+  } catch (error) {
+    console.error('searchDeals error:', error)
+    return []
+  }
+}
+
 export async function getDealsByStore(store: string, limit: number = 50): Promise<Deal[]> {
   try {
     return await query<Deal>(
