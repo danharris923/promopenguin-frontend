@@ -379,70 +379,55 @@ export function extractSearchTerms(title: string, brandName?: string): string {
   if (!title) return ''
 
   let cleaned = title
+    // Parenthesized / bracketed specs — store tags, variants, size charts
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*\]/g, ' ')
+    // Prices + sale / discount noise
+    .replace(/\$[\d,]+\.?\d*/g, '')
+    .replace(/\bsave\s+\d+%?/gi, '')
+    .replace(/^sale\s+/i, '').replace(/\bon\s+sale\b|\bsale\b|\bsavings?\b/gi, '')
+    .replace(/-?\d+%\s*(off)?\b/gi, '').replace(/\s*%\s*/g, ' ')
+    .replace(/\b(was|reg|regular|originally|now)\s*\$?[\d,.]+/gi, '')
+    .replace(/\b(was|now)\b/gi, '')
+    // Quantity / weight / pack
+    .replace(/\b\d+\.?\d*\s*(ct|pk|pack|count|ml|l|g|kg|oz|lb|pcs|pieces?|rolls?|bags?|boxes?)\b/gi, '')
+    // Storage / RAM / screen size specs
+    .replace(/\b\d+\s*(gb|tb|mb)\b/gi, '')
+    .replace(/\b\d+\s*(gb)?\s*ram\b/gi, '')
+    .replace(/\b\d+(\.\d+)?\s*(inch|in|")/gi, '')
+    .replace(/"/g, '')
+    // Years + generation designators
+    .replace(/\b20\d{2}\b/g, '')
+    .replace(/\bgen\s*\d+\b/gi, '')
+    .replace(/\b\d+(st|nd|rd|th)\s+gen(eration)?\b/gi, '')
+    // Marketing / fluff adjectives
+    .replace(/\b(collection|collections|arrivals|shop\s*now|shop|bestsellers?|best\s*seller|fan\s*favorites?|must[-\s]have|trending|featured|exclusive|hot|deals?|buy\s*now|get\s*it\s*now|available\s*now|in\s*stock|back\s*in\s*stock|premium|deluxe|elite|special|edition|classic|essentials?|brand[-\s]?new|new|genuine|authentic|official|smart|advanced|xl|xxl|xxxl|xs)\b/gi, '')
+    // Common colors
+    .replace(/\b(black|white|silver|gold|rose\s*gold|space\s*gr[ae]y|gr[ae]y|red|blue|green|navy|pink|purple|yellow|orange|beige|brown|tan|charcoal|cream|ivory|teal)\b/gi, '')
+    // Conjunctions that precede feature lists
+    .replace(/\bw\//gi, '').replace(/\bwith\b/gi, '')
+    .replace(/\blimit\s+\d+\b/gi, '')
+    .replace(/\bstarting\s+(at|from)\b/gi, '')
+    .replace(/^\d+\s+/, '')
+    .replace(/\b(selected|assorted|varieties|each|ea|only|from)\b/gi, '')
 
-  // Remove brand name if provided (case insensitive)
   if (brandName) {
     const brandPattern = new RegExp(`\\b${brandName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi')
     cleaned = cleaned.replace(brandPattern, '')
   }
 
-  // Remove common marketing/noise words that don't help search
-  const noiseWords = [
-    'collection', 'collections', 'new arrivals', 'arrivals', 'new', 'shop now',
-    'shop', 'bestseller', 'bestsellers', 'best seller', 'fan favorite', 'fan favorites',
-    'classic', 'essentials', 'must have', 'must-have', 'trending', 'featured',
-    'limited edition', 'exclusive', 'special', 'hot', 'deal', 'deals',
-    'buy now', 'get it now', 'available now', 'in stock', 'back in stock'
-  ]
-  for (const word of noiseWords) {
-    const wordPattern = new RegExp(`\\b${word}\\b`, 'gi')
-    cleaned = cleaned.replace(wordPattern, '')
-  }
+  cleaned = cleaned
+    .replace(/[,|:;!?]/g, ' ')
+    .replace(/\s-\s/g, ' ').replace(/-\s|\s-/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 
-  // Remove price patterns: $6, $19.99, $1,299.99
-  cleaned = cleaned.replace(/\$[\d,]+\.?\d*/g, '')
+  // Truncate to first 5 tokens — retailer searches are more tolerant of
+  // short queries than of long ones full of spec-detail fluff.
+  const words = cleaned.split(/\s+/).filter(Boolean)
+  if (words.length > 5) cleaned = words.slice(0, 5).join(' ')
 
-  // Remove "SAVE X%" patterns first (before removing standalone %)
-  cleaned = cleaned.replace(/\bsave\s+\d+%?/gi, '')
-
-  // Remove "Sale" prefix and sale-related words
-  cleaned = cleaned.replace(/^sale\s+/i, '')
-  cleaned = cleaned.replace(/\bon\s+sale\b/gi, '')
-  cleaned = cleaned.replace(/\bsale\b/gi, '')
-  cleaned = cleaned.replace(/\bsavings?\b/gi, '')
-
-  // Remove discount patterns: 50% OFF, -20%, 50%, 30% off
-  cleaned = cleaned.replace(/-?\d+%\s*(off)?\b/gi, '')
-
-  // Remove standalone % left over
-  cleaned = cleaned.replace(/\s*%\s*/g, ' ')
-
-  // Remove "was $X" / "reg $X" / "now $X" patterns
-  cleaned = cleaned.replace(/\b(was|reg|regular|originally|now)\s*\$?[\d,.]+/gi, '')
-
-  // Remove standalone "was", "now" left over from price removal
-  cleaned = cleaned.replace(/\b(was|now)\b/gi, '')
-
-  // Remove quantity/size patterns: 42ct, 500ml, 1.5L, 12pk, 6 pack, 1kg
-  cleaned = cleaned.replace(/\b\d+\.?\d*\s*(ct|pk|pack|count|ml|l|g|kg|oz|lb)\b/gi, '')
-
-  // Remove "limit X" patterns
-  cleaned = cleaned.replace(/\blimit\s+\d+\b/gi, '')
-
-  // Remove standalone numbers at start
-  cleaned = cleaned.replace(/^\d+\s+/, '')
-
-  // Remove common flyer noise words
-  cleaned = cleaned.replace(/\b(selected|assorted|varieties|each|ea)\b/gi, '')
-
-  // Clean up punctuation and whitespace
-  cleaned = cleaned.replace(/[,|\-]/g, ' ')    // Replace commas, pipes, dashes with spaces
-  cleaned = cleaned.replace(/\s+/g, ' ')       // Collapse multiple spaces
-  cleaned = cleaned.trim()
-
-  // If we stripped too much, return a reasonable portion of original
   if (cleaned.length < 3 && title.length > 3) {
-    // Just strip obvious prefixes and prices
     return title
       .replace(/^sale\s+/i, '')
       .replace(/\$[\d,]+\.?\d*/g, '')
