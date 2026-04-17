@@ -23,6 +23,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { DealCard } from '@/components/DealCard'
 import { Breadcrumbs } from '@/components/deal/Breadcrumbs'
+import { StickyMobileCTA } from '@/components/deal/StickyMobileCTA'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -321,6 +322,12 @@ export default async function DealPage({ params }: PageProps) {
       </main>
 
       <Footer />
+
+      <StickyMobileCTA
+        href={deal.affiliate_url}
+        price={priceNum}
+        storeName={storeName}
+      />
     </>
   )
 }
