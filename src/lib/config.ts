@@ -23,4 +23,6 @@ export const REVALIDATE_INTERVAL = 900
 /**
  * Base site URL - used for canonical URLs, Open Graph, and sitemaps
  */
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://promopenguin.ca'
+// Trim to defend against trailing-newline env-var values set in Vercel
+// (a stray newline leaks into robots.txt / sitemap / meta URLs).
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://promopenguin.ca').trim()

@@ -232,20 +232,37 @@ export async function searchDeals(
   if (!searchQuery || searchQuery.trim().length < 2) return []
 
   try {
-    const searchTerm = `%${searchQuery.trim().toLowerCase()}%`
+    const q = searchQuery.trim()
+    const qLower = q.toLowerCase()
+    const searchTerm = `%${qLower}%`
     const bucket = options.bucket ?? 'all'
     const bucketFilter =
       bucket === 'guru' ? `AND slug LIKE 'guru-%'`
       : bucket === 'non-guru' ? `AND slug NOT LIKE 'guru-%'`
       : ''
+    // Exact substring match OR trigram similarity match (pg_trgm) so typos
+    // like "amzon" still surface "amazon" rows.
     return await query<Deal>(
       `SELECT * FROM deals
        WHERE is_active = TRUE
        ${bucketFilter}
-       AND (LOWER(title) LIKE $1 OR LOWER(store) LIKE $1 OR LOWER(category) LIKE $1)
-       ORDER BY featured DESC, date_added DESC
-       LIMIT $2`,
-      [searchTerm, limit]
+       AND (
+         LOWER(title) LIKE $1
+         OR LOWER(store) LIKE $1
+         OR LOWER(category) LIKE $1
+         OR similarity(title, $2) > 0.2
+         OR similarity(store, $2) > 0.3
+       )
+       ORDER BY
+         featured DESC,
+         GREATEST(
+           similarity(title, $2),
+           similarity(store, $2) * 1.5,
+           COALESCE(similarity(category, $2), 0)
+         ) DESC,
+         date_added DESC
+       LIMIT $3`,
+      [searchTerm, qLower, limit]
     )
   } catch (error) {
     console.error('searchDeals error:', error)
