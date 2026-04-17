@@ -23,12 +23,6 @@ export function Header() {
               Stores
             </Link>
             <Link
-              href="/category"
-              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-            >
-              Categories
-            </Link>
-            <Link
               href="/deals"
               className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >

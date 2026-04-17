@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
@@ -25,7 +25,6 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/deals" className="hover:text-white transition-colors">All Deals</Link></li>
               <li><Link href="/stores" className="hover:text-white transition-colors">Stores</Link></li>
-              <li><Link href="/category" className="hover:text-white transition-colors">Categories</Link></li>
             </ul>
           </div>
 
@@ -41,17 +40,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm">Categories</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/category/electronics" className="hover:text-white transition-colors">Electronics</Link></li>
-              <li><Link href="/category/fashion" className="hover:text-white transition-colors">Fashion</Link></li>
-              <li><Link href="/category/home" className="hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/category/grocery" className="hover:text-white transition-colors">Grocery</Link></li>
-              <li><Link href="/category/beauty" className="hover:text-white transition-colors">Beauty</Link></li>
-            </ul>
-          </div>
         </div>
 
         {/* Bottom */}
