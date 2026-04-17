@@ -65,17 +65,6 @@ export interface StoreCardData {
 }
 
 /**
- * Category type
- * Compatible with both old and new (Deal Empire) schema
- */
-export interface Category {
-  id: string | number  // UUID in new schema, SERIAL in old
-  name: string
-  slug: string
-  deal_count: number
-}
-
-/**
  * Deal card display props (simplified for components)
  * Supports both regular deals and Flipp flyer deals via variant prop
  */

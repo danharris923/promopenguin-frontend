@@ -1,8 +1,8 @@
 import { Pool } from 'pg'
-import { Deal, Store, Category } from '@/types/deal'
+import { Deal, Store } from '@/types/deal'
 
 /**
- * Database queries for deals, stores, and categories.
+ * Database queries for deals and stores.
  * Uses pg driver for Prisma Postgres compatibility.
  */
 
@@ -265,18 +265,6 @@ export async function getDealsByStore(store: string, limit: number = 50): Promis
   }
 }
 
-export async function getDealsByCategory(category: string, limit: number = 50): Promise<Deal[]> {
-  try {
-    return await query<Deal>(
-      'SELECT * FROM deals WHERE category = $1 AND is_active = TRUE ORDER BY date_added DESC LIMIT $2',
-      [category, limit]
-    )
-  } catch (error) {
-    console.error('getDealsByCategory error:', error)
-    return []
-  }
-}
-
 export async function getRelatedDeals(deal: Deal, limit: number = 6): Promise<Deal[]> {
   try {
     const titleWords = deal.title
@@ -353,25 +341,6 @@ export async function getStoreBySlug(slug: string): Promise<Store | null> {
   } catch (error) {
     console.error('getStoreBySlug error:', error)
     return null
-  }
-}
-
-// =============================================================================
-// CATEGORIES (queries categories table)
-// =============================================================================
-
-export async function getCategories(): Promise<Category[]> {
-  try {
-    return await query<Category>(
-      `SELECT c.*, COUNT(d.id)::int AS deal_count
-       FROM categories c
-       LEFT JOIN deals d ON d.category = c.slug AND d.is_active = true
-       GROUP BY c.id
-       ORDER BY c.name ASC`
-    )
-  } catch (error) {
-    console.error('getCategories error:', error)
-    return []
   }
 }
 
