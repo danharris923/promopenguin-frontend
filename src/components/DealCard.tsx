@@ -13,6 +13,15 @@ const getStoreLogoPath = (store: string | null | undefined): string | null => {
   return `/images/stores/${slug}.png`
 }
 
+// RFD-sourced Amazon deals don't carry reliable product images (the scraped
+// image_url is often a hotlink that 403s from non-amazon origins). Skip the
+// broken-image flash and render the Amazon logo directly. Non-RFD rows
+// (guru-prefixed slugs) come with real product images in blob storage.
+const isRfdAmazon = (store: string | null | undefined, slug: string): boolean => {
+  if (!store) return false
+  return /amazon/i.test(store) && !slug.startsWith('guru-')
+}
+
 /**
  * Featured deal card — large format matching DealRadar style.
  * Store logo top-left, product image right, price prominent, "View Deal" button.
@@ -28,8 +37,10 @@ export function FeaturedDealCard({
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
+  const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
 
   const getInitialImage = () => {
+    if (skipToLogo) return storeLogoFallback!
     if (imageUrl && imageUrl !== PLACEHOLDER_IMAGE) return imageUrl
     if (storeLogoFallback) return storeLogoFallback
     return PLACEHOLDER_IMAGE
@@ -183,8 +194,10 @@ export function DealCard({
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
+  const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
 
   const getInitialImage = () => {
+    if (skipToLogo) return storeLogoFallback!
     if (imageUrl) return imageUrl
     if (storeLogoFallback) return storeLogoFallback
     return PLACEHOLDER_IMAGE
@@ -192,7 +205,7 @@ export function DealCard({
 
   const [imgSrc, setImgSrc] = useState(getInitialImage())
   const [imgError, setImgError] = useState(false)
-  const [triedStoreLogo, setTriedStoreLogo] = useState(!imageUrl)
+  const [triedStoreLogo, setTriedStoreLogo] = useState(!imageUrl || skipToLogo)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
