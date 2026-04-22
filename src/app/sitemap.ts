@@ -1,16 +1,12 @@
 import { MetadataRoute } from 'next'
-import { getAllDealSlugs, getStores } from '@/lib/db'
+import { getAllDealSlugs } from '@/lib/db'
 import { SITE_URL } from '@/lib/config'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [dealSlugs, stores] = await Promise.all([
-    getAllDealSlugs(),
-    getStores(),
-  ])
+  const dealSlugs = await getAllDealSlugs()
 
   const now = new Date()
 
-  // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
@@ -24,15 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'hourly',
       priority: 0.9,
     },
-    {
-      url: `${SITE_URL}/stores`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
   ]
 
-  // Deal pages
   const dealPages: MetadataRoute.Sitemap = dealSlugs.map(slug => ({
     url: `${SITE_URL}/deals/${slug}`,
     lastModified: now,
@@ -40,13 +29,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  // Store pages
-  const storePages: MetadataRoute.Sitemap = stores.map(store => ({
-    url: `${SITE_URL}/stores/${store.slug}`,
-    lastModified: now,
-    changeFrequency: 'daily' as const,
-    priority: 0.8,
-  }))
-
-  return [...staticPages, ...dealPages, ...storePages]
+  return [...staticPages, ...dealPages]
 }

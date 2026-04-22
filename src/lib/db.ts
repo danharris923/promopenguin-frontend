@@ -270,18 +270,6 @@ export async function searchDeals(
   }
 }
 
-export async function getDealsByStore(store: string, limit: number = 50): Promise<Deal[]> {
-  try {
-    return await query<Deal>(
-      'SELECT * FROM deals WHERE store = $1 AND is_active = TRUE ORDER BY date_added DESC LIMIT $2',
-      [store, limit]
-    )
-  } catch (error) {
-    console.error('getDealsByStore error:', error)
-    return []
-  }
-}
-
 export async function getRelatedDeals(deal: Deal, limit: number = 6): Promise<Deal[]> {
   try {
     const titleWords = deal.title
@@ -343,21 +331,6 @@ export async function getStores(): Promise<Store[]> {
   } catch (error) {
     console.error('getStores error:', error)
     return []
-  }
-}
-
-export async function getStoreBySlug(slug: string): Promise<Store | null> {
-  try {
-    return await queryOne<Store>(
-      `SELECT ${STORE_COLUMNS}
-      FROM stores
-      WHERE slug = $1
-      LIMIT 1`,
-      [slug]
-    )
-  } catch (error) {
-    console.error('getStoreBySlug error:', error)
-    return null
   }
 }
 
