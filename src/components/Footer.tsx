@@ -4,9 +4,9 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo-penguin.png" alt="" className="h-6 w-auto" />
@@ -24,19 +24,6 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4 text-sm">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/deals" className="hover:text-white transition-colors">All Deals</Link></li>
-              <li><Link href="/stores" className="hover:text-white transition-colors">Stores</Link></li>
-            </ul>
-          </div>
-
-          {/* Popular Stores */}
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm">Popular Stores</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/stores/amazon" className="hover:text-white transition-colors">Amazon.ca</Link></li>
-              <li><Link href="/stores/walmart" className="hover:text-white transition-colors">Walmart</Link></li>
-              <li><Link href="/stores/costco" className="hover:text-white transition-colors">Costco</Link></li>
-              <li><Link href="/stores/best-buy" className="hover:text-white transition-colors">Best Buy</Link></li>
-              <li><Link href="/stores/canadian-tire" className="hover:text-white transition-colors">Canadian Tire</Link></li>
             </ul>
           </div>
 

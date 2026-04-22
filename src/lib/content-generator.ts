@@ -189,24 +189,11 @@ export function generatePageTitle(deal: Deal): string {
  * Generate breadcrumb items
  */
 export function generateBreadcrumbs(deal: Deal): { label: string; href: string }[] {
-  const breadcrumbs = [
+  return [
     { label: 'Home', href: '/' },
     { label: 'Deals', href: '/deals' },
+    { label: truncate(deal.title, 40), href: `/deals/${deal.slug}` },
   ]
-
-  if (deal.store) {
-    breadcrumbs.push({
-      label: formatStoreName(deal.store),
-      href: `/stores/${deal.store}`,
-    })
-  }
-
-  breadcrumbs.push({
-    label: truncate(deal.title, 40),
-    href: `/deals/${deal.slug}`,
-  })
-
-  return breadcrumbs
 }
 
 /**
