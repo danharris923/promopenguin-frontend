@@ -38,27 +38,27 @@ export function FeaturedDealCard({
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
+  const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  const getInitialImage = () => {
-    if (skipToLogo) return storeLogoFallback!
-    if (imageUrl && imageUrl !== PLACEHOLDER_IMAGE) return imageUrl
-    if (storeLogoFallback) return storeLogoFallback
-    return PLACEHOLDER_IMAGE
-  }
-
-  const [imgSrc, setImgSrc] = useState(getInitialImage())
+  // Image rendering mirrors shopcanada's DealCard: try product image → fall
+  // back to the store logo → if both fail (or there was never a product
+  // image to begin with), flip to a text-only layout (dimmed store logo).
+  const [imgSrc, setImgSrc] = useState(skipToLogo ? storeLogoFallback! : initialImageUrl)
   const [imgError, setImgError] = useState(false)
+  const [triedStoreLogo, setTriedStoreLogo] = useState(skipToLogo)
+  const [noProductImage, setNoProductImage] = useState(!initialImageUrl && !skipToLogo)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
   const handleImageError = () => {
-    if (!imgError && storeLogoFallback && imgSrc !== storeLogoFallback) {
+    if (!imgError && !triedStoreLogo && storeLogoFallback) {
+      setTriedStoreLogo(true)
       setImgSrc(storeLogoFallback)
     } else if (!imgError) {
       setImgError(true)
-      setImgSrc(PLACEHOLDER_IMAGE)
+      setNoProductImage(true)
     }
   }
 
@@ -159,15 +159,27 @@ export function FeaturedDealCard({
           </div>
 
           {/* Product image */}
-          <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imgSrc}
-              alt={title}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
-              onError={handleImageError}
-              loading="lazy"
-            />
+          <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center flex items-center justify-center">
+            {noProductImage ? (
+              storeLogoFallback && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={storeLogoFallback}
+                  alt={store || 'Store'}
+                  className="w-full h-full object-contain opacity-60"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              )
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imgSrc}
+                alt={title}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+                onError={handleImageError}
+                loading="lazy"
+              />
+            )}
           </div>
         </div>
 
@@ -195,17 +207,16 @@ export function DealCard({
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
+  const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  const getInitialImage = () => {
-    if (skipToLogo) return storeLogoFallback!
-    if (imageUrl) return imageUrl
-    if (storeLogoFallback) return storeLogoFallback
-    return PLACEHOLDER_IMAGE
-  }
-
-  const [imgSrc, setImgSrc] = useState(getInitialImage())
+  // Image rendering mirrors shopcanada's DealCard: try product image → fall
+  // back to the store logo → if both fail (or there was never a product
+  // image to begin with), flip to a text-only layout (dimmed store logo +
+  // title).
+  const [imgSrc, setImgSrc] = useState(skipToLogo ? storeLogoFallback! : initialImageUrl)
   const [imgError, setImgError] = useState(false)
-  const [triedStoreLogo, setTriedStoreLogo] = useState(!imageUrl || skipToLogo)
+  const [triedStoreLogo, setTriedStoreLogo] = useState(skipToLogo)
+  const [noProductImage, setNoProductImage] = useState(!initialImageUrl && !skipToLogo)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
@@ -217,7 +228,7 @@ export function DealCard({
       setImgSrc(storeLogoFallback)
     } else if (!imgError) {
       setImgError(true)
-      setImgSrc(PLACEHOLDER_IMAGE)
+      setNoProductImage(true)
     }
   }
 
@@ -241,14 +252,31 @@ export function DealCard({
           </div>
         )}
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imgSrc}
-          alt={title}
-          className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
-          onError={handleImageError}
-          loading="lazy"
-        />
+        {noProductImage ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 gap-2">
+            {storeLogoFallback && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={storeLogoFallback}
+                alt={store || 'Store'}
+                className="w-20 h-20 object-contain opacity-60"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
+            )}
+            <p className="text-xs text-gray-500 text-center line-clamp-4 leading-relaxed px-2">
+              {title}
+            </p>
+          </div>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imgSrc}
+            alt={title}
+            className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
+            onError={handleImageError}
+            loading="lazy"
+          />
+        )}
       </div>
 
       {/* Content */}
