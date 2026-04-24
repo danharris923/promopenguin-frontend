@@ -110,7 +110,7 @@ export default function RootLayout({
         />
         <Script
           src="https://analytics.promopenguin.ca/script.js"
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          data-website-id="715630ed-8d80-4747-a258-106d128f42a2"
           strategy="afterInteractive"
         />
       </head>
