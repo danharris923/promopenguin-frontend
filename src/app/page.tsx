@@ -21,17 +21,15 @@ function DealGridSkeleton() {
   )
 }
 
-// Canonical 3-source mix shared across all three sister sites:
-// Flipp flyer items + RFD scraper rows + SavingsGuru rows, round-robin
-// interleaved so the feed never looks store-biased.
+// Guru-priority mix; RFD kept low (flaky upstream) — just enough non-Amazon
+// variety. Source order in mixDeals controls the top-left grid slot.
 async function DealsFeed() {
-  const PER_SOURCE = 17
-  const [flipp, rfd, guru] = await Promise.all([
-    getFlippDealsAsDeals('deals', PER_SOURCE),
-    getRfdDeals(PER_SOURCE),
-    getGuruDeals(PER_SOURCE),
+  const [guru, flipp, rfd] = await Promise.all([
+    getGuruDeals(24),
+    getFlippDealsAsDeals('deals', 17),
+    getRfdDeals(6),
   ])
-  const mixed = mixDeals(flipp, rfd, guru).slice(0, 47)
+  const mixed = mixDeals(guru, flipp, rfd).slice(0, 47)
 
   return (
     <DealGrid>

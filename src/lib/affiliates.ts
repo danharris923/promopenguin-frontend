@@ -206,7 +206,11 @@ export const RETAILER_SEARCH_URLS: Record<string, string> = {
   'walmart': 'https://www.walmart.ca/search?q=',
   'amazon': 'https://www.amazon.ca/s?k=',
   'amazon-ca': 'https://www.amazon.ca/s?k=',
-  'canadian-tire': 'https://www.canadiantire.ca/en/search.html?q=',
+  // Canadian Tire onsite search returns a flyer-only page that doesn't honor
+  // the q= param the way the URL implies, so land on the flyer page and let
+  // the user pivot from there. Trailing # makes the appended search term a
+  // (harmless, ignored) fragment instead of corrupting the path.
+  'canadian-tire': 'https://www.canadiantire.ca/en/flyer.html#',
   'dollarama': 'https://www.dollarama.com/en-CA/search?q=',
 
   // Electronics
