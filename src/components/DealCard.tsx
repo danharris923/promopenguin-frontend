@@ -13,6 +13,15 @@ const getStoreLogoPath = (store: string | null | undefined): string | null => {
   return `/images/stores/${slug}.png`
 }
 
+// RFD-sourced Amazon deals don't carry reliable product images (the scraped
+// image_url is often a hotlink that 403s from non-amazon origins). Skip the
+// broken-image flash and render the Amazon logo directly. Non-RFD rows
+// (guru-prefixed slugs) come with real product images in blob storage.
+const isRfdAmazon = (store: string | null | undefined, slug: string): boolean => {
+  if (!store) return false
+  return /amazon/i.test(store) && !slug.startsWith('guru-')
+}
+
 /**
  * Featured deal card — large format matching DealRadar style.
  * Store logo top-left, product image right, price prominent, "View Deal" button.
@@ -28,28 +37,33 @@ export function FeaturedDealCard({
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
+  const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
+  const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  const getInitialImage = () => {
-    if (imageUrl && imageUrl !== PLACEHOLDER_IMAGE) return imageUrl
-    if (storeLogoFallback) return storeLogoFallback
-    return PLACEHOLDER_IMAGE
-  }
-
-  const [imgSrc, setImgSrc] = useState(getInitialImage())
-  const [imgError, setImgError] = useState(false)
+  // Try product image → fall back to the store logo → if both fail (or
+  // there was no usable image to begin with) drop the card from the grid.
+  // Never render a dead/broken image placeholder.
+  const initialSrc = skipToLogo
+    ? storeLogoFallback!
+    : (initialImageUrl || storeLogoFallback || '')
+  const [imgSrc, setImgSrc] = useState(initialSrc)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [hideCard, setHideCard] = useState(!initialSrc)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
   const handleImageError = () => {
-    if (!imgError && storeLogoFallback && imgSrc !== storeLogoFallback) {
+    if (!triedFallback && storeLogoFallback) {
+      setTriedFallback(true)
       setImgSrc(storeLogoFallback)
-    } else if (!imgError) {
-      setImgError(true)
-      setImgSrc(PLACEHOLDER_IMAGE)
+    } else {
+      setHideCard(true)
     }
   }
+
+  if (hideCard) return null
 
   // Generate a short description
   const description = savings
@@ -148,7 +162,7 @@ export function FeaturedDealCard({
           </div>
 
           {/* Product image */}
-          <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center">
+          <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imgSrc}
@@ -183,30 +197,33 @@ export function DealCard({
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
+  const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
+  const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  const getInitialImage = () => {
-    if (imageUrl) return imageUrl
-    if (storeLogoFallback) return storeLogoFallback
-    return PLACEHOLDER_IMAGE
-  }
-
-  const [imgSrc, setImgSrc] = useState(getInitialImage())
-  const [imgError, setImgError] = useState(false)
-  const [triedStoreLogo, setTriedStoreLogo] = useState(!imageUrl)
+  // Try product image → fall back to the store logo → if both fail (or
+  // there was no usable image to begin with) drop the card from the grid.
+  // Never render a dead/broken image placeholder.
+  const initialSrc = skipToLogo
+    ? storeLogoFallback!
+    : (initialImageUrl || storeLogoFallback || '')
+  const [imgSrc, setImgSrc] = useState(initialSrc)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [hideCard, setHideCard] = useState(!initialSrc)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
   const savings = calculateSavings(originalPrice, price)
 
   const handleImageError = () => {
-    if (!imgError && !triedStoreLogo && storeLogoFallback) {
-      setTriedStoreLogo(true)
+    if (!triedFallback && storeLogoFallback) {
+      setTriedFallback(true)
       setImgSrc(storeLogoFallback)
-    } else if (!imgError) {
-      setImgError(true)
-      setImgSrc(PLACEHOLDER_IMAGE)
+    } else {
+      setHideCard(true)
     }
   }
+
+  if (hideCard) return null
 
   return (
     <Link
