@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
+import { getDealAffiliateUrl } from '@/lib/affiliates'
 
 const PLACEHOLDER_IMAGE = '/placeholder-deal.svg'
 
@@ -34,6 +35,7 @@ export function FeaturedDealCard({
   originalPrice,
   discountPercent,
   store,
+  affiliateUrl,
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
@@ -88,15 +90,18 @@ export function FeaturedDealCard({
       ? `Save $${savings}`
       : null
 
-  return (
-    <Link
-      href={`/deals/${slug}`}
-      className="
+  // Card click + button always go to the retailer/affiliate URL.
+  // Internal /deals/[slug] pages are kept for SEO crawling but are
+  // never linked from a card.
+  const storeSlug = store?.toLowerCase().replace(/\s+/g, '-') || ''
+  const effectiveAffiliateUrl = getDealAffiliateUrl(affiliateUrl || null, storeSlug, title) || ''
+  const cardClassName = `
         group block bg-white rounded-xl border border-gray-200
         hover:shadow-lg transition-shadow duration-200
         overflow-hidden
-      "
-    >
+      `
+
+  const inner = (
       <div className="p-5 flex flex-col h-full">
         {/* Top row: store logo + badge */}
         <div className="flex items-start justify-between mb-3">
@@ -190,6 +195,20 @@ export function FeaturedDealCard({
           <span className="btn-deal">View Deal</span>
         </div>
       </div>
+  )
+
+  return effectiveAffiliateUrl ? (
+    <a
+      href={effectiveAffiliateUrl}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      className={cardClassName}
+    >
+      {inner}
+    </a>
+  ) : (
+    <Link href={`/deals/${slug}`} className={cardClassName}>
+      {inner}
     </Link>
   )
 }
@@ -205,6 +224,7 @@ export function DealCard({
   originalPrice,
   discountPercent,
   store,
+  affiliateUrl,
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
@@ -246,16 +266,20 @@ export function DealCard({
 
   if (hideCard) return null
 
-  return (
-    <Link
-      href={`/deals/${slug}`}
-      className="
+  // Card click goes to the retailer/affiliate URL. The internal
+  // /deals/[slug] page is kept alive for SEO crawling but is never
+  // linked from a card.
+  const storeSlug = store?.toLowerCase().replace(/\s+/g, '-') || ''
+  const effectiveAffiliateUrl = getDealAffiliateUrl(affiliateUrl || null, storeSlug, title) || ''
+  const cardClassName = `
         group block
         bg-white rounded-xl border border-gray-200 overflow-hidden
         transition-all duration-200
         hover:shadow-lg hover:-translate-y-0.5
-      "
-    >
+      `
+
+  const inner = (
+      <>
       {/* Image */}
       <div className="relative aspect-square bg-gray-50">
         {discountPercent != null && discountPercent > 0 && (
@@ -312,6 +336,21 @@ export function DealCard({
           </div>
         )}
       </div>
+      </>
+  )
+
+  return effectiveAffiliateUrl ? (
+    <a
+      href={effectiveAffiliateUrl}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      className={cardClassName}
+    >
+      {inner}
+    </a>
+  ) : (
+    <Link href={`/deals/${slug}`} className={cardClassName}>
+      {inner}
     </Link>
   )
 }
