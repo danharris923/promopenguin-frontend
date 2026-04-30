@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
 
@@ -40,15 +40,15 @@ export function FeaturedDealCard({
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
   const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  // Try product image → fall back to the store logo → if both fail (or
-  // there was no usable image to begin with) drop the card from the grid.
-  // Never render a dead/broken image placeholder.
-  const initialSrc = skipToLogo
-    ? storeLogoFallback!
-    : (initialImageUrl || storeLogoFallback || '')
+  // The store logo is an onError fallback only — never the primary image.
+  // Upscaling a small logo into the card image slot reads as a blank card
+  // with the title floating beside it. If the deal has no usable image,
+  // drop the card from the grid.
+  const initialSrc = skipToLogo ? storeLogoFallback! : (initialImageUrl || '')
   const [imgSrc, setImgSrc] = useState(initialSrc)
-  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo)
   const [hideCard, setHideCard] = useState(!initialSrc)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
@@ -62,6 +62,16 @@ export function FeaturedDealCard({
       setHideCard(true)
     }
   }
+
+  // SSR/hydration race: if the <img> finished loading with zero
+  // dimensions before React attached its onError listener, the listener
+  // never fires. Re-check on mount and after each src change.
+  useEffect(() => {
+    const img = imgRef.current
+    if (img && img.complete && img.naturalWidth === 0) {
+      handleImageError()
+    }
+  }, [imgSrc])
 
   if (hideCard) return null
 
@@ -165,6 +175,7 @@ export function FeaturedDealCard({
           <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              ref={imgRef}
               src={imgSrc}
               alt={title}
               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
@@ -200,15 +211,15 @@ export function DealCard({
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
   const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  // Try product image → fall back to the store logo → if both fail (or
-  // there was no usable image to begin with) drop the card from the grid.
-  // Never render a dead/broken image placeholder.
-  const initialSrc = skipToLogo
-    ? storeLogoFallback!
-    : (initialImageUrl || storeLogoFallback || '')
+  // The store logo is an onError fallback only — never the primary image.
+  // Upscaling a small logo into the 400px card slot reads as a blank card
+  // with the title floating below. If the deal has no usable image, drop
+  // the card from the grid.
+  const initialSrc = skipToLogo ? storeLogoFallback! : (initialImageUrl || '')
   const [imgSrc, setImgSrc] = useState(initialSrc)
-  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo)
   const [hideCard, setHideCard] = useState(!initialSrc)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
@@ -222,6 +233,16 @@ export function DealCard({
       setHideCard(true)
     }
   }
+
+  // SSR/hydration race: if the <img> finished loading with zero
+  // dimensions before React attached its onError listener, the listener
+  // never fires. Re-check on mount and after each src change.
+  useEffect(() => {
+    const img = imgRef.current
+    if (img && img.complete && img.naturalWidth === 0) {
+      handleImageError()
+    }
+  }, [imgSrc])
 
   if (hideCard) return null
 
@@ -247,6 +268,7 @@ export function DealCard({
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={imgRef}
           src={imgSrc}
           alt={title}
           className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
