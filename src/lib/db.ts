@@ -185,12 +185,12 @@ export async function getFeaturedDeals(limit: number = 12, random: boolean = fal
 }
 
 // Bucketed fetchers for the 3-source mix. Only surface rows added in the
-// last 30 days so stale deals don't pile up in the feed — the external
-// scraper writes daily, so 30 days of window is plenty.
+// last 3 days — RFD/Amazon links die fast, and the scraper writes daily
+// (last-3d pool runs ~140 deals, ~3× the homepage need).
 //   Guru  = deals ingested from savingsguru.cc (slug prefix 'guru-').
 //   RFD   = everything else in the DB, primarily the daily RFD scraper's
 //           output (store = retailer, affiliate_url = retailer search).
-const FRESH_WINDOW = `AND date_added > NOW() - interval '30 days'`
+const FRESH_WINDOW = `AND date_added > NOW() - interval '3 days'`
 
 export async function getGuruDeals(limit: number): Promise<Deal[]> {
   try {
