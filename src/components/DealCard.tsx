@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DealCardProps } from '@/types/deal'
 import { toNumber, formatPrice, calculateSavings } from '@/lib/price-utils'
+import { getDealAffiliateUrl } from '@/lib/affiliates'
 
 const PLACEHOLDER_IMAGE = '/placeholder-deal.svg'
 
@@ -34,21 +35,22 @@ export function FeaturedDealCard({
   originalPrice,
   discountPercent,
   store,
+  affiliateUrl,
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
   const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  // Try product image → fall back to the store logo → if both fail (or
-  // there was no usable image to begin with) drop the card from the grid.
-  // Never render a dead/broken image placeholder.
-  const initialSrc = skipToLogo
-    ? storeLogoFallback!
-    : (initialImageUrl || storeLogoFallback || '')
+  // The store logo is an onError fallback only — never the primary image.
+  // Upscaling a small logo into the card image slot reads as a blank card
+  // with the title floating beside it. If the deal has no usable image,
+  // drop the card from the grid.
+  const initialSrc = skipToLogo ? storeLogoFallback! : (initialImageUrl || '')
   const [imgSrc, setImgSrc] = useState(initialSrc)
-  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo)
   const [hideCard, setHideCard] = useState(!initialSrc)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
@@ -62,6 +64,16 @@ export function FeaturedDealCard({
       setHideCard(true)
     }
   }
+
+  // SSR/hydration race: if the <img> finished loading with zero
+  // dimensions before React attached its onError listener, the listener
+  // never fires. Re-check on mount and after each src change.
+  useEffect(() => {
+    const img = imgRef.current
+    if (img && img.complete && img.naturalWidth === 0) {
+      handleImageError()
+    }
+  }, [imgSrc])
 
   if (hideCard) return null
 
@@ -78,15 +90,18 @@ export function FeaturedDealCard({
       ? `Save $${savings}`
       : null
 
-  return (
-    <Link
-      href={`/deals/${slug}`}
-      className="
+  // Card click + button always go to the retailer/affiliate URL.
+  // Internal /deals/[slug] pages are kept for SEO crawling but are
+  // never linked from a card.
+  const storeSlug = store?.toLowerCase().replace(/\s+/g, '-') || ''
+  const effectiveAffiliateUrl = getDealAffiliateUrl(affiliateUrl || null, storeSlug, title) || ''
+  const cardClassName = `
         group block bg-white rounded-xl border border-gray-200
         hover:shadow-lg transition-shadow duration-200
         overflow-hidden
-      "
-    >
+      `
+
+  const inner = (
       <div className="p-5 flex flex-col h-full">
         {/* Top row: store logo + badge */}
         <div className="flex items-start justify-between mb-3">
@@ -165,6 +180,7 @@ export function FeaturedDealCard({
           <div className="w-28 h-28 md:w-36 md:h-36 flex-shrink-0 self-center flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              ref={imgRef}
               src={imgSrc}
               alt={title}
               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
@@ -179,6 +195,20 @@ export function FeaturedDealCard({
           <span className="btn-deal">View Deal</span>
         </div>
       </div>
+  )
+
+  return effectiveAffiliateUrl ? (
+    <a
+      href={effectiveAffiliateUrl}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      className={cardClassName}
+    >
+      {inner}
+    </a>
+  ) : (
+    <Link href={`/deals/${slug}`} className={cardClassName}>
+      {inner}
     </Link>
   )
 }
@@ -194,21 +224,22 @@ export function DealCard({
   originalPrice,
   discountPercent,
   store,
+  affiliateUrl,
   featured,
 }: DealCardProps) {
   const storeLogoFallback = getStoreLogoPath(store)
   const skipToLogo = isRfdAmazon(store, slug) && !!storeLogoFallback
   const initialImageUrl = imageUrl && imageUrl !== PLACEHOLDER_IMAGE ? imageUrl : ''
 
-  // Try product image → fall back to the store logo → if both fail (or
-  // there was no usable image to begin with) drop the card from the grid.
-  // Never render a dead/broken image placeholder.
-  const initialSrc = skipToLogo
-    ? storeLogoFallback!
-    : (initialImageUrl || storeLogoFallback || '')
+  // The store logo is an onError fallback only — never the primary image.
+  // Upscaling a small logo into the 400px card slot reads as a blank card
+  // with the title floating below. If the deal has no usable image, drop
+  // the card from the grid.
+  const initialSrc = skipToLogo ? storeLogoFallback! : (initialImageUrl || '')
   const [imgSrc, setImgSrc] = useState(initialSrc)
-  const [triedFallback, setTriedFallback] = useState(skipToLogo || !initialImageUrl)
+  const [triedFallback, setTriedFallback] = useState(skipToLogo)
   const [hideCard, setHideCard] = useState(!initialSrc)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   const priceNum = toNumber(price)
   const originalPriceNum = toNumber(originalPrice)
@@ -223,18 +254,32 @@ export function DealCard({
     }
   }
 
+  // SSR/hydration race: if the <img> finished loading with zero
+  // dimensions before React attached its onError listener, the listener
+  // never fires. Re-check on mount and after each src change.
+  useEffect(() => {
+    const img = imgRef.current
+    if (img && img.complete && img.naturalWidth === 0) {
+      handleImageError()
+    }
+  }, [imgSrc])
+
   if (hideCard) return null
 
-  return (
-    <Link
-      href={`/deals/${slug}`}
-      className="
+  // Card click goes to the retailer/affiliate URL. The internal
+  // /deals/[slug] page is kept alive for SEO crawling but is never
+  // linked from a card.
+  const storeSlug = store?.toLowerCase().replace(/\s+/g, '-') || ''
+  const effectiveAffiliateUrl = getDealAffiliateUrl(affiliateUrl || null, storeSlug, title) || ''
+  const cardClassName = `
         group block
         bg-white rounded-xl border border-gray-200 overflow-hidden
         transition-all duration-200
         hover:shadow-lg hover:-translate-y-0.5
-      "
-    >
+      `
+
+  const inner = (
+      <>
       {/* Image */}
       <div className="relative aspect-square bg-gray-50">
         {discountPercent != null && discountPercent > 0 && (
@@ -247,6 +292,7 @@ export function DealCard({
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={imgRef}
           src={imgSrc}
           alt={title}
           className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
@@ -290,6 +336,21 @@ export function DealCard({
           </div>
         )}
       </div>
+      </>
+  )
+
+  return effectiveAffiliateUrl ? (
+    <a
+      href={effectiveAffiliateUrl}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      className={cardClassName}
+    >
+      {inner}
+    </a>
+  ) : (
+    <Link href={`/deals/${slug}`} className={cardClassName}>
+      {inner}
     </Link>
   )
 }
